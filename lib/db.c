@@ -1094,7 +1094,7 @@ grn_alias_resolve(grn_ctx *ctx,
       GRN_BULK_REWIND(alias_name_buffer);
       grn_obj_get_value(ctx, alias_column, alias_id, alias_name_buffer);
       name = GRN_TEXT_VALUE(alias_name_buffer);
-      name_size = GRN_TEXT_LEN(alias_name_buffer);
+      name_size = (int)GRN_TEXT_LEN(alias_name_buffer);
     }
   }
 
@@ -5473,8 +5473,10 @@ grn_obj_column_(grn_ctx *ctx,
             alias_name += len;
             alias_name_size -= len;
           }
-          column =
-            grn_obj_get_accessor(ctx, table, alias_name, alias_name_size);
+          column = grn_obj_get_accessor(ctx,
+                                        table,
+                                        alias_name,
+                                        (uint32_t)alias_name_size);
         }
         GRN_OBJ_FIN(ctx, &alias_name_buffer);
       } else {
@@ -5579,7 +5581,7 @@ grn_table_columns(grn_ctx *ctx,
       grn_table_search(ctx,
                        s->keys,
                        GRN_BULK_HEAD(&bulk),
-                       GRN_BULK_VSIZE(&bulk),
+                       (uint32_t)GRN_BULK_VSIZE(&bulk),
                        GRN_OP_PREFIX,
                        res,
                        GRN_OP_OR);
@@ -6415,7 +6417,7 @@ grn_obj_get_accessor(grn_ctx *ctx,
     } else {
       /* if obj->header.type == GRN_TYPE ... lookup table */
       for (rp = &res;; rp = &(*rp)->next) {
-        grn_obj *column = grn_obj_column_(ctx, obj, name, len);
+        grn_obj *column = grn_obj_column_(ctx, obj, name, (uint32_t)len);
         if (column) {
           *rp = grn_accessor_new(ctx);
           (*rp)->obj = column;
@@ -6479,7 +6481,7 @@ grn_obj_get_accessor(grn_ctx *ctx,
       }
     }
     if (sp != se) {
-      if (!grn_obj_get_accessor(ctx, (grn_obj *)res, sp, se - sp)) {
+      if (!grn_obj_get_accessor(ctx, (grn_obj *)res, sp, (uint32_t)(se - sp))) {
         if (!is_chained) {
           grn_obj_close(ctx, (grn_obj *)res);
           res = NULL;
@@ -14372,7 +14374,7 @@ grn_column_name(grn_ctx *ctx, grn_obj *obj, char *namebuf, int buf_size)
           p0 = p + cl;
         }
       }
-      len = pe - p0;
+      len = (int)(pe - p0);
       if (len && len <= buf_size) {
         grn_memcpy(namebuf, p0, len);
       }
@@ -14454,7 +14456,7 @@ grn_column_name(grn_ctx *ctx, grn_obj *obj, char *namebuf, int buf_size)
     }
 #undef ADD_DELIMITER
 
-    len = GRN_TEXT_LEN(&name);
+    len = (int)GRN_TEXT_LEN(&name);
     if (len > 0 && len <= buf_size) {
       grn_memcpy(namebuf, GRN_TEXT_VALUE(&name), len);
     }
@@ -16333,7 +16335,11 @@ grn_obj_columns(grn_ctx *ctx,
                             GRN_OBJ_TABLE_HASH_KEY | GRN_HASH_TINY);
           if (cols) {
             grn_id *key;
-            grn_table_columns(ctx, table, p, r - p - 1, (grn_obj *)cols);
+            grn_table_columns(ctx,
+                              table,
+                              p,
+                              (unsigned int)(r - p - 1),
+                              (grn_obj *)cols);
             GRN_HASH_EACH(ctx, cols, id, &key, NULL, NULL, {
               if ((col = grn_ctx_at(ctx, *key))) {
                 GRN_PTR_PUT(ctx, res, col);
@@ -16368,7 +16374,7 @@ grn_obj_columns(grn_ctx *ctx,
                     grn_table_columns(ctx,
                                       target_table,
                                       p,
-                                      r - p - 1,
+                                      (unsigned int)(r - p - 1),
                                       (grn_obj *)cols);
                     GRN_HASH_EACH_BEGIN(ctx, cols, cursor, id)
                     {
@@ -16410,7 +16416,7 @@ grn_obj_columns(grn_ctx *ctx,
             }
             grn_obj_unref(ctx, type);
           }
-        } else if ((col = grn_obj_column(ctx, table, p, r - p))) {
+        } else if ((col = grn_obj_column(ctx, table, p, (uint32_t)(r - p)))) {
           GRN_PTR_PUT(ctx, res, col);
         }
       }
@@ -16433,7 +16439,7 @@ grn_table_column(grn_ctx *ctx,
     name_size = strlen(name);
   }
 
-  grn_obj *column = grn_obj_column_(ctx, table, name, name_size);
+  grn_obj *column = grn_obj_column_(ctx, table, name, (uint32_t)name_size);
   if (grn_obj_is_accessor(ctx, column)) {
     grn_obj_unlink(ctx, column);
     column = NULL;
