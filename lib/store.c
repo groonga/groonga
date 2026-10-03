@@ -28,6 +28,7 @@
 #include "grn_obj.h"
 #include "grn_output.h"
 #include "grn_db.h"
+#include "grn_util.h"
 #include "grn_vector.h"
 #include "grn_wal.h"
 #include <string.h>
@@ -1012,6 +1013,42 @@ _grn_ja_create(grn_ctx *ctx,
   ja->partitions = NULL;
   ja->partition_mapping = NULL;
   return ja;
+}
+
+/*
+ * This function allocates the space needed to map each ID to its partition.
+ *
+ * If the mapping is already open, it returns without taking any action.
+ * If the mapping is not open, it creates a new file if one does not exist, or
+ * opens the existing file.
+ */
+static void
+grn_ja_ensure_partition_map(grn_ctx *ctx, grn_ja *ja)
+{
+  if (ja->partition_mapping) {
+    return;
+  }
+
+  if (strlen(ja->io->path) + strlen(".partitions") >= PATH_MAX) {
+    ERR(
+      GRN_FILENAME_TOO_LONG,
+      "[ja][ensure][partition-map] The path of partition map file is too long "
+      "path: %s.partitions",
+      ja->io->path);
+    return;
+  }
+
+  char path[PATH_MAX];
+  snprintf(path, sizeof(path), "%s.partitions", ja->io->path);
+  if (grn_path_exist(path)) {
+    ja->partition_mapping = grn_ra_open(ctx, path);
+    return;
+  }
+  /*
+   * partition_id is stored per record id. Its range is 0..255,
+   * so the element size is sizeof(uint8_t).
+   */
+  ja->partition_mapping = grn_ra_create(ctx, path, sizeof(uint8_t), 0);
 }
 
 grn_ja *
