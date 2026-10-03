@@ -2842,7 +2842,7 @@ delete_reference_records_in_index(grn_ctx *ctx,
   grn_ii_cursor *ii_cursor = NULL;
   grn_posting *posting;
   grn_obj source_ids;
-  unsigned int i, n_ids;
+  size_t i, n_ids;
   grn_obj sources;
   bool have_reference_source = false;
 
@@ -2967,7 +2967,7 @@ exit:
   }
   GRN_OBJ_FIN(ctx, &source_ids);
   {
-    int i, n_sources;
+    size_t i, n_sources;
     n_sources = GRN_BULK_VSIZE(&sources) / sizeof(grn_obj *);
     for (i = 0; i < n_sources; i++) {
       grn_obj *source = GRN_PTR_VALUE_AT(&sources, i);
@@ -8313,7 +8313,7 @@ del_hook(grn_ctx *ctx, grn_obj *obj, grn_hook_entry entry, grn_id target_id)
     }
   }
 
-  int n = GRN_INT32_VECTOR_SIZE(&offsets);
+  int n = (int)GRN_INT32_VECTOR_SIZE(&offsets);
   for (i = 0; i < n; i++) {
     /* This must be larger -> smaller order. If we use smaller ->
      * larger order, offset is changed. */
@@ -9970,7 +9970,7 @@ grn_obj_add_hook(grn_ctx *ctx,
     grn_hook *new, **last = &DB_OBJ(obj)->hooks[entry];
     if (hook_data) {
       data_value = GRN_BULK_HEAD(hook_data);
-      data_size = GRN_BULK_VSIZE(hook_data);
+      data_size = (uint32_t)GRN_BULK_VSIZE(hook_data);
     }
     if (!(new = GRN_MALLOC(sizeof(grn_hook) + data_size))) {
       rc = GRN_NO_MEMORY_AVAILABLE;
@@ -11299,7 +11299,7 @@ grn_obj_remove_internal(grn_ctx *ctx, grn_obj *obj, uint32_t flags)
     grn_obj *space;
     space = ctx->impl->temporary_open_spaces.current;
     if (space) {
-      unsigned int i, n_elements;
+      size_t i, n_elements;
       n_elements = GRN_PTR_VECTOR_SIZE(space);
       for (i = 0; i < n_elements; i++) {
         if (GRN_PTR_VALUE_AT(space, i) == obj) {
@@ -12741,7 +12741,7 @@ grn_pvector_fin(grn_ctx *ctx, grn_obj *obj)
      * Note that GRN_OBJ_OWN should not be used outside the DB API function
      * because grn_obj_close is a DB API function.
      */
-    unsigned int i, n_elements;
+    size_t i, n_elements;
     n_elements = GRN_PTR_VECTOR_SIZE(obj);
     for (i = 0; i < n_elements; i++) {
       grn_obj *element = GRN_PTR_VALUE_AT(obj, n_elements - i - 1);
@@ -14140,7 +14140,7 @@ grn_obj_reinit(grn_ctx *ctx, grn_obj *obj, grn_id domain, uint8_t flags)
       break;
     case GRN_PVECTOR:
       if (obj->header.impl_flags & GRN_OBJ_OWN) {
-        unsigned int i, n_elements;
+        size_t i, n_elements;
         n_elements = GRN_BULK_VSIZE(obj) / sizeof(grn_obj *);
         for (i = 0; i < n_elements; i++) {
           grn_obj *element = GRN_PTR_VALUE_AT(obj, i);
@@ -16958,7 +16958,7 @@ grn_ctx_merge_temporary_open_space(grn_ctx *ctx)
   space = ctx->impl->temporary_open_spaces.current;
   next_space = ctx->impl->temporary_open_spaces.current - 1;
   {
-    unsigned int i, n_elements;
+    size_t i, n_elements;
     n_elements = GRN_PTR_VECTOR_SIZE(space);
     for (i = 0; i < n_elements; i++) {
       grn_obj *element = GRN_PTR_VALUE_AT(space, i);
