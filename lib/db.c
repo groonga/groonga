@@ -8848,7 +8848,7 @@ grn_obj_set_info_source_validate(grn_ctx *ctx, grn_obj *obj, grn_obj *value)
   bool lexicon_have_tokenizer = false;
   bool is_full_text_search_index = false;
   grn_id *source_ids;
-  int i, n_source_ids;
+  size_t i, n_source_ids;
 
   lexicon_id = obj->header.domain;
   lexicon = grn_ctx_at(ctx, lexicon_id);
@@ -9002,7 +9002,8 @@ grn_obj_set_info_source_log(grn_ctx *ctx, grn_obj *obj, grn_obj *value)
 {
   grn_obj buf;
   grn_id *vp = (grn_id *)GRN_BULK_HEAD(value);
-  uint32_t vs = GRN_BULK_VSIZE(value), s = 0;
+  size_t vs = GRN_BULK_VSIZE(value);
+  uint32_t s = 0;
   grn_id id;
   const char *n;
 
@@ -9032,7 +9033,7 @@ static inline grn_rc
 grn_obj_set_info_source_update(grn_ctx *ctx, grn_obj *obj, grn_obj *value)
 {
   void *v = GRN_BULK_HEAD(value);
-  uint32_t s = GRN_BULK_VSIZE(value);
+  uint32_t s = (uint32_t)GRN_BULK_VSIZE(value);
   if (s) {
     void *v2 = GRN_MALLOC(s);
     if (!v2) {
@@ -9174,7 +9175,7 @@ grn_obj_set_info_table_module_raw(grn_ctx *ctx,
       grn_expr_parse(ctx,
                      expression,
                      GRN_TEXT_VALUE(module),
-                     GRN_TEXT_LEN(module),
+                     (unsigned int)GRN_TEXT_LEN(module),
                      NULL,
                      GRN_OP_MATCH,
                      GRN_OP_AND,
@@ -9207,7 +9208,8 @@ grn_obj_set_info_table_module_raw(grn_ctx *ctx,
       proc = grn_expr_simple_function_call_get_function(ctx, expression);
       grn_expr_simple_function_call_get_arguments(ctx, expression, &options);
     } else {
-      proc = grn_ctx_get(ctx, GRN_TEXT_VALUE(module), GRN_TEXT_LEN(module));
+      proc =
+        grn_ctx_get(ctx, GRN_TEXT_VALUE(module), (int)GRN_TEXT_LEN(module));
       if (!proc) {
         ERR(GRN_INVALID_ARGUMENT,
             "%s[%.*s] unknown %s: <%.*s>",
@@ -9387,7 +9389,7 @@ grn_obj_set_info_table_modules_text(grn_ctx *ctx,
   unsigned int name_size;
   grn_obj *unused;
   grn_obj *expression = NULL;
-  size_t i, n;
+  unsigned int i, n;
   grn_obj options;
 
   GRN_TEXT_INIT(&options, GRN_OBJ_VECTOR);
@@ -9406,7 +9408,7 @@ grn_obj_set_info_table_modules_text(grn_ctx *ctx,
   grn_expr_parse(ctx,
                  expression,
                  GRN_TEXT_VALUE(modules),
-                 GRN_TEXT_LEN(modules),
+                 (unsigned int)GRN_TEXT_LEN(modules),
                  NULL,
                  GRN_OP_MATCH,
                  GRN_OP_AND,
@@ -9522,7 +9524,7 @@ grn_obj_set_info_table_modules_vector(grn_ctx *ctx,
   if (is_names) {
     n_modules = grn_vector_size(ctx, modules);
   } else {
-    n_modules = GRN_PTR_VECTOR_SIZE(modules);
+    n_modules = (unsigned int)GRN_PTR_VECTOR_SIZE(modules);
   }
 
   unsigned int i;
@@ -9540,7 +9542,7 @@ grn_obj_set_info_table_modules_vector(grn_ctx *ctx,
       module = GRN_PTR_VALUE_AT(modules, i);
     }
 
-    unsigned int current_table_modules_size = GRN_BULK_VSIZE(table_modules);
+    size_t current_table_modules_size = GRN_BULK_VSIZE(table_modules);
     grn_bulk_space(ctx, table_modules, sizeof(grn_table_module));
     grn_table_module *table_module =
       ((grn_table_module *)GRN_BULK_HEAD(table_modules)) + i;
@@ -9747,7 +9749,7 @@ grn_obj_set_generator(grn_ctx *ctx,
       grn_expr_parse(ctx,
                      *parsed_generator,
                      generator.value,
-                     generator.length,
+                     (unsigned int)generator.length,
                      NULL,
                      GRN_OP_MATCH,
                      GRN_OP_AND,
