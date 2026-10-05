@@ -115,9 +115,9 @@ targets.each do |target|
     url = "https://github.com/facebook/openzl/archive/refs/tags/"
     url << "v#{version}.tar.gz"
     download(url, "openzl-#{version}.tar.gz") do
-      # TODO: Remove this when OpenZL supports system zstd
+      # TODO: Remove this when OpenZL supports system zstd and lz4
       # https://github.com/facebook/openzl/issues/105
-      openzl_deps = File.read("build/cmake/openzl-deps.cmake")
+      openzl_deps = File.read("build-scripts/cmake/openzl-deps.cmake")
       zstd_version = openzl_deps[/set\(ZSTD_VERSION "(.+)"\)/, 1]
       zstd_url = "https://github.com/facebook/zstd/releases/download/"
       zstd_url << "v#{zstd_version}/zstd-#{zstd_version}.tar.gz"
@@ -126,6 +126,14 @@ targets.each do |target|
       system("tar", "xf", "zstd-#{zstd_version}.tar.gz", "-C", "deps/zstd",
              "--strip-components=1")
       FileUtils.rm("zstd-#{zstd_version}.tar.gz")
+      lz4_version = openzl_deps[/set\(LZ4_VERSION "(.+)"\)/, 1]
+      lz4_url = "https://github.com/lz4/lz4/releases/download/"
+      lz4_url << "v#{lz4_version}/lz4-#{lz4_version}.tar.gz"
+      download(lz4_url, "lz4-#{lz4_version}.tar.gz")
+      FileUtils.mkdir_p("deps/lz4")
+      system("tar", "xf", "lz4-#{lz4_version}.tar.gz", "-C", "deps/lz4",
+             "--strip-components=1")
+      FileUtils.rm("lz4-#{lz4_version}.tar.gz")
     end
   when "simdjson"
     version = cmakelists[/set\(GRN_SIMDJSON_BUNDLED_VERSION \"(.+)"\)/, 1]
