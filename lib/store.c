@@ -1193,7 +1193,7 @@ grn_ja_have_partition_map(grn_ctx *ctx, const char *path)
                                    path,
                                    partition_map_path,
                                    sizeof(partition_map_path));
-  if (ctx->rc != GEN_SUCCESS) {
+  if (ctx->rc != GRN_SUCCESS) {
     partition_map_path[0] = '\0';
   }
   return grn_path_exist(partition_map_path);
