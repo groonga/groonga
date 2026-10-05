@@ -1183,9 +1183,9 @@ else()
   set(GRN_WITH_MESSAGE_PACK FALSE)
 endif()
 
-set(GRN_OPENZL_BUNDLED_VERSION "0.1.0")
+set(GRN_OPENZL_BUNDLED_VERSION "0.3.0")
 set(GRN_OPENZL_BUNDLED_SHA256
-    "3278546dcdbae3aef3887f07b435ebe0aa9f6943a5ac74cf9b7baeefe6526c2e")
+    "6e105e5c49187ebf63e0bf62fb3ecb22b628248c0bf55bd40ace434721f394f5")
 set(GRN_WITH_OPENZL
     "auto"
     CACHE STRING "Support data compression by OpenZL.")
@@ -1238,7 +1238,24 @@ if(NOT "${GRN_WITH_OPENZL}" STREQUAL "no")
       fetchcontent_declare(openzl ${GRN_FETCH_CONTENT_COMMON_OPTIONS}
                                   ${GRN_OPENZL_FETCH_CONTENT_SOURCE})
       grn_prepare_fetchcontent()
+      # We only need the OpenZL C library. Tools and CLI require xgboost
+      # that is downloaded by git at configure time.
+      set(OPENZL_BUILD_CLI OFF)
+      set(OPENZL_BUILD_CPP OFF)
+      set(OPENZL_BUILD_CUSTOM_PARSERS OFF)
+      set(OPENZL_BUILD_EXAMPLES OFF)
+      set(OPENZL_BUILD_TOOLS OFF)
+      set(OPENZL_INSTALL OFF)
       fetchcontent_makeavailable(openzl)
+      # openzl target exposes include directories of its bundled
+      # dependencies such as lz4 and zstd. They shadow headers used by
+      # Groonga such as xxhash.h. So we use only OpenZL's include
+      # directories and link openzl without its usage requirements.
+      add_library(grn_openzl INTERFACE)
+      target_include_directories(
+        grn_openzl INTERFACE "${openzl_SOURCE_DIR}/include"
+                             "${openzl_BINARY_DIR}/include")
+      target_link_libraries(grn_openzl INTERFACE $<LINK_ONLY:openzl>)
       if(GRN_C_COMPILER_GNU_LIKE)
         if(CMAKE_C_COMPILER_ID STREQUAL GNU)
           set(GRN_OPENZL_SUPPRESS_WARNINGS -Wno-conversion
@@ -1264,7 +1281,7 @@ if(NOT "${GRN_WITH_OPENZL}" STREQUAL "no")
         DESTINATION "${GRN_DATA_DIR}/openzl")
     endfunction()
     grn_build_openzl()
-    target_link_libraries(grn_dependencies INTERFACE openzl)
+    target_link_libraries(grn_dependencies INTERFACE grn_openzl)
     set(GRN_WITH_BUNDLED_OPENZL TRUE)
     set(GRN_WITH_OPENZL TRUE)
     message(STATUS "OpenZL: (bundled)")
