@@ -28,6 +28,7 @@
 #include "grn_obj.h"
 #include "grn_output.h"
 #include "grn_db.h"
+#include "grn_util.h"
 #include "grn_vector.h"
 #include "grn_wal.h"
 #include <string.h>
@@ -1166,17 +1167,71 @@ grn_ja_close(grn_ctx *ctx, grn_ja *ja)
   return rc;
 }
 
+static inline void
+grn_ja_create_partition_map_path(grn_ctx *ctx,
+                                 const char *path,
+                                 char *partition_map_path,
+                                 size_t path_length)
+{
+  if (strlen(path) + strlen(".partitions") + 1 > PATH_MAX) {
+    ERR(
+      GRN_FILENAME_TOO_LONG,
+      "[ja][ensure][partition-map] The path of partition map file is too long "
+      "path: %s.partitions",
+      path);
+    return;
+  }
+
+  snprintf(partition_map_path,
+           path_length,
+           "%s.partitions",
+           path);
+}
+
+static inline bool
+grn_ja_have_partition_map(grn_ctx *ctx, const char *path)
+{
+  char partition_map_path[PATH_MAX];
+  grn_ja_create_partition_map_path(ctx,
+                                   path,
+                                   partition_map_path,
+                                   sizeof(partition_map_path));
+  if (ctx->rc != GEN_SUCCESS) {
+    partition_map_path[0] = '\0';
+  }
+  return grn_path_exist(partition_map_path);
+}
+
+static grn_rc
+grn_ja_remove_partition_map(grn_ctx *ctx, const char *path)
+{
+  char partition_map_path[PATH_MAX];
+  grn_ja_create_partition_map_path(ctx,
+                                   path,
+                                   partition_map_path,
+                                   sizeof(partition_map_path));
+  return grn_ra_remove(ctx, partition_map_path);
+}
+
 grn_rc
 grn_ja_remove(grn_ctx *ctx, const char *path)
 {
   if (!path) {
     return GRN_INVALID_ARGUMENT;
   }
+  grn_rc ja_remove_rc = GRN_SUCCESS;
+  if (grn_ja_have_partition_map(ctx, path)) {
+    ja_remove_rc = grn_ja_remove_partition_map(ctx, path);
+  }
   grn_rc wal_rc = grn_wal_remove(ctx, path, "[ja]");
   grn_rc io_rc = grn_io_remove(ctx, path);
-  grn_rc rc = wal_rc;
+
+  grn_rc rc = ja_remove_rc;
   if (rc == GRN_SUCCESS) {
-    rc = io_rc;
+    rc = wal_rc;
+    if (rc == GRN_SUCCESS) {
+      rc = io_rc;
+    }
   }
   return rc;
 }
