@@ -1179,7 +1179,7 @@ grn_ja_create_partition_map_path(grn_ctx *ctx,
       "[ja][ensure][partition-map] The path of partition map file is too long "
       "path: %s.partitions",
       path);
-    return;
+    return ctx->rc;
   }
 
   grn_snprintf(partition_map_path,
@@ -1187,6 +1187,7 @@ grn_ja_create_partition_map_path(grn_ctx *ctx,
                path_length,
                "%s.partitions",
                path);
+  return GRN_SUCCESS;
 }
 
 static inline bool
