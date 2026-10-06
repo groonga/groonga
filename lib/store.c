@@ -1167,7 +1167,7 @@ grn_ja_close(grn_ctx *ctx, grn_ja *ja)
   return rc;
 }
 
-static inline void
+static inline grn_rc
 grn_ja_create_partition_map_path(grn_ctx *ctx,
                                  const char *path,
                                  char *partition_map_path,
@@ -1189,11 +1189,11 @@ static inline bool
 grn_ja_have_partition_map(grn_ctx *ctx, const char *path)
 {
   char partition_map_path[PATH_MAX];
-  grn_ja_create_partition_map_path(ctx,
-                                   path,
-                                   partition_map_path,
-                                   sizeof(partition_map_path));
-  if (ctx->rc != GRN_SUCCESS) {
+  grn_rc rc = grn_ja_create_partition_map_path(ctx,
+                                               path,
+                                               partition_map_path,
+                                               sizeof(partition_map_path));
+  if (rc != GRN_SUCCESS) {
     partition_map_path[0] = '\0';
   }
   return grn_path_exist(partition_map_path);
@@ -1203,10 +1203,13 @@ static grn_rc
 grn_ja_remove_partition_map(grn_ctx *ctx, const char *path)
 {
   char partition_map_path[PATH_MAX];
-  grn_ja_create_partition_map_path(ctx,
-                                   path,
-                                   partition_map_path,
-                                   sizeof(partition_map_path));
+  grn_rc rc = grn_ja_create_partition_map_path(ctx,
+                                               path,
+                                               partition_map_path,
+                                               sizeof(partition_map_path));
+  if (rc != GRN_SUCCESS) {
+    return rc;
+  }
   return grn_ra_remove(ctx, partition_map_path);
 }
 
