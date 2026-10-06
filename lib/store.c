@@ -2485,16 +2485,28 @@ grn_ja_find_free_segment(grn_ja *ja)
   return seg;
 }
 
-/*
- * Temporarily disable this function to suppress the unused-function error.
- * This function will be used for column partitioning.
- */
-// static inline bool
-// grn_ja_is_full(grn_ja *ja)
-// {
-//   uint32_t seg = grn_ja_find_free_segment(ja);
-//   return (seg == grn_ja_n_data_segments);
-// }
+static inline bool
+grn_ja_is_full(grn_ja *ja)
+{
+  uint32_t seg = grn_ja_find_free_segment(ja);
+  return (seg == grn_ja_n_data_segments);
+}
+
+grn_ja *
+grn_ja_get(grn_ctx *ctx, grn_obj *obj)
+{
+  grn_ja *ja = (grn_ja *)obj;
+
+  if (ja->header->flags & GRN_OBJ_COLUMN_LARGE) {
+    if ((ja->header->flags & GRN_OBJ_COLUMN_TYPE_MASK) ==
+        GRN_OBJ_COLUMN_SCALAR) {
+      if (grn_ja_is_full(ja)) {
+        grn_ja_ensure_partition_map(ctx, ja);
+      }
+    }
+  }
+  return (grn_ja *)obj;
+}
 
 static grn_rc
 grn_ja_free_huge(grn_ctx *ctx, grn_ja_wal_add_entry_data *wal_data)

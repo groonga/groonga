@@ -7372,7 +7372,7 @@ static grn_rc
 grn_obj_set_value_column_var_size(
   grn_ctx *ctx, grn_obj *column, grn_id id, grn_obj *value, int flags)
 {
-  grn_ja *ja = (grn_ja *)column;
+  grn_ja *ja = grn_ja_get(ctx, column);
   grn_obj buffer;
   GRN_VOID_INIT(&buffer);
   grn_obj *casted_value = grn_ja_cast_value(ctx, ja, value, &buffer, flags);
