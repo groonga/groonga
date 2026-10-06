@@ -1182,7 +1182,11 @@ grn_ja_create_partition_map_path(grn_ctx *ctx,
     return;
   }
 
-  snprintf(partition_map_path, path_length, "%s.partitions", path);
+  grn_snprintf(partition_map_path,
+               path_length,
+               path_length,
+               "%s.partitions",
+               path);
 }
 
 static inline bool
