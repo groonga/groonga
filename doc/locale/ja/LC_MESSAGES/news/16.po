@@ -17,6 +17,27 @@ msgstr ""
 msgid "News - 16 series"
 msgstr "お知らせ - 16系"
 
+msgid "Release 16.1.3 - 2026-10-08"
+msgstr "16.1.3リリース - 2026-10-08"
+
+msgid "Fixes"
+msgstr "修正"
+
+msgid "[{doc}`/reference/alias`] Fixed a crash when an alias to an accessor such as `_key` is used"
+msgstr "[{doc}`/reference/alias`] `_key` のようなアクセサーへのエイリアスを使うとクラッシュする問題を修正"
+
+msgid "This occurred when a name was resolved via a table that refers to the aliased table, such as the result set used by `--post_filter` in {doc}`/reference/commands/select`."
+msgstr "これはエイリアスを設定したテーブルを参照している別のテーブル経由で名前を解決したときに発生していました。例えば、{doc}`/reference/commands/select` の `--post_filter` が使う結果セットは検索対象のテーブルを参照しているので、このケースです。"
+
+msgid "For example, `Sources.ctid` -> `Sources._key` crashed with the following data:"
+msgstr "次のデータでは `Sources.ctid` -> `Sources._key` の参照でクラッシュしていました。"
+
+msgid "With this data, the following `select` command crashed:"
+msgstr "このデータの場合、次の `select` コマンドがクラッシュしていました。"
+
+msgid "This bug has existed since v8.0.1."
+msgstr "このバグは v8.0.1 から存在していました。"
+
 msgid "Release 16.1.2 - 2026-09-29"
 msgstr "16.1.2リリース - 2026-09-29"
 
@@ -37,9 +58,6 @@ msgstr "[WASI] Webブラウザ上での実行に対応"
 
 msgid "A Web browser doesn't provide WASI nor a file system. `libgroonga-web.mjs` implements the needed WASI functions with an in-memory file system, and downloads a database over HTTP on demand. See `examples/web/` for a working example."
 msgstr "WebブラウザはWASIもファイルシステムも提供しません。 そこで `libgroonga-web.mjs` にはインメモリのファイルシステムで必要なWASI関数を実装しています。データベースは必要に応じてHTTP経由でダウンロードします。`examples/web/` に例があるので参照してください。"
-
-msgid "Fixes"
-msgstr "修正"
 
 msgid "[{doc}`/reference/commands/select`] Fixed a bug that `drilldowns[${LABEL}].columns[${NAME}]` with `stage=output` used `offset`/`limit` of the main search"
 msgstr "[{doc}`/reference/commands/select`] `stage=output` を指定した `drilldowns[${LABEL}].columns[${NAME}]` が本体検索の `offset`/`limit` を使っていた問題を修正"
