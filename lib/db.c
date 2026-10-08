@@ -6419,19 +6419,13 @@ grn_obj_get_accessor(grn_ctx *ctx,
       for (rp = &res;; rp = &(*rp)->next) {
         grn_obj *column = grn_obj_column_(ctx, obj, name, (uint32_t)len);
         if (column) {
-          *rp = grn_accessor_new(ctx);
-          (*rp)->obj = column;
-          /*
-          switch (column->header.type) {
-          case GRN_COLUMN_VAR_SIZE :
-            break;
-          case GRN_COLUMN_FIX_SIZE :
-            break;
-          case GRN_COLUMN_INDEX :
-            break;
+          if (GRN_ACCESSORP(column)) {
+            *rp = (grn_accessor *)column;
+          } else {
+            *rp = grn_accessor_new(ctx);
+            (*rp)->obj = column;
+            (*rp)->action = GRN_ACCESSOR_GET_COLUMN_VALUE;
           }
-          */
-          (*rp)->action = GRN_ACCESSOR_GET_COLUMN_VALUE;
           if (obj_is_referred) {
             grn_obj_unref(ctx, obj);
             obj_is_referred = false;

@@ -1,0 +1,22 @@
+config_set alias.column Aliases.real_name
+
+table_create Aliases TABLE_HASH_KEY ShortText
+column_create Aliases real_name COLUMN_SCALAR ShortText
+
+table_create Sources TABLE_HASH_KEY UInt64
+
+load --table Aliases
+[
+{"_key": "Sources.ctid", "real_name": "Sources._key"}
+]
+
+load --table Sources
+[
+{"_key": 1},
+{"_key": 2},
+{"_key": 3}
+]
+
+select Sources \
+  --filter '_key >= 2' \
+  --post_filter 'ctid > 2'
