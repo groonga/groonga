@@ -1,0 +1,12 @@
+#$GRN_JA_N_DATA_SEGMENTS=2
+
+table_create Memos TABLE_HASH_KEY ShortText
+column_create Memos content COLUMN_SCALAR|COLUMN_LARGE Text
+
+load --table Memos
+[
+{"_key": "Groonga", "content": "Mroonga, PGroonga, and Rroonga"},
+{"_key": "Mroonga", "content": "Groonga, PGroonga, and Rroonga"}
+]
+
+#@file-exist #{db_path}.0000101.partitions
