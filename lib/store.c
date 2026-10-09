@@ -2729,6 +2729,9 @@ grn_ja_free(grn_ctx *ctx, grn_ja *ja, grn_ja_einfo *einfo)
   wal_data.ja = ja;
   wal_data.need_lock = false;
   wal_data.tag = tag;
+  if (wal_data.ja->partition_mapping) {
+    grn_ra_close(ctx, wal_data.ja->partition_mapping);
+  }
   if (ETINY_P(einfo)) {
     return GRN_SUCCESS;
   }
