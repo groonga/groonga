@@ -1,0 +1,10 @@
+table_create Memos TABLE_HASH_KEY ShortText
+[[0,0.0,0.0],true]
+column_create Memos content COLUMN_SCALAR|COLUMN_LARGE Text
+[[0,0.0,0.0],true]
+load --table Memos
+[
+{"_key": "Groonga", "content": "Mroonga, PGroonga, and Rroonga"},
+{"_key": "Mroonga", "content": "Groonga, PGroonga, and Rroonga"}
+]
+[[0,0.0,0.0],2]

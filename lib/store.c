@@ -1015,6 +1015,42 @@ _grn_ja_create(grn_ctx *ctx,
   return ja;
 }
 
+/*
+ * This function allocates the space needed to map each ID to its partition.
+ *
+ * If the mapping is already open, it returns without taking any action.
+ * If the mapping is not open, it creates a new file if one does not exist, or
+ * opens the existing file.
+ */
+static void
+grn_ja_ensure_partition_map(grn_ctx *ctx, grn_ja *ja)
+{
+  if (ja->partition_mapping) {
+    return;
+  }
+
+  if (strlen(ja->io->path) + strlen(".partitions") >= PATH_MAX) {
+    ERR(
+      GRN_FILENAME_TOO_LONG,
+      "[ja][ensure][partition-map] The path of partition map file is too long "
+      "path: %s.partitions",
+      ja->io->path);
+    return;
+  }
+
+  char path[PATH_MAX];
+  snprintf(path, sizeof(path), "%s.partitions", ja->io->path);
+  if (grn_path_exist(path)) {
+    ja->partition_mapping = grn_ra_open(ctx, path);
+    return;
+  }
+  /*
+   * partition_id is stored per record id. Its range is 0..255,
+   * so the element size is sizeof(uint8_t).
+   */
+  ja->partition_mapping = grn_ra_create(ctx, path, sizeof(uint8_t), 0);
+}
+
 grn_ja *
 grn_ja_create(grn_ctx *ctx,
               const char *path,
@@ -2449,16 +2485,28 @@ grn_ja_find_free_segment(grn_ja *ja)
   return seg;
 }
 
-/*
- * Temporarily disable this function to suppress the unused-function error.
- * This function will be used for column partitioning.
- */
-// static inline bool
-// grn_ja_is_full(grn_ja *ja)
-// {
-//   uint32_t seg = grn_ja_find_free_segment(ja);
-//   return (seg == grn_ja_n_data_segments);
-// }
+static inline bool
+grn_ja_is_full(grn_ja *ja)
+{
+  uint32_t seg = grn_ja_find_free_segment(ja);
+  return (seg == grn_ja_n_data_segments);
+}
+
+grn_ja *
+grn_ja_get(grn_ctx *ctx, grn_obj *obj)
+{
+  grn_ja *ja = (grn_ja *)obj;
+
+  if (ja->header->flags & GRN_OBJ_COLUMN_LARGE) {
+    if ((ja->header->flags & GRN_OBJ_COLUMN_TYPE_MASK) ==
+        GRN_OBJ_COLUMN_SCALAR) {
+      if (grn_ja_is_full(ja)) {
+        grn_ja_ensure_partition_map(ctx, ja);
+      }
+    }
+  }
+  return (grn_ja *)obj;
+}
 
 static grn_rc
 grn_ja_free_huge(grn_ctx *ctx, grn_ja_wal_add_entry_data *wal_data)
@@ -2681,6 +2729,9 @@ grn_ja_free(grn_ctx *ctx, grn_ja *ja, grn_ja_einfo *einfo)
   wal_data.ja = ja;
   wal_data.need_lock = false;
   wal_data.tag = tag;
+  if (wal_data.ja->partition_mapping) {
+    grn_ra_close(ctx, wal_data.ja->partition_mapping);
+  }
   if (ETINY_P(einfo)) {
     return GRN_SUCCESS;
   }

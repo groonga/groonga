@@ -1,0 +1,14 @@
+table_create Items TABLE_HASH_KEY ShortText
+column_create Items price COLUMN_SCALAR|COLUMN_LARGE UInt32
+
+load --table Items
+[
+{"_key": "item1", "price": 666},
+{"_key": "item2", "price": 999},
+{"_key": "item3", "price": 777},
+{"_key": "item4", "price": 111},
+{"_key": "item5", "price": 333},
+{"_key": "item6", "price": 222}
+]
+
+select Items
