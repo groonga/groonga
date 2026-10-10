@@ -3032,7 +3032,7 @@ grn_hash_rehash(grn_ctx *ctx, grn_hash *hash, uint32_t expected_n_entries)
    *   |<------------|------------>|
    *   |<-used->|    |<-0 clear-> |
    *
-   * Rehash (coping):
+   * Rehash (copying):
    *
    *   0           2^29           2^30
    *   |<------------|------------>|
