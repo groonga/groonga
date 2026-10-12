@@ -2714,15 +2714,15 @@ grn_text_code_point(grn_ctx *ctx, grn_obj *buffer, uint32_t code_point)
   if (code_point <= 0x7F) {
     GRN_TEXT_PUTC(ctx, buffer, (char)code_point);
   } else if (code_point <= 0x07FF) {
-    GRN_TEXT_PUTC(ctx, buffer, (char)(((code_point & 0x0007C0) >> 6) | 0x60));
+    GRN_TEXT_PUTC(ctx, buffer, (char)(((code_point & 0x0007C0) >> 6) | 0xC0));
     GRN_TEXT_PUTC(ctx, buffer, (char)(((code_point & 0x00003F)) | 0x80));
   } else if (code_point <= 0xFFFF) {
     GRN_TEXT_PUTC(ctx, buffer, (char)(((code_point & 0x00F000) >> 12) | 0xE0));
     GRN_TEXT_PUTC(ctx, buffer, (char)(((code_point & 0x000FC0) >> 6) | 0x80));
     GRN_TEXT_PUTC(ctx, buffer, (char)(((code_point & 0x00003F)) | 0x80));
   } else if (code_point <= 0x10FFFF) {
-    GRN_TEXT_PUTC(ctx, buffer, (char)(((code_point & 0x1C0000) >> 18) | 0xE0));
-    GRN_TEXT_PUTC(ctx, buffer, (char)(((code_point & 0x03F000) >> 12) | 0xE0));
+    GRN_TEXT_PUTC(ctx, buffer, (char)(((code_point & 0x1C0000) >> 18) | 0xF0));
+    GRN_TEXT_PUTC(ctx, buffer, (char)(((code_point & 0x03F000) >> 12) | 0x80));
     GRN_TEXT_PUTC(ctx, buffer, (char)(((code_point & 0x000FC0) >> 6) | 0x80));
     GRN_TEXT_PUTC(ctx, buffer, (char)(((code_point & 0x00003F)) | 0x80));
   } else {

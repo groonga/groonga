@@ -1,0 +1,4 @@
+# U+0080 ~ U+07FF
+normalize \
+  'NormalizerHTML' \
+  "&#xE9;"

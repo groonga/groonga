@@ -1,0 +1,4 @@
+# U+0000 ~ U+007F
+normalize \
+  'NormalizerHTML' \
+  "&#x41;"

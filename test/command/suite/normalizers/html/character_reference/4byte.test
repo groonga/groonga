@@ -1,0 +1,4 @@
+# U+10000 ~ U+10FFFF
+normalize \
+  'NormalizerHTML' \
+  "&#x1F600;"
