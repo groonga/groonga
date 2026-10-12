@@ -1,0 +1,4 @@
+# U+0800 ~ U+FFFF
+normalize \
+  'NormalizerHTML' \
+  "&#x3042;"
