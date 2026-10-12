@@ -86,7 +86,7 @@ createServer((request, response) => {
 });
 
 // Node.js ignores SIGINT and SIGTERM when it runs as PID 1 such as in a container.
-// We need to handle them explicitly to stop by Ctrl-C.
+// We need to handle them explicitly so the server can be stopped with Ctrl-C.
 // https://github.com/nodejs/docker-node/blob/feeba252e1e8bec14470f5ee8f9be7fce65bf935/docs/BestPractices.md#handling-kernel-signals
 for (const signal of ["SIGINT", "SIGTERM"]) {
   process.on(signal, () => process.exit(0));
