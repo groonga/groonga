@@ -40,6 +40,9 @@ cp -R /source/test/command test
 # a function in plugins/ fails. WASI doesn't support dynamic linking.
 # We can't link all plugins statically yet because all plugins define
 # the same GRN_PLUGIN_INIT()/GRN_PLUGIN_REGISTER()/GRN_PLUGIN_FIN().
+#
+# TODO: Run test/suite/wal_recover. groonga.mjs doesn't support
+# GRN_WAL_ROLE and _database_close/_database_reopen yet.
 grntest \
   --base-directory=test \
   --groonga=${PREFIX}/bin/groonga.mjs \
@@ -53,17 +56,20 @@ grntest \
   test/suite/column_remove \
   test/suite/column_rename \
   test/suite/command_list \
+  test/suite/command_version \
   test/suite/config_delete \
   test/suite/config_get \
   test/suite/config_set \
   test/suite/defrag \
   test/suite/extractors \
   test/suite/geo \
+  test/suite/index_column_diff \
   test/suite/language_model \
   test/suite/log_level \
   test/suite/log_put \
   test/suite/normalize \
   test/suite/normalizer_list \
+  test/suite/normalizers \
   test/suite/object_exist \
   test/suite/object_inspect \
   test/suite/object_list \
@@ -73,6 +79,7 @@ grntest \
   test/suite/query_log_flags_remove \
   test/suite/query_log_flags_set \
   test/suite/range_filter \
+  test/suite/reindex \
   test/suite/request_cancel \
   test/suite/response \
   test/suite/ruby \
@@ -84,7 +91,7 @@ grntest \
   test/suite/tables \
   test/suite/tokenize \
   test/suite/tokenizer_list \
-  test/suite/wal_recover \
+  test/suite/tokenizers \
   test/suite/select/filter/logical_operation
 set +x
 echo "::endgroup::"

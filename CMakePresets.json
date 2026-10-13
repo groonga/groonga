@@ -59,7 +59,7 @@
         "GRN_WITH_LLAMA_CPP": "no",
         "GRN_WITH_LZ4": "no",
         "GRN_WITH_MECAB": "no",
-        "GRN_WITH_MESSAGE_PACK": "no",
+        "GRN_WITH_MESSAGE_PACK": "bundled",
         "GRN_WITH_MRUBY": "no",
         "GRN_WITH_OPENZL": "no",
         "GRN_WITH_RAPIDJSON": "no",
