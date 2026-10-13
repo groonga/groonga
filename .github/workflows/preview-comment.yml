@@ -12,6 +12,7 @@ on:
       - '**/CMakeLists.txt'
       - '.github/workflows/document.yml'
       - '.github/workflows/preview-comment.yml'
+      - 'CMakePresets.json'
       - 'Rakefile'
       - 'cmake/**'
       - 'doc/**'
