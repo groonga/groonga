@@ -95,13 +95,13 @@ logical_select Memos   --shard_key timestamp   --query 'content:@is'   --slices[
         [
           1,
           [
-            "PGroonga <span class=\"keyword\">is</span> <span class=\"keyword\">fast</span> and easy to use."
+            "Groonga <span class=\"keyword\">is</span> <span class=\"keyword\">fast</span>."
           ]
         ],
         [
           1,
           [
-            "Groonga <span class=\"keyword\">is</span> <span class=\"keyword\">fast</span>."
+            "PGroonga <span class=\"keyword\">is</span> <span class=\"keyword\">fast</span> and easy to use."
           ]
         ]
       ]
@@ -119,8 +119,7 @@ logical_select Memos   --shard_key timestamp   --query 'content:@is'   --slices[
 #:000000000000000 output(3)
 #:000000000000000 slices[fast].sort(2): -_id
 #:000000000000000 slices[fast].sort(1): -_id
-#:000000000000000 slices[fast].columns[snippets](1)
-#:000000000000000 slices[fast].columns[snippets](1)
+#:000000000000000 slices[fast].columns[snippets](2)
 #:000000000000000 slices[fast].columns[snippets](1)
 #:000000000000000 slices[fast].output(3)
 #:000000000000000 send(0)

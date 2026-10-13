@@ -86,7 +86,7 @@ logical_select Memos   --shard_key timestamp   --slices[fast].query 'content:@fa
         ],
         [
           1,
-          "PGroonga is <span class=\"keyword\">fast</span> and easy to use."
+          "Groonga is <span class=\"keyword\">fast</span>."
         ]
       ]
     }
@@ -101,8 +101,7 @@ logical_select Memos   --shard_key timestamp   --slices[fast].query 'content:@fa
 #:000000000000000 output(3)
 #:000000000000000 slices[fast].sort(2): -_id
 #:000000000000000 slices[fast].sort(1): -_id
-#:000000000000000 slices[fast].columns[highlighted_content](1)
-#:000000000000000 slices[fast].columns[highlighted_content](1)
+#:000000000000000 slices[fast].columns[highlighted_content](2)
 #:000000000000000 slices[fast].output(2)
 #:000000000000000 send(0)
 #<000000000000000 rc=0

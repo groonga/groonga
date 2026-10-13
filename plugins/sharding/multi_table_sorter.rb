@@ -53,7 +53,16 @@ module Groonga
           else
             sort_key_column_name(i)
           end
-        end
+        end + [
+          # Records that have the same sort key values must be sorted
+          # in a fixed order. The order must not change by the `offset`
+          # and `limit` parameters. Otherwise, pagination doesn't work
+          # as expected.
+          # To ensure the order remains consistent, sort by the table index
+          # and the record offset in each table as well.
+          TABLE_INDEX_COLUMN_NAME,
+          OFFSET_COLUMN_NAME,
+        ]
       end
 
       def close_column(column)
