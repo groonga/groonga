@@ -624,7 +624,6 @@ do_alone(int argc, char **argv)
           if (allow_db_reopen) {
             bool processed = do_alone_allow_db_reopen(ctx, &text, &db, path);
             if (processed) {
-              ctx->impl->curr_expr = NULL;
               grn_ctx_set_output_type(ctx, GRN_CONTENT_JSON);
               grn_ctx_output_bool(ctx, ctx->rc == GRN_SUCCESS);
               grn_ctx_output_flush(ctx, GRN_CTX_TAIL);
