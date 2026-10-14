@@ -884,6 +884,8 @@ grn_db_close(grn_ctx *ctx, grn_obj *db)
   if (ctx_used_db) {
     grn_ctx_loader_clear(ctx);
     grn_ctx_expr_parsers_clear(ctx);
+    /* The current command is closed with this database. */
+    ctx->impl->curr_expr = NULL;
   }
 
   if (ctx_used_db) {
