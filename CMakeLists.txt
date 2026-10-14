@@ -161,12 +161,38 @@ find_package(PkgConfig)
 
 if(DEFINED GRN_EMBED)
   set(GRN_EMBED_DEFAULT ${GRN_EMBED})
+elseif(WASI)
+  # WASI doesn't support dynamic linking. So we must link all plugins
+  # statically.
+  set(GRN_EMBED_DEFAULT ON)
 else()
   set(GRN_EMBED_DEFAULT OFF)
 endif()
 set(GRN_EMBED
     ${GRN_EMBED_DEFAULT}
     CACHE BOOL "Build as a static library to embed into an application")
+
+# Register a plugin linked to libgroonga statically. "name" is a plugin
+# name such as "functions/vector".
+function(grn_add_embedded_plugin target name)
+  set_property(
+    TARGET grn_dependencies
+    APPEND
+    PROPERTY GRN_EMBEDDED_PLUGIN_TARGETS ${target})
+  set_property(
+    TARGET grn_dependencies
+    APPEND
+    PROPERTY GRN_EMBEDDED_PLUGIN_NAMES ${name})
+endfunction()
+
+# A plugin can't link to libgroonga for WASI because it's an
+# executable. grn_plugin_dependencies has only the usage requirements
+# of libgroonga.
+if(WASI)
+  set(GRN_PLUGIN_LIBGROONGA grn_plugin_dependencies)
+else()
+  set(GRN_PLUGIN_LIBGROONGA libgroonga)
+endif()
 
 set(GRN_INCLUDE_DIR "${CMAKE_INSTALL_INCLUDEDIR}/groonga")
 set(GRN_INSTALL_CMAKE_DIR "${CMAKE_INSTALL_LIBDIR}/cmake/Groonga")
@@ -2402,16 +2428,15 @@ if(GRN_EMBED)
   add_subdirectory(plugins)
 endif()
 add_subdirectory(lib)
-if(NOT GRN_EMBED)
+if(WASI)
+  # GRN_EMBED is ON for WASI but we still install the groonga command
+  # in JavaScript and the data such as synonyms.tsv.
   add_subdirectory(src)
-  if(NOT WASI)
-    # WASI doesn't support dynamic linking. So we can't use plugins.
-    add_subdirectory(plugins)
-    # We don't install headers for WASI because a user of
-    # libgroonga.wasm uses the C API from JavaScript and so on. They
-    # don't use a C compiler.
-    add_subdirectory(include)
-  endif()
+  add_subdirectory(data)
+elseif(NOT GRN_EMBED)
+  add_subdirectory(src)
+  add_subdirectory(plugins)
+  add_subdirectory(include)
   add_subdirectory(data)
 endif()
 option(GRN_WITH_DOC "build document" OFF)
@@ -2439,7 +2464,7 @@ set(GRN_EXPANDED_DEFAULT_DOCUMENT_ROOT "${GRN_DEFAULT_DOCUMENT_ROOT}")
 set(EXEEXT "${CMAKE_EXECUTABLE_SUFFIX}")
 configure_file(groonga.pc.in "${CMAKE_CURRENT_BINARY_DIR}/groonga.pc" @ONLY)
 
-if(NOT GRN_EMBED AND NOT WASI)
+if(NOT GRN_EMBED)
   install(FILES "${CMAKE_CURRENT_BINARY_DIR}/groonga.pc"
           DESTINATION "${CMAKE_INSTALL_LIBDIR}/pkgconfig/")
 endif()

@@ -1,5 +1,5 @@
 # Copyright(C) 2012-2018  Brazil
-# Copyright(C) 2023  Sutou Kouhei <kou@clear-code.com>
+# Copyright(C) 2023-2026  Sutou Kouhei <kou@clear-code.com>
 #
 # This library is free software; you can redistribute it and/or
 # modify it under the terms of the GNU Lesser General Public
@@ -21,6 +21,7 @@ set_source_files_properties(${SUGGEST_SOURCES}
                             PROPERTIES COMPILE_FLAGS "${GRN_C_COMPILE_FLAGS}")
 if(GRN_EMBED)
   add_library(suggest STATIC ${SUGGEST_SOURCES})
+  grn_add_embedded_plugin(suggest "suggest/suggest")
   set_target_properties(suggest PROPERTIES POSITION_INDEPENDENT_CODE ON)
 else()
   add_library(suggest MODULE ${SUGGEST_SOURCES})
@@ -33,4 +34,4 @@ else()
       OPTIONAL)
   endif()
 endif()
-target_link_libraries(suggest libgroonga)
+target_link_libraries(suggest ${GRN_PLUGIN_LIBGROONGA})

@@ -1,4 +1,4 @@
-# Copyright (C) 2025  Sutou Kouhei <kou@clear-code.com>
+# Copyright (C) 2025-2026  Sutou Kouhei <kou@clear-code.com>
 #
 # This library is free software; you can redistribute it and/or
 # modify it under the terms of the GNU Lesser General Public
@@ -22,6 +22,7 @@ if(GRN_WITH_FAISS)
     ${KNN_SOURCES} PROPERTIES COMPILE_FLAGS "${GRN_CXX_COMPILE_FLAGS}")
   if(GRN_EMBED)
     add_library(knn STATIC ${KNN_SOURCES})
+    grn_add_embedded_plugin(knn "language_model/knn")
     set_target_properties(knn PROPERTIES POSITION_INDEPENDENT_CODE ON)
   else()
     add_library(knn MODULE ${KNN_SOURCES})
@@ -34,5 +35,5 @@ if(GRN_WITH_FAISS)
         OPTIONAL)
     endif()
   endif()
-  target_link_libraries(knn libgroonga faiss)
+  target_link_libraries(knn ${GRN_PLUGIN_LIBGROONGA} faiss)
 endif()

@@ -1,5 +1,6 @@
 /*
   Copyright(C) 2010-2016 Brazil
+  Copyright(C) 2026  Sutou Kouhei <kou@clear-code.com>
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
@@ -46,6 +47,17 @@ struct _grn_plugin {
   grn_plugin_func fin_func;
   int refcount;
 };
+
+/* A plugin linked to libgroonga statically. grn_embedded_plugins is
+ * generated from embedded_plugins.c.in and terminated by NULL name. */
+typedef struct {
+  const char *name;
+  grn_plugin_func init_func;
+  grn_plugin_func register_func;
+  grn_plugin_func fin_func;
+} grn_embedded_plugin;
+
+extern const grn_embedded_plugin grn_embedded_plugins[];
 
 void grn_plugin_init_from_env(void);
 grn_rc grn_plugins_init(void);

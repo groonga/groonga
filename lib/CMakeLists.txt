@@ -105,7 +105,31 @@ if(GRN_WITH_XSIMD)
   endif()
 endif()
 
+get_property(
+  GRN_EMBEDDED_PLUGIN_TARGETS
+  TARGET grn_dependencies
+  PROPERTY GRN_EMBEDDED_PLUGIN_TARGETS)
+get_property(
+  GRN_EMBEDDED_PLUGIN_NAMES
+  TARGET grn_dependencies
+  PROPERTY GRN_EMBEDDED_PLUGIN_NAMES)
+set(GRN_EMBEDDED_PLUGIN_DECLARATIONS "")
+set(GRN_EMBEDDED_PLUGIN_ENTRIES "")
+foreach(name IN LISTS GRN_EMBEDDED_PLUGIN_NAMES)
+  # The tag of a plugin is its name that replaces "/" with "_". See
+  # GRN_PLUGIN_FUNCTION_TAG in the source of the plugin.
+  string(REPLACE "/" "_" tag "${name}")
+  string(APPEND GRN_EMBEDDED_PLUGIN_DECLARATIONS
+         "GRN_PLUGIN_DECLARE_FUNCTIONS(${tag});\n")
+  string(
+    APPEND GRN_EMBEDDED_PLUGIN_ENTRIES "  {\"${name}\",\n"
+    "   grn_plugin_impl_init_${tag},\n" "   grn_plugin_impl_register_${tag},\n"
+    "   grn_plugin_impl_fin_${tag}},\n")
+endforeach()
+configure_file(embedded_plugins.c.in embedded_plugins.c @ONLY)
+
 set(GRN_ALL_SOURCES
+    "${CMAKE_CURRENT_BINARY_DIR}/embedded_plugins.c"
     ${LIBGROONGA_C_SOURCES}
     ${LIBGROONGA_CPP_SOURCES}
     ${LIBGRNDAT_SOURCES}
@@ -142,11 +166,14 @@ if(WASI)
 elseif(GRN_EMBED)
   add_library(libgroonga STATIC ${GRN_ALL_SOURCES})
   target_compile_definitions(libgroonga PUBLIC GRN_STATIC)
-  target_compile_definitions(libgroonga PUBLIC GRN_EMBEDDED)
   set_target_properties(libgroonga PROPERTIES POSITION_INDEPENDENT_CODE ON)
 else()
   add_library(libgroonga SHARED ${GRN_ALL_SOURCES})
   target_compile_definitions(libgroonga PRIVATE GRN_DAT_EXPORT)
+endif()
+if(GRN_EMBED)
+  # A plugin uses this to name its entry points uniquely.
+  target_compile_definitions(libgroonga PUBLIC GRN_EMBEDDED)
 endif()
 if(WASI)
   add_executable(libgroonga_callback wasm_callback.c)
@@ -181,6 +208,16 @@ target_include_directories(
 if(NOT MSVC)
   set_target_properties(libgroonga PROPERTIES OUTPUT_NAME "groonga")
 endif()
+if(WASI)
+  # See GRN_PLUGIN_LIBGROONGA in the top level CMakeLists.txt.
+  add_library(grn_plugin_dependencies INTERFACE)
+  target_include_directories(
+    grn_plugin_dependencies
+    INTERFACE $<TARGET_PROPERTY:libgroonga,INTERFACE_INCLUDE_DIRECTORIES>)
+  target_compile_definitions(
+    grn_plugin_dependencies
+    INTERFACE $<TARGET_PROPERTY:libgroonga,INTERFACE_COMPILE_DEFINITIONS>)
+endif()
 if(NOT WASI)
   set_target_properties(libgroonga PROPERTIES VERSION "0.0.0" SOVERSION "0")
 endif()
@@ -203,53 +240,45 @@ if(GRN_USE_LEMON)
     VERBATIM)
 endif()
 
-if(GRN_EMBED)
-  set(GRN_EMBEDDED_PLUGIN_LIBRARIES "")
-  if(GRN_WITH_MECAB)
-    list(APPEND GRN_EMBEDDED_PLUGIN_LIBRARIES mecab_tokenizer)
-  endif()
-  target_link_libraries(libgroonga PRIVATE grn_dependencies
-                                           ${GRN_EMBEDDED_PLUGIN_LIBRARIES})
-else()
-  target_link_libraries(libgroonga PRIVATE grn_dependencies)
+target_link_libraries(libgroonga PRIVATE grn_dependencies
+                                         ${GRN_EMBEDDED_PLUGIN_TARGETS})
+if(WASI)
+  # Exporting libgroonga.wasm requires exporting grn_dependencies
+  # too. We don't provide the CMake package for WASI for now.
+  install(TARGETS libgroonga RUNTIME DESTINATION "${CMAKE_INSTALL_LIBDIR}")
+elseif(NOT GRN_EMBED)
   target_include_directories(
     libgroonga
     INTERFACE "$<INSTALL_INTERFACE:${CMAKE_INSTALL_INCLUDEDIR}/groonga>")
-  if(WASI)
-    # Exporting libgroonga.wasm requires exporting grn_dependencies
-    # too. We don't provide the CMake package for WASI for now.
-    install(TARGETS libgroonga RUNTIME DESTINATION "${CMAKE_INSTALL_LIBDIR}")
-  else()
+  install(
+    TARGETS libgroonga
+    EXPORT libgroonga_export
+    ARCHIVE DESTINATION "${CMAKE_INSTALL_LIBDIR}"
+    LIBRARY DESTINATION "${CMAKE_INSTALL_LIBDIR}"
+    RUNTIME DESTINATION "${CMAKE_INSTALL_BINDIR}")
+  set(CONFIG_CMAKE "GroongaConfig.cmake")
+  set(BUILT_CONFIG_CMAKE "${CMAKE_CURRENT_BINARY_DIR}/${CONFIG_CMAKE}")
+  configure_package_config_file(
+    "${CONFIG_CMAKE}.in" "${BUILT_CONFIG_CMAKE}"
+    INSTALL_DESTINATION "${GRN_INSTALL_CMAKE_DIR}"
+    PATH_VARS GRN_RELATIVE_PLUGINS_DIR)
+  set(CONFIG_VERSION_CMAKE "GroongaConfigVersion.cmake")
+  set(BUILT_CONFIG_VERSION_CMAKE
+      "${CMAKE_CURRENT_BINARY_DIR}/${CONFIG_VERSION_CMAKE}")
+  write_basic_package_version_file("${BUILT_CONFIG_VERSION_CMAKE}"
+                                   COMPATIBILITY AnyNewerVersion)
+  install(FILES "${BUILT_CONFIG_CMAKE}" "${BUILT_CONFIG_VERSION_CMAKE}"
+          DESTINATION "${GRN_INSTALL_CMAKE_DIR}")
+  install(
+    EXPORT libgroonga_export
+    DESTINATION "${GRN_INSTALL_CMAKE_DIR}"
+    NAMESPACE "Groonga::"
+    FILE "GroongaTargets.cmake")
+  if(MSVC)
     install(
-      TARGETS libgroonga
-      EXPORT libgroonga_export
-      ARCHIVE DESTINATION "${CMAKE_INSTALL_LIBDIR}"
-      LIBRARY DESTINATION "${CMAKE_INSTALL_LIBDIR}"
-      RUNTIME DESTINATION "${CMAKE_INSTALL_BINDIR}")
-    set(CONFIG_CMAKE "GroongaConfig.cmake")
-    set(BUILT_CONFIG_CMAKE "${CMAKE_CURRENT_BINARY_DIR}/${CONFIG_CMAKE}")
-    configure_package_config_file(
-      "${CONFIG_CMAKE}.in" "${BUILT_CONFIG_CMAKE}"
-      INSTALL_DESTINATION "${GRN_INSTALL_CMAKE_DIR}"
-      PATH_VARS GRN_RELATIVE_PLUGINS_DIR)
-    set(CONFIG_VERSION_CMAKE "GroongaConfigVersion.cmake")
-    set(BUILT_CONFIG_VERSION_CMAKE
-        "${CMAKE_CURRENT_BINARY_DIR}/${CONFIG_VERSION_CMAKE}")
-    write_basic_package_version_file("${BUILT_CONFIG_VERSION_CMAKE}"
-                                     COMPATIBILITY AnyNewerVersion)
-    install(FILES "${BUILT_CONFIG_CMAKE}" "${BUILT_CONFIG_VERSION_CMAKE}"
-            DESTINATION "${GRN_INSTALL_CMAKE_DIR}")
-    install(
-      EXPORT libgroonga_export
-      DESTINATION "${GRN_INSTALL_CMAKE_DIR}"
-      NAMESPACE "Groonga::"
-      FILE "GroongaTargets.cmake")
-    if(MSVC)
-      install(
-        FILES $<TARGET_PDB_FILE:libgroonga>
-        DESTINATION "${CMAKE_INSTALL_BINDIR}"
-        OPTIONAL)
-    endif()
+      FILES $<TARGET_PDB_FILE:libgroonga>
+      DESTINATION "${CMAKE_INSTALL_BINDIR}"
+      OPTIONAL)
   endif()
 endif()
 if(GRN_WITH_MESSAGE_PACK)
