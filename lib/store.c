@@ -1031,11 +1031,11 @@ grn_ja_ensure_partition_map(grn_ctx *ctx, grn_ja *ja)
   }
 
   if (strlen(ja->io->path) + strlen(".partitions") >= PATH_MAX) {
-    ERR(
-      GRN_FILENAME_TOO_LONG,
-      "[ja][ensure][partition-map] The path of partition map file is too long "
-      "path: %s.partitions",
-      ja->io->path);
+    ERR(GRN_FILENAME_TOO_LONG,
+        "%s The path of partition map file is too long "
+        "path: %s.partitions",
+        tag,
+        ja->io->path);
     return;
   }
 
