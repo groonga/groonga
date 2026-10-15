@@ -1025,6 +1025,7 @@ _grn_ja_create(grn_ctx *ctx,
 static void
 grn_ja_ensure_partition_map(grn_ctx *ctx, grn_ja *ja)
 {
+  const char *tag = "[ja][ensure][partition-map]";
   if (ja->partition_mapping) {
     return;
   }
