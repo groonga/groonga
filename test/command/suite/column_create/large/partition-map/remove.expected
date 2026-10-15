@@ -12,19 +12,7 @@ load --table Memos
 [[0,0.0,0.0],2]
 #|i| [ja][ensure][partition-map] Create a new partition map. Because the number of data segments is full
 column_remove Memos content
-[
-  [
-    [
-      -13,
-      0.0,
-      0.0
-    ],
-    "[ja][free][(temporary)] failed to allocate a new garbage info segment because of full: variation:2 element-size:23 initial-garb"
-  ],
-  false
-]
 #|i| [io][remove] removed path: <db/db.0000101.partitions>
 #|i| [io][remove] removed path: <db/db.0000101>
-#|e| [ja][free][(temporary)] failed to allocate a new garbage info segment because of full: variation:2 element-size:23 initial-garbage-segment:0 n-garbages:0: path:<db/db.0000000>
 log_level --level notice
 [[0,0.0,0.0],true]
