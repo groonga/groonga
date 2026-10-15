@@ -2516,10 +2516,15 @@ grn_ja_get(grn_ctx *ctx, grn_obj *obj)
         GRN_OBJ_COLUMN_SCALAR) {
       if (grn_ja_is_full(ja)) {
         grn_ja_ensure_partition_map(ctx, ja);
+        if (!ja->partition_mapping) {
+          ERR(GRN_NOT_ENOUGH_SPACE,
+              "[ja][get] Cannot partition map file. So, cannot create "
+              "partition any more");
+        }
       }
     }
   }
-  return (grn_ja *)obj;
+  return ja;
 }
 
 static grn_rc
