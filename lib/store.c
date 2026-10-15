@@ -1050,6 +1050,19 @@ grn_ja_ensure_partition_map(grn_ctx *ctx, grn_ja *ja)
    * so the element size is sizeof(uint8_t).
    */
   ja->partition_mapping = grn_ra_create(ctx, path, sizeof(uint8_t), 0);
+  if (ja->partition_mapping) {
+    GRN_LOG(ctx,
+            GRN_LOG_INFO,
+            "%s Create a new partition map. Because the number of data "
+            "segments is full",
+            tag);
+  } else {
+    GRN_LOG(ctx,
+            GRN_LOG_ERROR,
+            "%s Cannot create a new partition map: %s",
+            tag,
+            path);
+  }
 }
 
 grn_ja *
