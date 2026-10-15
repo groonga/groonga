@@ -1015,6 +1015,143 @@ _grn_ja_create(grn_ctx *ctx,
   return ja;
 }
 
+/*
+ * This function allocates the space needed to map each ID to its partition.
+ *
+ * If the mapping is already open, it returns without taking any action.
+ * If the mapping is not open, it creates a new file if one does not exist, or
+ * opens the existing file.
+ */
+static void
+grn_ja_ensure_partition_map(grn_ctx *ctx, grn_ja *ja)
+{
+  if (ja->partition_mapping) {
+    return;
+  }
+
+  if (strlen(ja->io->path) + strlen(".partitions") >= PATH_MAX) {
+    ERR(
+      GRN_FILENAME_TOO_LONG,
+      "[ja][ensure][partition-map] The path of partition map file is too long "
+      "path: %s.partitions",
+      ja->io->path);
+    return;
+  }
+
+  char path[PATH_MAX];
+  snprintf(path, sizeof(path), "%s.partitions", ja->io->path);
+  if (grn_path_exist(path)) {
+    ja->partition_mapping = grn_ra_open(ctx, path);
+    return;
+  }
+  /*
+   * partition_id is stored per record id. Its range is 0..255,
+   * so the element size is sizeof(uint8_t).
+   */
+  ja->partition_mapping = grn_ra_create(ctx, path, sizeof(uint8_t), 0);
+}
+
+static grn_ja *
+grn_ja_create_new_partition(grn_ctx *ctx, grn_ja *ja, grn_id id)
+{
+  const char *tag = "[ja][create][new-partition]";
+
+  GRN_LOG(ctx,
+          GRN_LOG_INFO,
+          "%s current ja partition is full. create and use a new partition.",
+          tag);
+
+  grn_ja_ensure_partition_map(ctx, ja);
+  if (!ja->partition_mapping) {
+    return NULL;
+  }
+  if (ja->max_partition_id + 1 > UINT8_MAX) {
+    ERR(GRN_NOT_ENOUGH_SPACE,
+        "%s cannot create a new partition. no partition id available to assign: "
+        "%d",
+        tag,
+        ja->max_partition_id);
+    return NULL;
+  }
+  uint8_t new_partition_id;
+  if (!ja->partitions) {
+    new_partition_id = 0;
+  } else {
+    new_partition_id = ja->max_partition_id + 1;
+  }
+
+  if (strlen(ja->io->path) + strlen(".partitions.") +
+      snprintf(NULL, 0, "%d", new_partition_id) >= PATH_MAX) {
+    ERR(GRN_FILENAME_TOO_LONG,
+        "%s the path of partition map file is too long "
+        "path: %s.partitions.%d",
+        tag,
+        ja->io->path,
+        new_partition_id);
+    return NULL;
+  }
+
+  uint16_t n_partitions = (uint16_t)(new_partition_id + 1);
+  grn_ja **partitions =
+    (grn_ja **)GRN_REALLOC(ja->partitions,
+                           sizeof(grn_ja *) * (n_partitions));
+  if (!partitions) {
+    ERR(GRN_NO_MEMORY_AVAILABLE,
+        "%s cannot realloc partitions area for a new partition", tag);
+    return NULL;
+  }
+  ja->partitions = partitions;
+  ja->partitions[new_partition_id] = NULL;
+
+  char path[PATH_MAX];
+  snprintf(path,
+           sizeof(path),
+           "%s.partitions.%d",
+           ja->io->path,
+           new_partition_id);
+  if (grn_path_exist(path)) {
+    ERR(GRN_FILE_CORRUPT,
+        "%s already exist partition file, but this file cannot exist: %s",
+        tag,
+        path);
+    return NULL;
+  }
+
+  grn_ja *new_partition =
+    grn_ja_create(ctx,
+                  path,
+                  ja->header->max_element_size,
+                  (ja->header->flags & (~GRN_OBJ_COLUMN_LARGE)));
+  if (!new_partition) {
+    if (grn_path_exist(path)) {
+      grn_ja_remove(ctx, path);
+    }
+    return NULL;
+  }
+  new_partition->obj.range = ja->obj.range;
+
+  ja->partitions[new_partition_id] = new_partition;
+
+  grn_obj partition_id;
+  GRN_UINT8_SET(ctx, &partition_id, new_partition_id);
+  grn_rc rc = grn_ra_set_value(ctx,
+                               ja->partition_mapping,
+                               id,
+                               &partition_id,
+                               GRN_OBJ_SET);
+  GRN_OBJ_FIN(ctx, &partition_id);
+  if (rc != GRN_SUCCESS) {
+    ctx->rc = rc;
+    ja->partitions[new_partition_id] = NULL;
+    grn_ja_close(ctx, new_partition);
+    grn_ja_remove(ctx, path);
+    return NULL;
+  }
+  ja->max_partition_id = new_partition_id;
+
+  return new_partition;
+}
+
 grn_ja *
 grn_ja_create(grn_ctx *ctx,
               const char *path,
