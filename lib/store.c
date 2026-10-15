@@ -2748,9 +2748,18 @@ grn_ja_free(grn_ctx *ctx, grn_ja *ja, grn_ja_einfo *einfo)
   wal_data.ja = ja;
   wal_data.need_lock = false;
   wal_data.tag = tag;
+
   if (wal_data.ja->partition_mapping) {
-    grn_ra_close(ctx, wal_data.ja->partition_mapping);
+    grn_rc rc = grn_ra_close(ctx, wal_data.ja->partition_mapping);
+    if (rc != GRN_SUCCESS) {
+      ERR(rc,
+          "%s cannot close partition map: %s.partitions",
+          tag,
+          wal_data.ja->io->path);
+      return rc;
+    } else {
       wal_data.ja->partition_mapping = NULL;
+    }
   }
   if (ETINY_P(einfo)) {
     return GRN_SUCCESS;
