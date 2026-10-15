@@ -3,10 +3,14 @@
 table_create Memos TABLE_HASH_KEY ShortText
 column_create Memos content COLUMN_SCALAR|COLUMN_LARGE Text
 
+log_level --level info
+#@add-important-log-levels info
+
 load --table Memos
 [
 {"_key": "Groonga", "content": "Mroonga, PGroonga, and Rroonga"},
 {"_key": "Mroonga", "content": "Groonga, PGroonga, and Rroonga"}
 ]
 
-#@file-exist #{db_path}.0000101.partitions
+#@remove-important-log-levels info
+log_level --level notice
