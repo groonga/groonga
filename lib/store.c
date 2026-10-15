@@ -2511,7 +2511,7 @@ grn_ja_get(grn_ctx *ctx, grn_obj *obj)
 {
   grn_ja *ja = (grn_ja *)obj;
 
-  if (ja->header->flags & GRN_OBJ_COLUMN_LARGE) {
+  if ((ja->header->flags & GRN_OBJ_COLUMN_LARGE) && (ja->io->path[0] != '\0')) {
     if ((ja->header->flags & GRN_OBJ_COLUMN_TYPE_MASK) ==
         GRN_OBJ_COLUMN_SCALAR) {
       if (grn_ja_is_full(ja)) {
