@@ -133,25 +133,24 @@ if (!options.databasePath) {
   writeSync(process.stderr.fd, "groonga.mjs: database path is missing\n");
   process.exit(1);
 }
-// groonga resolves a relative path by the current directory. So we
-// must change the current directory before we open the database.
-const workingDirectory = options.workingDirectory || process.cwd();
+// groonga resolves a relative path such as a database path by the
+// current directory. So we must change the current directory of both
+// Node.js and libgroonga.wasm before we open the database.
 if (options.workingDirectory) {
   process.chdir(options.workingDirectory);
 }
 
 const groonga = await open({
-  logPath: options.logPath && resolve(workingDirectory, options.logPath),
-  queryLogPath:
-    options.queryLogPath && resolve(workingDirectory, options.queryLogPath),
+  logPath: options.logPath && resolve(options.logPath),
+  queryLogPath: options.queryLogPath && resolve(options.queryLogPath),
 });
+groonga.chdir(process.cwd());
 const context = groonga.createContext();
-const databasePath = resolve(workingDirectory, options.databasePath);
 try {
   if (options.isNew) {
-    context.createDatabase(databasePath);
+    context.createDatabase(options.databasePath);
   } else {
-    context.openDatabase(databasePath);
+    context.openDatabase(options.databasePath);
   }
 } catch (error) {
   writeSync(process.stderr.fd, `groonga.mjs: ${error.message}\n`);
