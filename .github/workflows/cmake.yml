@@ -478,6 +478,14 @@ jobs:
       - name: Install packages
         run: |
           ./setup.sh
+      - name: Work around missing faiss header
+        # Homebrew faiss 1.15.1 doesn't install utils/popcount.h.
+        # Remove this once https://github.com/facebookresearch/faiss/pull/5744 is released.
+        run: |
+          include_dir="$(brew --prefix)/include/faiss/utils"
+          version="$(brew list --versions faiss | awk '{print $2}')"
+          curl -fsSL -o "${include_dir}/popcount.h" \
+            "https://raw.githubusercontent.com/facebookresearch/faiss/v${version}/faiss/utils/popcount.h"
       - name: Prepare ccache
         run: |
           echo "CCACHE_DIR=${PWD}/ccache" >> ${GITHUB_ENV}
