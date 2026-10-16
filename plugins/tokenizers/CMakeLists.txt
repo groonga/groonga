@@ -1,5 +1,5 @@
 # Copyright(C) 2012-2018  Brazil
-# Copyright(C) 2023-2024  Sutou Kouhei <kou@clear-code.com>
+# Copyright(C) 2023-2026  Sutou Kouhei <kou@clear-code.com>
 #
 # This library is free software; you can redistribute it and/or
 # modify it under the terms of the GNU Lesser General Public
@@ -37,6 +37,7 @@ if(GRN_WITH_MECAB)
                               PROPERTIES COMPILE_FLAGS "${GRN_C_COMPILE_FLAGS}")
   if(GRN_EMBED)
     add_library(mecab_tokenizer STATIC ${MECAB_SOURCES})
+    grn_add_embedded_plugin(mecab_tokenizer "tokenizers/mecab")
     set_target_properties(mecab_tokenizer PROPERTIES POSITION_INDEPENDENT_CODE
                                                      ON)
   else()
@@ -51,7 +52,7 @@ if(GRN_WITH_MECAB)
         OPTIONAL)
     endif()
   endif()
-  target_link_libraries(mecab_tokenizer libgroonga libmecab)
+  target_link_libraries(mecab_tokenizer ${GRN_PLUGIN_LIBGROONGA} libmecab)
 endif()
 
 if(GRN_WITH_KYTEA)
@@ -62,6 +63,7 @@ if(GRN_WITH_KYTEA)
     ${KYTEA_SOURCES} PROPERTIES COMPILE_FLAGS "${GRN_CXX_COMPILE_FLAGS}")
   if(GRN_EMBED)
     add_library(kytea_tokenizer STATIC ${KYTEA_SOURCES})
+    grn_add_embedded_plugin(kytea_tokenizer "tokenizers/kytea")
     set_target_properties(kytea_tokenizer PROPERTIES POSITION_INDEPENDENT_CODE
                                                      ON)
   else()
@@ -76,7 +78,7 @@ if(GRN_WITH_KYTEA)
         OPTIONAL)
     endif()
   endif()
-  target_link_libraries(kytea_tokenizer libgroonga kytea)
+  target_link_libraries(kytea_tokenizer ${GRN_PLUGIN_LIBGROONGA} kytea)
 endif()
 
 if(GRN_WITH_H3)
@@ -85,6 +87,7 @@ if(GRN_WITH_H3)
                               PROPERTIES COMPILE_FLAGS "${GRN_C_COMPILE_FLAGS}")
   if(GRN_EMBED)
     add_library(h3_index_tokenizer STATIC ${H3_INDEX_SOURCES})
+    grn_add_embedded_plugin(h3_index_tokenizer "tokenizers/h3_index")
     set_target_properties(h3_index_tokenizer
                           PROPERTIES POSITION_INDEPENDENT_CODE ON)
   else()
@@ -99,5 +102,5 @@ if(GRN_WITH_H3)
         OPTIONAL)
     endif()
   endif()
-  target_link_libraries(h3_index_tokenizer libgroonga)
+  target_link_libraries(h3_index_tokenizer ${GRN_PLUGIN_LIBGROONGA})
 endif()

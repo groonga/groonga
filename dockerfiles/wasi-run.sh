@@ -36,11 +36,6 @@ echo "::group::Test"
 set -x
 export TZ=Asia/Tokyo
 cp -R /source/test/command test
-# TODO: Run all tests. A test that needs a normalizer, a tokenizer or
-# a function in plugins/ fails. WASI doesn't support dynamic linking.
-# We can't link all plugins statically yet because all plugins define
-# the same GRN_PLUGIN_INIT()/GRN_PLUGIN_REGISTER()/GRN_PLUGIN_FIN().
-#
 # TODO: Run test/suite/wal_recover. groonga.mjs doesn't support
 # GRN_WAL_ROLE and _database_close/_database_reopen yet.
 grntest \
@@ -52,6 +47,7 @@ grntest \
   --reporter=mark \
   test/suite/cache_limit \
   test/suite/check \
+  test/suite/column_create \
   test/suite/column_create_similar \
   test/suite/column_remove \
   test/suite/column_rename \
@@ -74,6 +70,9 @@ grntest \
   test/suite/object_inspect \
   test/suite/object_list \
   test/suite/object_set_visibility \
+  test/suite/plugin_register \
+  test/suite/plugin_unregister \
+  test/suite/query_expand \
   test/suite/query_log_flags_add \
   test/suite/query_log_flags_get \
   test/suite/query_log_flags_remove \
@@ -84,14 +83,18 @@ grntest \
   test/suite/response \
   test/suite/ruby \
   test/suite/schema \
+  test/suite/select/filter/logical_operation \
   test/suite/sharding \
   test/suite/sleep \
   test/suite/suggest \
   test/suite/table_copy \
+  test/suite/table_create_similar \
+  test/suite/table_tokenize \
   test/suite/tables \
+  test/suite/token_filters \
   test/suite/tokenize \
   test/suite/tokenizer_list \
   test/suite/tokenizers \
-  test/suite/select/filter/logical_operation
+  test/suite/truncate
 set +x
 echo "::endgroup::"

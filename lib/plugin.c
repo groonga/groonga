@@ -1,6 +1,6 @@
 /*
   Copyright (C) 2012-2018  Brazil
-  Copyright (C) 2022-2024  Sutou Kouhei <kou@clear-code.com>
+  Copyright (C) 2022-2026  Sutou Kouhei <kou@clear-code.com>
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
@@ -290,6 +290,25 @@ grn_plugin_call_fin(grn_ctx *ctx, grn_id id)
   return GRN_SUCCESS;
 }
 
+static const grn_embedded_plugin *
+grn_plugin_find_embedded(grn_ctx *ctx, const char *name)
+{
+  /* Ignore the suffix such as ".so" of a plugin path in a database. */
+  const char *suffix = strrchr(name, '.');
+  size_t name_length =
+    (suffix && !strchr(suffix, '/')) ? (size_t)(suffix - name) : strlen(name);
+
+  const grn_embedded_plugin *embedded_plugin;
+  for (embedded_plugin = grn_embedded_plugins; embedded_plugin->name;
+       embedded_plugin++) {
+    if (strncmp(embedded_plugin->name, name, name_length) == 0 &&
+        embedded_plugin->name[name_length] == '\0') {
+      return embedded_plugin;
+    }
+  }
+  return NULL;
+}
+
 static grn_rc
 grn_plugin_initialize(
   grn_ctx *ctx, grn_plugin *plugin, grn_dl dl, grn_id id, const char *path)
@@ -383,6 +402,56 @@ grn_plugin_open_mrb(grn_ctx *ctx, const char *filename, size_t filename_size)
 }
 #endif /* GRN_WITH_MRUBY */
 
+static grn_id
+grn_plugin_open_embedded(grn_ctx *ctx,
+                         const grn_embedded_plugin *embedded_plugin,
+                         const char *filename,
+                         unsigned int filename_size)
+{
+  grn_ctx *plugins_ctx = &grn_plugins_ctx;
+  grn_id id;
+  grn_plugin **plugin = NULL;
+
+  id = grn_hash_add(plugins_ctx,
+                    grn_plugins,
+                    filename,
+                    filename_size,
+                    (void **)&plugin,
+                    NULL);
+  if (!id) {
+    return GRN_ID_NIL;
+  }
+
+  {
+    grn_ctx *ctx = plugins_ctx;
+    *plugin = GRN_CALLOC(sizeof(grn_plugin));
+  }
+  if (!*plugin) {
+    grn_hash_delete_by_id(plugins_ctx, grn_plugins, id, NULL);
+    return GRN_ID_NIL;
+  }
+
+  grn_memcpy((*plugin)->path, filename, filename_size);
+  (*plugin)->init_func = embedded_plugin->init_func;
+  (*plugin)->register_func = embedded_plugin->register_func;
+  (*plugin)->fin_func = embedded_plugin->fin_func;
+  ctx->impl->plugin_path = filename;
+  grn_plugin_call_init(ctx, id);
+  ctx->impl->plugin_path = NULL;
+  if (ctx->rc != GRN_SUCCESS) {
+    {
+      grn_ctx *ctx = plugins_ctx;
+      GRN_FREE(*plugin);
+    }
+    *plugin = NULL;
+    grn_hash_delete_by_id(plugins_ctx, grn_plugins, id, NULL);
+    return GRN_ID_NIL;
+  }
+  (*plugin)->refcount = 1;
+
+  return id;
+}
+
 grn_id
 grn_plugin_open(grn_ctx *ctx, const char *filename)
 {
@@ -402,6 +471,16 @@ grn_plugin_open(grn_ctx *ctx, const char *filename)
                          (void **)&plugin))) {
     (*plugin)->refcount++;
     goto exit;
+  }
+
+  {
+    const grn_embedded_plugin *embedded_plugin =
+      grn_plugin_find_embedded(ctx, filename);
+    if (embedded_plugin) {
+      id =
+        grn_plugin_open_embedded(ctx, embedded_plugin, filename, filename_size);
+      goto exit;
+    }
   }
 
 #ifdef GRN_WITH_MRUBY
@@ -492,8 +571,10 @@ grn_plugin_close(grn_ctx *ctx, grn_id id)
     rc = GRN_SUCCESS;
     goto exit;
   }
-  if (plugin->dl) {
+  if (plugin->fin_func) {
     grn_plugin_call_fin(ctx, id);
+  }
+  if (plugin->dl) {
     if (!grn_dl_close(plugin->dl)) {
       const char *label;
       label = grn_dl_close_error_label();
@@ -878,6 +959,15 @@ grn_plugin_find_path(grn_ctx *ctx, const char *name)
   char *found_path = NULL;
 
   GRN_API_ENTER;
+
+  {
+    const grn_embedded_plugin *embedded_plugin =
+      grn_plugin_find_embedded(ctx, name);
+    if (embedded_plugin) {
+      /* An embedded plugin has no file. We use its name as its path. */
+      GRN_API_RETURN(GRN_STRDUP(embedded_plugin->name));
+    }
+  }
 
   if (grn_plugin_find_path_is_absolute_path(ctx, name)) {
     found_path = grn_plugin_find_path_one(ctx, name);

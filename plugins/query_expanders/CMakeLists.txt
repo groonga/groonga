@@ -1,5 +1,5 @@
 # Copyright(C) 2012-2018  Brazil
-# Copyright(C) 2023  Sutou Kouhei <kou@clear-code.com>
+# Copyright(C) 2023-2026  Sutou Kouhei <kou@clear-code.com>
 #
 # This library is free software; you can redistribute it and/or
 # modify it under the terms of the GNU Lesser General Public
@@ -21,6 +21,7 @@ set_source_files_properties(${TSV_SOURCES} PROPERTIES COMPILE_FLAGS
                                                       "${GRN_C_COMPILE_FLAGS}")
 if(GRN_EMBED)
   add_library(tsv_query_expander STATIC ${TSV_SOURCES})
+  grn_add_embedded_plugin(tsv_query_expander "query_expanders/tsv")
   set_target_properties(tsv_query_expander PROPERTIES POSITION_INDEPENDENT_CODE
                                                       ON)
 else()
@@ -35,4 +36,4 @@ else()
       OPTIONAL)
   endif()
 endif()
-target_link_libraries(tsv_query_expander libgroonga)
+target_link_libraries(tsv_query_expander ${GRN_PLUGIN_LIBGROONGA})

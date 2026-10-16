@@ -1,5 +1,5 @@
 # Copyright(C) 2014-2018  Brazil
-# Copyright(C) 2023  Sutou Kouhei <kou@clear-code.com>
+# Copyright(C) 2023-2026  Sutou Kouhei <kou@clear-code.com>
 #
 # This library is free software; you can redistribute it and/or
 # modify it under the terms of the GNU Lesser General Public
@@ -23,6 +23,7 @@ set_source_files_properties(${STOP_WORD_SOURCES}
                             PROPERTIES COMPILE_FLAGS "${GRN_C_COMPILE_FLAGS}")
 if(GRN_EMBED)
   add_library(stop_word_token_filter STATIC ${STOP_WORD_SOURCES})
+  grn_add_embedded_plugin(stop_word_token_filter "token_filters/stop_word")
   set_target_properties(stop_word_token_filter
                         PROPERTIES POSITION_INDEPENDENT_CODE ON)
 else()
@@ -37,7 +38,7 @@ else()
       OPTIONAL)
   endif()
 endif()
-target_link_libraries(stop_word_token_filter libgroonga)
+target_link_libraries(stop_word_token_filter ${GRN_PLUGIN_LIBGROONGA})
 
 if(GRN_WITH_LIBSTEMMER)
   read_file_list(${CMAKE_CURRENT_SOURCE_DIR}/stem_sources.am STEM_SOURCES)
@@ -45,6 +46,7 @@ if(GRN_WITH_LIBSTEMMER)
                               PROPERTIES COMPILE_FLAGS "${GRN_C_COMPILE_FLAGS}")
   if(GRN_EMBED)
     add_library(stem_token_filter STATIC ${STEM_SOURCES})
+    grn_add_embedded_plugin(stem_token_filter "token_filters/stem")
     set_target_properties(stem_token_filter PROPERTIES POSITION_INDEPENDENT_CODE
                                                        ON)
   else()
@@ -59,5 +61,6 @@ if(GRN_WITH_LIBSTEMMER)
         OPTIONAL)
     endif()
   endif()
-  target_link_libraries(stem_token_filter libgroonga Groonga::libstemmer)
+  target_link_libraries(stem_token_filter ${GRN_PLUGIN_LIBGROONGA}
+                        Groonga::libstemmer)
 endif()

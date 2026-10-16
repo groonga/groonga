@@ -1619,6 +1619,11 @@ GRN_CONFIG_PATH="`
 AC_DEFINE_UNQUOTED(GRN_CONFIG_PATH, ["$GRN_CONFIG_PATH"],
   [Default command line option configuration file.])
 
+# We don't support GRN_EMBED with autotools. So we don't embed any
+# plugins.
+AC_SUBST(GRN_EMBEDDED_PLUGIN_DECLARATIONS, [])
+AC_SUBST(GRN_EMBEDDED_PLUGIN_ENTRIES, [])
+
 AC_CONFIG_FILES([
   Makefile
   benchmark/Makefile
@@ -1657,6 +1662,7 @@ AC_CONFIG_FILES([
   include/groonga/build_option.h
   include/groonga/version.h
   lib/Makefile
+  lib/embedded_plugins.c
   lib/dat/Makefile
   lib/metadata.rc
   lib/mrb/Makefile

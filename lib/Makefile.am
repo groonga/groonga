@@ -47,6 +47,7 @@ BUNDLED_LIBRARIES_CFLAGS =			\
 	$(ONIGMO_CFLAGS)
 
 DEFAULT_INCLUDES =				\
+	-I$(srcdir)				\
 	-I$(top_builddir)			\
 	-I$(top_builddir)/include		\
 	-I$(top_srcdir)/include			\
@@ -59,6 +60,8 @@ include cpp_sources.am
 libgroonga_la_SOURCES =				\
 	$(libgroonga_c_sources)			\
 	$(libgroonga_cpp_source)
+nodist_libgroonga_la_SOURCES =			\
+	embedded_plugins.c
 
 #nfkc.c:
 #	$(RUBY) nfkc.rb --impl=table
@@ -130,6 +133,7 @@ EXTRA_DIST =						\
 	distance_avx512.cpp				\
 	distance_common.cpp				\
 	distance_neon64.cpp				\
+	embedded_plugins.c.in				\
 	grn_ecmascript.c				\
 	grn_ecmascript.h				\
 	grn_ecmascript.lemon				\
