@@ -155,6 +155,9 @@ if(WASI)
     # API and to use a callback of the C API.
     "-Wl,--export=malloc"
     "-Wl,--export=free"
+    # WASI doesn't have the current directory but wasi-libc emulates it.
+    # A user of libgroonga.wasm needs this to use a relative path.
+    "-Wl,--export=chdir"
     "-Wl,--export-table"
     "-Wl,--growable-table"
     # The default stack size of wasm-ld is only 64KiB. Stack overflow

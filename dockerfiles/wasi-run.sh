@@ -49,6 +49,7 @@ grntest \
   test/suite/check \
   test/suite/column_create \
   test/suite/column_create_similar \
+  test/suite/column_list \
   test/suite/column_remove \
   test/suite/column_rename \
   test/suite/command_list \
@@ -57,6 +58,7 @@ grntest \
   test/suite/config_get \
   test/suite/config_set \
   test/suite/defrag \
+  test/suite/dump \
   test/suite/extractors \
   test/suite/geo \
   test/suite/index_column_diff \
@@ -70,6 +72,7 @@ grntest \
   test/suite/object_inspect \
   test/suite/object_list \
   test/suite/object_set_visibility \
+  test/suite/object_warm \
   test/suite/plugin_register \
   test/suite/plugin_unregister \
   test/suite/query_expand \
@@ -89,6 +92,7 @@ grntest \
   test/suite/suggest \
   test/suite/table_copy \
   test/suite/table_create_similar \
+  test/suite/table_list \
   test/suite/table_tokenize \
   test/suite/tables \
   test/suite/token_filters \
