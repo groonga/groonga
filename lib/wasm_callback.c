@@ -41,3 +41,15 @@ grn_recv_handler_func(int ctx, int flags, int user_data)
 {
   grn_recv_handler_func_body(ctx, flags, user_data);
 }
+
+/* The signature is the same as \ref grn_time_utc_offset_func in
+ * include/groonga/time.h. */
+__attribute__((import_module("env"),
+               import_name("grn_time_utc_offset_func"))) extern int
+grn_time_utc_offset_func_body(long long unix_time, int user_data);
+
+__attribute__((export_name("grn_time_utc_offset_func"))) int
+grn_time_utc_offset_func(long long unix_time, int user_data)
+{
+  return grn_time_utc_offset_func_body(unix_time, user_data);
+}
