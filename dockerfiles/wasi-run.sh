@@ -47,6 +47,7 @@ grntest \
   --reporter=mark \
   test/suite/cache_limit \
   test/suite/check \
+  test/suite/column_copy \
   test/suite/column_create \
   test/suite/column_create_similar \
   test/suite/column_list \

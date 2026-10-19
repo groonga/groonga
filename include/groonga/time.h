@@ -1,6 +1,6 @@
 /*
   Copyright (C) 2016  Brazil
-  Copyright (C) 2022  Sutou Kouhei <kou@clear-code.com>
+  Copyright (C) 2022-2026  Sutou Kouhei <kou@clear-code.com>
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
@@ -67,6 +67,16 @@ GRN_API bool grn_time_to_tm(grn_ctx *ctx,
 GRN_API bool grn_time_from_tm(grn_ctx *ctx,
                               int64_t *time,
                               struct tm *tm);
+
+/* Return the offset of the local time from UTC in seconds at the given
+ * UNIX time. */
+typedef int32_t (*grn_time_utc_offset_func)(int64_t unix_time,
+                                            void *user_data);
+/* Use the given function instead of localtime() and mktime() to
+ * convert between UNIX time and local time. This is for an environment
+ * that doesn't have time zone information such as WASI. */
+GRN_API void grn_time_set_utc_offset_func(grn_time_utc_offset_func func,
+                                          void *user_data);
 
 #ifdef __cplusplus
 }

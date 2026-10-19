@@ -1,6 +1,6 @@
 /*
   Copyright (C) 2009-2016  Brazil
-  Copyright (C) 2020-2022  Sutou Kouhei <kou@clear-code.com>
+  Copyright (C) 2020-2026  Sutou Kouhei <kou@clear-code.com>
 
   This library is free software; you can redistribute it and/or
   modify it under the terms of the GNU Lesser General Public
@@ -89,32 +89,59 @@ grn_time_now(grn_ctx *ctx, grn_obj *obj)
                                        GRN_TIME_NSEC_TO_USEC(tv.tv_nsec)));
 }
 
+static grn_time_utc_offset_func grn_time_utc_offset_func_ = NULL;
+static void *grn_time_utc_offset_func_user_data = NULL;
+
+void
+grn_time_set_utc_offset_func(grn_time_utc_offset_func func, void *user_data)
+{
+  grn_time_utc_offset_func_ = func;
+  grn_time_utc_offset_func_user_data = user_data;
+}
+
+static int32_t
+grn_time_utc_offset(grn_time_t time)
+{
+  return grn_time_utc_offset_func_(time, grn_time_utc_offset_func_user_data);
+}
+
 static bool
 grn_time_t_to_tm(grn_ctx *ctx, const grn_time_t time, struct tm *tm)
 {
   bool success;
   const char *function_name;
+  if (grn_time_utc_offset_func_) {
+    grn_time_t local_time = time + grn_time_utc_offset(time);
+#ifdef HAVE__GMTIME64_S
+    function_name = "gmtime_s";
+    success = (_gmtime64_s(tm, &local_time) == 0);
+#else  /* HAVE__GMTIME64_S */
+    function_name = "gmtime_r";
+    success = (gmtime_r(&local_time, tm) != NULL);
+#endif /* HAVE__GMTIME64_S */
+  } else {
 #ifdef HAVE__LOCALTIME64_S
-  function_name = "localtime_s";
-  success = (_localtime64_s(tm, &time) == 0);
+    function_name = "localtime_s";
+    success = (_localtime64_s(tm, &time) == 0);
 #else /* HAVE__LOCALTIME64_S */
 # ifdef HAVE_LOCALTIME_R
-  function_name = "localtime_r";
-  success = (localtime_r(&time, tm) != NULL);
+    function_name = "localtime_r";
+    success = (localtime_r(&time, tm) != NULL);
 # else /* HAVE_LOCALTIME_R */
-  function_name = "localtime";
-  {
-    struct tm *local_tm;
-    local_tm = localtime(&time);
-    if (local_tm) {
-      success = true;
-      memcpy(tm, local_tm, sizeof(struct tm));
-    } else {
-      success = false;
+    function_name = "localtime";
+    {
+      struct tm *local_tm;
+      local_tm = localtime(&time);
+      if (local_tm) {
+        success = true;
+        memcpy(tm, local_tm, sizeof(struct tm));
+      } else {
+        success = false;
+      }
     }
-  }
 # endif /* HAVE_LOCALTIME_R */
 #endif /* HAVE__LOCALTIME64_S */
+  }
   if (!success) {
     SERR("%s: failed to convert time_t to struct tm: <%" GRN_FMT_INT64D ">",
          function_name,
@@ -143,11 +170,24 @@ grn_time_to_tm(grn_ctx *ctx, int64_t time, struct tm *tm)
   return grn_time_t_to_tm(ctx, sec, tm);
 }
 
+static grn_time_t
+grn_time_mktime(struct tm *tm)
+{
+  if (!grn_time_utc_offset_func_) {
+    return grn_mktime(tm);
+  }
+  /* The UTC offset depends on the UNIX time that we want to compute.
+   * So we compute it from an estimated UNIX time and then fix it. */
+  grn_time_t local_time = grn_timegm(tm);
+  grn_time_t time = local_time - grn_time_utc_offset(local_time);
+  return local_time - grn_time_utc_offset(time);
+}
+
 static bool
 grn_time_t_from_tm(grn_ctx *ctx, grn_time_t *time, struct tm *tm)
 {
   tm->tm_yday = -1;
-  *time = grn_mktime(tm);
+  *time = grn_time_mktime(tm);
   /* We can't use (*time != -1) because -1 is a valid UNIX time
    * (1969-12-31T23:59:59Z). */
   bool success = (tm->tm_yday != -1);
@@ -325,7 +365,7 @@ grn_str2timeval(const char *str, uint32_t str_len, grn_timeval *tv)
       tv->tv_sec = grn_timegm(&tm);
       tv->tv_sec -= gm_offset_sec;
     } else {
-      tv->tv_sec = grn_mktime(&tm);
+      tv->tv_sec = grn_time_mktime(&tm);
     }
     /* tm_yday is set appropriately (0-365) on successful completion. */
     if (tm.tm_yday == -1) { return GRN_INVALID_ARGUMENT; }
