@@ -127,6 +127,8 @@ foreach(name IN LISTS GRN_EMBEDDED_PLUGIN_NAMES)
     "   grn_plugin_impl_fin_${tag}},\n")
 endforeach()
 configure_file(embedded_plugins.c.in embedded_plugins.c @ONLY)
+set_source_files_properties("${CMAKE_CURRENT_BINARY_DIR}/embedded_plugins.c"
+                            PROPERTIES COMPILE_FLAGS "${GRN_C_COMPILE_FLAGS}")
 
 set(GRN_ALL_SOURCES
     "${CMAKE_CURRENT_BINARY_DIR}/embedded_plugins.c"
