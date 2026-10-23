@@ -35,6 +35,16 @@ else
   apt update
 fi
 
+# Work around Apache Arrow's missing OpenTelemetry runtime dependency.
+# https://github.com/apache/arrow/issues/55112
+case "${code_name}" in
+  jammy|noble)
+    ;;
+  *)
+    apt install -V -y opentelemetry-cpp
+    ;;
+esac
+
 repositories_dir=/groonga/packages/apt/repositories
 apt install -V -y \
   ${repositories_dir}/${distribution}/pool/${code_name}/${component}/*/*/*_{${architecture},all}.deb
