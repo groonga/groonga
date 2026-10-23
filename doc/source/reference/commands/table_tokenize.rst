@@ -25,6 +25,7 @@ optional::
                  [mode=GET]
                  [index_column=null]
                  [output_style=full]
+                 [with_normalizer_table_variants=no]
 
 Usage
 -----
@@ -114,12 +115,30 @@ Specifies the output style of the ``table_tokenize`` command.
 
 See :ref:`tokenize-output-style` option in :doc:`/reference/commands/tokenize` about details.
 
+``with_normalizer_table_variants``
+""""""""""""""""""""""""""""""""""
+
+Specifies whether variants by ``NormalizerTable`` are included in each token.
+
+The default value is ``no``.
+
+This is useful to explain what surface forms can be normalized to the same token
+when the lexicon uses :doc:`/reference/normalizers/normalizer_table`.
+
+This option is intended for investigation and debugging. It may scan the
+normalization definition table internally, so it isn't recommended for regular
+application queries or frequently executed workloads.
+
 Return value
 ------------
 
 ``table_tokenize`` command returns tokenized tokens.
 
 See :ref:`tokenize-return-value` option in :doc:`/reference/commands/tokenize` about details.
+
+If ``with_normalizer_table_variants`` is ``yes``, each token also includes
+``variants``. ``variants`` is a list of surface forms that can be normalized to
+the token value by ``NormalizerTable``.
 
 See also
 --------

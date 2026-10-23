@@ -5535,6 +5535,120 @@ table_options_close(grn_ctx *ctx, void *data)
   GRN_FREE(options);
 }
 
+bool
+grn_normalizer_table_option_process(grn_ctx *ctx,
+                                    grn_obj *raw_options,
+                                    unsigned int i,
+                                    grn_raw_string *name_raw,
+                                    const char *tag,
+                                    grn_obj **normalized_column,
+                                    grn_obj *target_name)
+{
+  if (GRN_RAW_STRING_EQUAL_CSTRING((*name_raw), "column") ||
+      GRN_RAW_STRING_EQUAL_CSTRING((*name_raw), "normalized")) {
+    if (*normalized_column) {
+      ERR(GRN_INVALID_ARGUMENT,
+          "%s[%.*s] must not specify "
+          "both of <column> (deprecated) and <normalized>",
+          tag,
+          (int)(name_raw->length),
+          name_raw->value);
+      return false;
+    }
+    const char *name;
+    grn_id domain;
+    unsigned int name_length =
+      grn_vector_get_element(ctx, raw_options, i, &name, NULL, &domain);
+    if (!grn_type_id_is_text_family(ctx, domain)) {
+      grn_obj value;
+      GRN_VALUE_FIX_SIZE_INIT(&value, GRN_OBJ_DO_SHALLOW_COPY, domain);
+      GRN_TEXT_SET(ctx, &value, name, name_length);
+      grn_obj inspected;
+      grn_inspect(ctx, &inspected, &value);
+      ERR(GRN_INVALID_ARGUMENT,
+          "%s[%.*s] must be a text: <%.*s>",
+          tag,
+          (int)(name_raw->length),
+          name_raw->value,
+          (int)GRN_TEXT_LEN(&inspected),
+          GRN_TEXT_VALUE(&inspected));
+      GRN_OBJ_FIN(ctx, &inspected);
+      GRN_OBJ_FIN(ctx, &value);
+      return false;
+    }
+    if (name_length == 0) {
+      ERR(GRN_INVALID_ARGUMENT,
+          "%s[%.*s] must not be empty",
+          tag,
+          (int)(name_raw->length),
+          name_raw->value);
+      return false;
+    }
+    *normalized_column = grn_ctx_get(ctx, name, (int)name_length);
+    if (!*normalized_column) {
+      ERR(GRN_INVALID_ARGUMENT,
+          "%s[%.*s] nonexistent column: <%.*s>",
+          tag,
+          (int)(name_raw->length),
+          name_raw->value,
+          (int)name_length,
+          name);
+      return false;
+    }
+    if (!grn_obj_is_text_family_scalar_column(ctx, *normalized_column)) {
+      grn_obj inspected;
+      GRN_TEXT_INIT(&inspected, 0);
+      grn_inspect_limited(ctx, &inspected, *normalized_column);
+      ERR(GRN_INVALID_ARGUMENT,
+          "%s[%.*s] must be a text family scalar column: <%.*s>: <%.*s>",
+          tag,
+          (int)(name_raw->length),
+          name_raw->value,
+          (int)name_length,
+          name,
+          (int)GRN_TEXT_LEN(&inspected),
+          GRN_TEXT_VALUE(&inspected));
+      GRN_OBJ_FIN(ctx, &inspected);
+      return false;
+    }
+    return true;
+  } else if (GRN_RAW_STRING_EQUAL_CSTRING((*name_raw), "target")) {
+    const char *name;
+    grn_id domain;
+    unsigned int name_length =
+      grn_vector_get_element(ctx, raw_options, i, &name, NULL, &domain);
+    if (!grn_type_id_is_text_family(ctx, domain)) {
+      grn_obj value;
+      GRN_VALUE_FIX_SIZE_INIT(&value, GRN_OBJ_DO_SHALLOW_COPY, domain);
+      GRN_TEXT_SET(ctx, &value, name, name_length);
+      grn_obj inspected;
+      grn_inspect(ctx, &inspected, &value);
+      ERR(GRN_INVALID_ARGUMENT,
+          "%s[%.*s] must be a text: <%.*s>",
+          tag,
+          (int)(name_raw->length),
+          name_raw->value,
+          (int)GRN_TEXT_LEN(&inspected),
+          GRN_TEXT_VALUE(&inspected));
+      GRN_OBJ_FIN(ctx, &inspected);
+      GRN_OBJ_FIN(ctx, &value);
+      return false;
+    }
+    if (name_length == 0) {
+      ERR(GRN_INVALID_ARGUMENT,
+          "%s[%.*s] must not be empty",
+          tag,
+          (int)(name_raw->length),
+          name_raw->value);
+      return false;
+    }
+    GRN_TEXT_SET(ctx, target_name, name, name_length);
+    return true;
+  }
+
+  return true;
+}
+
 static void *
 table_options_open(grn_ctx *ctx,
                    grn_obj *normalizer,
@@ -5563,103 +5677,25 @@ table_options_open(grn_ctx *ctx,
 
     if (GRN_RAW_STRING_EQUAL_CSTRING(name_raw, "column") ||
         GRN_RAW_STRING_EQUAL_CSTRING(name_raw, "normalized")) {
-      if (options->normalized_column) {
-        ERR(GRN_INVALID_ARGUMENT,
-            "%s[%.*s] must not specify "
-            "both of <column> (deprecated) and <normalized>",
-            tag,
-            (int)(name_raw.length),
-            name_raw.value);
-        break;
-      }
-      const char *name;
-      grn_id domain;
-      unsigned int name_length =
-        grn_vector_get_element(ctx, raw_options, i, &name, NULL, &domain);
-      if (!grn_type_id_is_text_family(ctx, domain)) {
-        grn_obj value;
-        GRN_VALUE_FIX_SIZE_INIT(&value, GRN_OBJ_DO_SHALLOW_COPY, domain);
-        GRN_TEXT_SET(ctx, &value, name, name_length);
-        grn_obj inspected;
-        grn_inspect(ctx, &inspected, &value);
-        ERR(GRN_INVALID_ARGUMENT,
-            "%s[%.*s] must be a text: <%.*s>",
-            tag,
-            (int)(name_raw.length),
-            name_raw.value,
-            (int)GRN_TEXT_LEN(&inspected),
-            GRN_TEXT_VALUE(&inspected));
-        GRN_OBJ_FIN(ctx, &inspected);
-        GRN_OBJ_FIN(ctx, &value);
-        break;
-      }
-      if (name_length == 0) {
-        ERR(GRN_INVALID_ARGUMENT,
-            "%s[%.*s] must not be empty",
-            tag,
-            (int)(name_raw.length),
-            name_raw.value);
-        break;
-      }
-      options->normalized_column = grn_ctx_get(ctx, name, (int)name_length);
-      if (!options->normalized_column) {
-        ERR(GRN_INVALID_ARGUMENT,
-            "%s[%.*s] nonexistent column: <%.*s>",
-            tag,
-            (int)(name_raw.length),
-            name_raw.value,
-            (int)name_length,
-            name);
-        break;
-      }
-      if (!grn_obj_is_text_family_scalar_column(ctx,
-                                                options->normalized_column)) {
-        grn_obj inspected;
-        GRN_TEXT_INIT(&inspected, 0);
-        grn_inspect_limited(ctx, &inspected, options->normalized_column);
-        ERR(GRN_INVALID_ARGUMENT,
-            "%s[%.*s] must be a text family scalar column: <%.*s>: <%.*s>",
-            tag,
-            (int)(name_raw.length),
-            name_raw.value,
-            (int)name_length,
-            name,
-            (int)GRN_TEXT_LEN(&inspected),
-            GRN_TEXT_VALUE(&inspected));
-        GRN_OBJ_FIN(ctx, &inspected);
+      if (!grn_normalizer_table_option_process(ctx,
+                                               raw_options,
+                                               i,
+                                               &name_raw,
+                                               tag,
+                                               &(options->normalized_column),
+                                               target_name)) {
         break;
       }
     } else if (GRN_RAW_STRING_EQUAL_CSTRING(name_raw, "target")) {
-      const char *name;
-      grn_id domain;
-      unsigned int name_length =
-        grn_vector_get_element(ctx, raw_options, i, &name, NULL, &domain);
-      if (!grn_type_id_is_text_family(ctx, domain)) {
-        grn_obj value;
-        GRN_VALUE_FIX_SIZE_INIT(&value, GRN_OBJ_DO_SHALLOW_COPY, domain);
-        GRN_TEXT_SET(ctx, &value, name, name_length);
-        grn_obj inspected;
-        grn_inspect(ctx, &inspected, &value);
-        ERR(GRN_INVALID_ARGUMENT,
-            "%s[%.*s] must be a text: <%.*s>",
-            tag,
-            (int)(name_raw.length),
-            name_raw.value,
-            (int)GRN_TEXT_LEN(&inspected),
-            GRN_TEXT_VALUE(&inspected));
-        GRN_OBJ_FIN(ctx, &inspected);
-        GRN_OBJ_FIN(ctx, &value);
+      if (!grn_normalizer_table_option_process(ctx,
+                                               raw_options,
+                                               i,
+                                               &name_raw,
+                                               tag,
+                                               &(options->normalized_column),
+                                               target_name)) {
         break;
       }
-      if (name_length == 0) {
-        ERR(GRN_INVALID_ARGUMENT,
-            "%s[%.*s] must not be empty",
-            tag,
-            (int)(name_raw.length),
-            name_raw.value);
-        break;
-      }
-      GRN_TEXT_SET(ctx, target_name, name, name_length);
     } else if (GRN_RAW_STRING_EQUAL_CSTRING(name_raw, "unicode_version")) {
       grn_nfkc_funcs funcs =
         grn_nfkc_version_option_process(ctx, raw_options, i, &name_raw, tag);
