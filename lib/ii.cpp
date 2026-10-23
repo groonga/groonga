@@ -539,7 +539,7 @@ buffer_garbage_enqueue(grn_ii *ii, uint32_t lseg)
   const uint32_t pseg = grn_ii_get_buffer_pseg_inline(ii, lseg);
   if (pseg != GRN_II_PSEG_NOT_ASSIGNED) {
     grn_ii_header_common *header = ii->header.common;
-    header->bgqbody[header->bgqhead] = header->binfo[lseg];
+    header->bgqbody[header->bgqhead] = pseg;
     header->bgqhead = (header->bgqhead + 1) & (GRN_II_BGQSIZE - 1);
     GRN_ASSERT(header->bgqhead != header->bgqtail);
   }
