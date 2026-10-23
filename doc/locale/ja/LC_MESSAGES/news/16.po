@@ -17,26 +17,116 @@ msgstr ""
 msgid "News - 16 series"
 msgstr "お知らせ - 16系"
 
-msgid "Release 16.1.4 - 2026-10-16"
-msgstr "16.1.4リリース - 2026-10-16"
+msgid "Release 16.1.5 - 2026-10-29"
+msgstr "16.1.5リリース - 2026-10-29"
 
 msgid "Improvements"
 msgstr "改良"
 
-msgid "[WASI] Added support for options of a tokenizer, a normalizer and a token filter"
-msgstr "[WASI] トークナイザー、ノーマライザー、トークンフィルターのオプションをサポート"
+msgid "[WASI] Added support for plugins"
+msgstr "[WASI] プラグインをサポート"
 
 msgid "This is an experimental feature. Currently, this feature is still not stable."
 msgstr "これは実験的な機能です。現時点ではまだ安定しきっていません。"
+
+msgid "WASI doesn't support dynamic linking. So plugins couldn't be used with WASI."
+msgstr "WASIは動的リンクをサポートしていないため、WASIではプラグインを使えませんでした。"
+
+msgid "Plugins are linked statically now so that you can use them with WASI. You can use the following plugins by {doc}`/reference/commands/plugin_register`:"
+msgstr "プラグインを静的にリンクするようにして、WASIでも使えるようにしました。{doc}`/reference/commands/plugin_register` で次のプラグインを使えます。"
+
+msgid "`functions/binary`"
+msgstr ""
+
+msgid "`functions/index_column`"
+msgstr ""
+
+msgid "`functions/math`"
+msgstr ""
+
+msgid "`functions/number`"
+msgstr ""
+
+msgid "`functions/string`"
+msgstr ""
+
+msgid "`functions/time`"
+msgstr ""
+
+msgid "`functions/vector`"
+msgstr ""
+
+msgid "`query_expanders/tsv`: {doc}`/reference/query_expanders/tsv`"
+msgstr ""
+
+msgid "`suggest/suggest`: {doc}`/reference/suggest`"
+msgstr ""
+
+msgid "`token_filters/stop_word`: {doc}`/reference/token_filters/token_filter_stop_word`"
+msgstr ""
+
+msgid "Only the plugins listed above are available for now."
+msgstr "現在は上述のプラグインのみ利用できます。"
+
+msgid "[WASI] Changed `groonga.mjs` to open a database by a relative path"
+msgstr "[WASI] `groonga.mjs` が相対パスでデータベースを開くように変更"
+
+msgid "`groonga.mjs` opened a database by an absolute path. So paths in outputs such as {doc}`/reference/commands/column_list` were absolute paths such as `/.../db/db.0000101` unlike the `groonga` command that outputs `db/db.0000101`."
+msgstr "`groonga.mjs` はデータベースを絶対パスで開いていました。そのため、{doc}`/reference/commands/column_list` などの出力に含まれるパスが、`groonga` コマンドの `db/db.0000101` ではなく、`/.../db/db.0000101` のような絶対パスになっていました。"
+
+msgid "`groonga.mjs` opens a database by a relative path now so that paths in outputs are the same as the `groonga` command."
+msgstr "`groonga.mjs` が相対パスでデータベースを開くように修正し、`groonga` コマンドと同じパスを出力するようにしました。"
+
+msgid "Fixes"
+msgstr "修正"
+
+msgid "[WASI] Fixed a bug that local time was always UTC"
+msgstr "[WASI] ローカル時間が常にUTCになる問題を修正"
+
+msgid "For example, `\"2016-04-08 00:00:01\"` was converted to `1460073601.0` instead of `1460041201.0` with `TZ=Asia/Tokyo`."
+msgstr "例えば、`TZ=Asia/Tokyo` のとき、`\"2016-04-08 00:00:01\"` が `1460041201.0` ではなく `1460073601.0` に変換されていました。"
+
+msgid "The time zone of the host such as the `TZ` environment variable is used now."
+msgstr "`TZ` 環境変数などのホストのタイムゾーンを使うようになりました。"
+
+msgid "[{doc}`/reference/commands/check`] Fixed a bug that segment counts of an `INDEX_LARGE` index were wrong"
+msgstr "[{doc}`/reference/commands/check`] `INDEX_LARGE` インデックスのセグメント数が誤っていた問題を修正"
+
+msgid "`INDEX_LARGE` extends the number of segments of an index. But `check` only scanned the original segments, not the extended segments. So `number of array segments`, `number of buffer segments`, `max id of physical segment in use` and `number of unmanaged segments` were wrong for an `INDEX_LARGE` index that uses the extended segments."
+msgstr "`INDEX_LARGE` はインデックスのセグメント数を増やします。しかし、`check` は増やす前の領域しかスキャンしておらず、増やした領域はスキャンしていませんでした。そのため、増やした領域を使う `INDEX_LARGE` のインデックスでは、`number of array segments`、`number of buffer segments`、`max id of physical segment in use`、`number of unmanaged segments` が間違っていました。"
+
+msgid "[{doc}`/reference/commands/check`] Fixed a bug that `max id of chunk segments in use` of an index column was wrong"
+msgstr "[{doc}`/reference/commands/check`] インデックスカラムの `max id of chunk segments in use` が誤っていた問題を修正"
+
+msgid "For example, `251` was reported for an index whose max used chunk is `249`."
+msgstr "例えば、使用中の最大チャンクが `249` のインデックスで `251` が報告されていました。"
+
+msgid "[{doc}`/reference/commands/check`] Fixed a bug that MessagePack output for an index column was broken"
+msgstr "[{doc}`/reference/commands/check`] インデックスカラムに対するMessagePack出力が壊れていた問題を修正"
+
+msgid "`check` for an index column returned broken MessagePack with `--output_type msgpack`. Clients couldn't decode it correctly. JSON output isn't affected."
+msgstr "インデックスカラムに対して `check` コマンドを `--output_type msgpack` オプションと一緒に実行すると、壊れたMessagePackを返していました。よって、クライアントは正しくデコードできませんでした。JSON出力には影響ありません。"
+
+msgid "[{doc}`/reference/commands/column_create`] Fixed a bug that an `INDEX_LARGE` index may be broken"
+msgstr "[{doc}`/reference/commands/column_create`] `INDEX_LARGE` インデックスが壊れることがある問題を修正"
+
+msgid "This happened only with an `INDEX_LARGE` index that has more than 65536 buffer segments (16GiB+ of buffer segments)."
+msgstr "これは、バッファーセグメントが65536個を超える（バッファーセグメントが16GiB以上の）`INDEX_LARGE` インデックスでのみ発生していました。"
+
+msgid "Index updates could fail with `failed to allocate a destination segment1` or an in-use buffer segment could be overwritten."
+msgstr "インデックスの更新が `failed to allocate a destination segment1` で失敗したり、使用中のバッファーセグメントが不正に上書きされることがありました。"
+
+msgid "Release 16.1.4 - 2026-10-16"
+msgstr "16.1.4リリース - 2026-10-16"
+
+msgid "[WASI] Added support for options of a tokenizer, a normalizer and a token filter"
+msgstr "[WASI] トークナイザー、ノーマライザー、トークンフィルターのオプションをサポート"
 
 msgid "You can use options such as `TokenNgram(\"n\", 3)` now."
 msgstr "`TokenNgram(\"n\", 3)` のようなオプションを使えるようになりました。"
 
 msgid "MessagePack is required when you build it yourself."
 msgstr "自分でビルドする場合は MessagePack が必要です。"
-
-msgid "Fixes"
-msgstr "修正"
 
 msgid "[{doc}`/install/almalinux`] Fixed installation failure on AlmaLinux 9"
 msgstr "[{doc}`/install/almalinux`] AlmaLinux 9でインストールが失敗する問題を修正"
