@@ -142,4 +142,14 @@ jobs:
           brew uninstall pkg-config || :
           brew uninstall pkg-config@0.29.2 || :
           ./setup.sh
+      - name: Work around missing faiss header
+        # Homebrew faiss 1.15.1 doesn't install utils/popcount.h.
+        # Remove this once https://github.com/facebookresearch/faiss/pull/5744 is released.
+        run: |
+          include_dir="$(brew --prefix)/include/faiss/utils"
+          version="$(brew list --versions faiss | awk '{print $2}')"
+          curl -fsSL -o "${include_dir}/popcount.h" \
+            "https://raw.githubusercontent.com/facebookresearch/faiss/v${version}/faiss/utils/popcount.h"
+      - name: Build
+        run: |
           ./build.sh ./ /tmp/build /tmp/local
