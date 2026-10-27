@@ -2364,7 +2364,7 @@ proc_check(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_data)
           GRN_OUTPUT_CSTR("max id of chunk segments in use");
           GRN_OUTPUT_INT64(max);
           GRN_OUTPUT_CSTR("number of garbage chunk");
-          GRN_OUTPUT_ARRAY_OPEN("NGARBAGES", GRN_II_N_CHUNK_VARIATION);
+          GRN_OUTPUT_ARRAY_OPEN("NGARBAGES", GRN_II_N_CHUNK_VARIATION + 1);
           for (i = 0; i <= GRN_II_N_CHUNK_VARIATION; i++) {
             GRN_OUTPUT_INT64(h->ngarbages[i]);
           }
