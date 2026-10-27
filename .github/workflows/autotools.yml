@@ -92,7 +92,7 @@ jobs:
           sudo apt update -o="APT::Acquire::Retries=3"
           sudo apt install -y -V -o="APT::Acquire::Retries=3" \
             autoconf-archive \
-            automake1.11 \
+            automake \
             autotools-dev \
             ccache \
             clang \
@@ -107,6 +107,7 @@ jobs:
             libmecab-dev \
             libmsgpack-dev \
             libstemmer-dev \
+            libtool \
             libxxhash-dev \
             libzstd-dev \
             mecab-naist-jdic \
