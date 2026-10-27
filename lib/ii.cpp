@@ -5795,6 +5795,16 @@ buffer_flush(grn_ctx *ctx, grn_ii *ii, uint32_t lseg, grn_hash *h)
   return rc;
 }
 
+typedef struct {
+  grn_id tid;
+  grn_id found_tid;
+  uint16_t size_in_buffer;
+  uint32_t size_in_chunk;
+  bool have_chunk_data;
+  uint32_t n_documents;
+  uint32_t n_positions;
+} grn_ii_buffer_check_term;
+
 extern "C" void
 grn_ii_buffer_check(grn_ctx *ctx, grn_ii *ii, uint32_t lseg)
 {
@@ -5808,7 +5818,6 @@ grn_ii_buffer_check(grn_ctx *ctx, grn_ii *ii, uint32_t lseg)
   uint16_t n;
   int nterms_void = 0;
   int size_in_buffer = 0;
-  grn_obj buf;
   size_t lower_bound;
   int64_t nloops = 0, nviolations = 0;
   if (grn_ii_get_buffer_pseg_inline(ii, lseg) == GRN_II_PSEG_NOT_ASSIGNED) {
@@ -5824,12 +5833,9 @@ grn_ii_buffer_check(grn_ctx *ctx, grn_ii *ii, uint32_t lseg)
     (sb->header.buffer_free + sizeof(buffer_term) * sb->header.nterms) /
     sizeof(buffer_rec);
   datavec_init(ctx, ii, rdv, 0, 0);
-  GRN_OUTPUT_MAP_OPEN("BUFFER", -1);
-  GRN_OUTPUT_CSTR("buffer id");
-  GRN_OUTPUT_INT64(lseg);
+  const char *chunk_size_label;
   if ((scn = sb->header.chunk) == GRN_II_PSEG_NOT_ASSIGNED) {
-    GRN_OUTPUT_CSTR("void chunk size");
-    GRN_OUTPUT_INT64(sb->header.chunk_size);
+    chunk_size_label = "void chunk size";
   } else {
     if ((sc = static_cast<uint8_t *>(WIN_MAP(ctx,
                                              ii->chunk,
@@ -5838,17 +5844,17 @@ grn_ii_buffer_check(grn_ctx *ctx, grn_ii *ii, uint32_t lseg)
                                              0,
                                              sb->header.chunk_size,
                                              GRN_IO_RDONLY)))) {
-      GRN_OUTPUT_CSTR("chunk size");
-      GRN_OUTPUT_INT64(sb->header.chunk_size);
+      chunk_size_label = "chunk size";
     } else {
-      GRN_OUTPUT_CSTR("unmappable chunk size");
-      GRN_OUTPUT_INT64(sb->header.chunk_size);
+      chunk_size_label = "unmappable chunk size";
     }
   }
-  GRN_OUTPUT_CSTR("buffer term");
-  GRN_OUTPUT_ARRAY_OPEN("TERMS", sb->header.nterms);
 
-  GRN_OBJ_INIT(&buf, GRN_BULK, 0, ii->lexicon->header.domain);
+  /* We collect all information before we output it because we need
+   * the number of elements of maps/arrays before we output them for
+   * MessagePack output. */
+  std::vector<grn_ii_buffer_check_term> terms;
+  bool succeeded = true;
   for (bt = sb->terms, n = sb->header.nterms; n; n--, bt++) {
     grn_id tid, tid_;
     char key[GRN_TABLE_MAX_KEY_SIZE];
@@ -5863,22 +5869,21 @@ grn_ii_buffer_check(grn_ctx *ctx, grn_ii *ii, uint32_t lseg)
       nterms_void++;
       continue;
     }
-    GRN_OUTPUT_ARRAY_OPEN("TERM", -1);
     tid = CHUNK_SPLIT_OFF(bt->tid);
     key_size =
       grn_table_get_key(ctx, ii->lexicon, tid, key, GRN_TABLE_MAX_KEY_SIZE);
     tid_ = grn_table_get(ctx, ii->lexicon, key, key_size);
-    GRN_TEXT_SET(ctx, &buf, key, key_size);
-    GRN_OUTPUT_OBJ(&buf, NULL);
-    GRN_OUTPUT_INT64(bt->tid);
-    GRN_OUTPUT_INT64(tid_);
+
+    grn_ii_buffer_check_term term = {};
+    term.tid = bt->tid;
+    term.found_tid = tid_;
+    term.size_in_buffer = bt->size_in_buffer;
+    term.size_in_chunk = bt->size_in_chunk;
 
     size_in_buffer += bt->size_in_buffer;
     if (tid != tid_ && (bt->size_in_buffer || bt->size_in_chunk)) {
       ndeleted_terms_with_value++;
     }
-    GRN_OUTPUT_INT64(bt->size_in_buffer);
-    GRN_OUTPUT_INT64(bt->size_in_chunk);
 
     data.ii = ii;
     data.term_id = bt->tid;
@@ -5894,9 +5899,8 @@ grn_ii_buffer_check(grn_ctx *ctx, grn_ii *ii, uint32_t lseg)
         uint32_t i;
         GRN_B_DEC(nchunks, chunk_data->data);
         if (!(cinfo = GRN_MALLOCN(chunk_info, nchunks + 1))) {
-          datavec_fin(ctx, rdv);
-          GRN_OBJ_FIN(ctx, &buf);
-          return;
+          succeeded = false;
+          break;
         }
         for (i = 0; i < nchunks; i++) {
           GRN_B_DEC(cinfo[i].segno, chunk_data->data);
@@ -5913,9 +5917,10 @@ grn_ii_buffer_check(grn_ctx *ctx, grn_ii *ii, uint32_t lseg)
                          chunk_data->data_end - chunk_data->data,
                          rdv);
         merger_init_chunk_data(ctx, &data, rdv);
-        GRN_OUTPUT_INT64(chunk_data->n_documents);
-        GRN_OUTPUT_INT64(chunk_data->position_gaps_end -
-                         chunk_data->position_gaps);
+        term.have_chunk_data = true;
+        term.n_documents = chunk_data->n_documents;
+        term.n_positions = static_cast<uint32_t>(chunk_data->position_gaps_end -
+                                                 chunk_data->position_gaps);
         {
           int j = 0;
           j++;
@@ -5957,43 +5962,93 @@ grn_ii_buffer_check(grn_ctx *ctx, grn_ii *ii, uint32_t lseg)
         sid_ = sid;
       }
     }
-    GRN_OUTPUT_ARRAY_CLOSE();
     if (cinfo) {
       GRN_FREE(cinfo);
     }
+    terms.push_back(term);
   }
-  GRN_OBJ_FIN(ctx, &buf);
 
-  GRN_OUTPUT_ARRAY_CLOSE();
-  GRN_OUTPUT_CSTR("buffer free");
-  GRN_OUTPUT_INT64(sb->header.buffer_free);
-  GRN_OUTPUT_CSTR("size in buffer");
-  GRN_OUTPUT_INT64(size_in_buffer);
-  GRN_OUTPUT_CSTR("nterms");
-  GRN_OUTPUT_INT64(sb->header.nterms);
-  if (nterms_void != sb->header.nterms_void) {
-    GRN_OUTPUT_CSTR("nterms void gap");
-    GRN_OUTPUT_INT64(nterms_void - sb->header.nterms_void);
+  if (succeeded) {
+    const bool have_nterms_void_gap = (nterms_void != sb->header.nterms_void);
+    int n_buffer_elements = 7;
+    if (have_nterms_void_gap) {
+      n_buffer_elements++;
+    }
+    if (nterms_with_corrupt_chunk) {
+      n_buffer_elements++;
+    }
+    if (ndeleted_terms_with_value) {
+      n_buffer_elements++;
+    }
+    if (nloops) {
+      n_buffer_elements++;
+    }
+    if (nviolations) {
+      n_buffer_elements++;
+    }
+    GRN_OUTPUT_MAP_OPEN("BUFFER", n_buffer_elements);
+    GRN_OUTPUT_CSTR("buffer id");
+    GRN_OUTPUT_INT64(lseg);
+    GRN_OUTPUT_CSTR(chunk_size_label);
+    GRN_OUTPUT_INT64(sb->header.chunk_size);
+    GRN_OUTPUT_CSTR("buffer term");
+    GRN_OUTPUT_ARRAY_OPEN("TERMS", static_cast<int>(terms.size()));
+    grn_obj buf;
+    GRN_OBJ_INIT(&buf, GRN_BULK, 0, ii->lexicon->header.domain);
+    for (const auto &term : terms) {
+      char key[GRN_TABLE_MAX_KEY_SIZE];
+      int key_size = grn_table_get_key(ctx,
+                                       ii->lexicon,
+                                       CHUNK_SPLIT_OFF(term.tid),
+                                       key,
+                                       GRN_TABLE_MAX_KEY_SIZE);
+      GRN_OUTPUT_ARRAY_OPEN("TERM", term.have_chunk_data ? 7 : 5);
+      GRN_TEXT_SET(ctx, &buf, key, key_size);
+      GRN_OUTPUT_OBJ(&buf, NULL);
+      GRN_OUTPUT_INT64(term.tid);
+      GRN_OUTPUT_INT64(term.found_tid);
+      GRN_OUTPUT_INT64(term.size_in_buffer);
+      GRN_OUTPUT_INT64(term.size_in_chunk);
+      if (term.have_chunk_data) {
+        GRN_OUTPUT_INT64(term.n_documents);
+        GRN_OUTPUT_INT64(term.n_positions);
+      }
+      GRN_OUTPUT_ARRAY_CLOSE();
+    }
+    GRN_OBJ_FIN(ctx, &buf);
+    GRN_OUTPUT_ARRAY_CLOSE();
+    GRN_OUTPUT_CSTR("buffer free");
+    GRN_OUTPUT_INT64(sb->header.buffer_free);
+    GRN_OUTPUT_CSTR("size in buffer");
+    GRN_OUTPUT_INT64(size_in_buffer);
+    GRN_OUTPUT_CSTR("nterms");
+    GRN_OUTPUT_INT64(sb->header.nterms);
+    if (have_nterms_void_gap) {
+      GRN_OUTPUT_CSTR("nterms void gap");
+      GRN_OUTPUT_INT64(nterms_void - sb->header.nterms_void);
+    }
+    GRN_OUTPUT_CSTR("nterms with chunk");
+    GRN_OUTPUT_INT64(nterm_with_chunk);
+    if (nterms_with_corrupt_chunk) {
+      GRN_OUTPUT_CSTR("nterms with corrupt chunk");
+      GRN_OUTPUT_INT64(nterms_with_corrupt_chunk);
+    }
+    if (ndeleted_terms_with_value) {
+      GRN_OUTPUT_CSTR("number of deleted terms with value");
+      GRN_OUTPUT_INT64(ndeleted_terms_with_value);
+    }
+    if (nloops) {
+      GRN_OUTPUT_CSTR("number of loops");
+      GRN_OUTPUT_INT64(nloops);
+    }
+    if (nviolations) {
+      GRN_OUTPUT_CSTR("number of violations");
+      GRN_OUTPUT_INT64(nviolations);
+    }
+    GRN_OUTPUT_MAP_CLOSE();
+  } else {
+    GRN_OUTPUT_BOOL(false);
   }
-  GRN_OUTPUT_CSTR("nterms with chunk");
-  GRN_OUTPUT_INT64(nterm_with_chunk);
-  if (nterms_with_corrupt_chunk) {
-    GRN_OUTPUT_CSTR("nterms with corrupt chunk");
-    GRN_OUTPUT_INT64(nterms_with_corrupt_chunk);
-  }
-  if (ndeleted_terms_with_value) {
-    GRN_OUTPUT_CSTR("number of deleted terms with value");
-    GRN_OUTPUT_INT64(ndeleted_terms_with_value);
-  }
-  if (nloops) {
-    GRN_OUTPUT_CSTR("number of loops");
-    GRN_OUTPUT_INT64(nloops);
-  }
-  if (nviolations) {
-    GRN_OUTPUT_CSTR("number of violations");
-    GRN_OUTPUT_INT64(nviolations);
-  }
-  GRN_OUTPUT_MAP_CLOSE();
   datavec_fin(ctx, rdv);
   if (sc) {
     grn_io_win_unmap(ctx, &sw);

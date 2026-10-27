@@ -2298,7 +2298,17 @@ proc_check(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_data)
         grn_ii *ii = (grn_ii *)obj;
         grn_ii_header_common *h = ii->header.common;
         char buf[8];
-        GRN_OUTPUT_ARRAY_OPEN("RESULT", 8);
+        /* The summary and the results of all assigned buffers. */
+        int n_results = 1;
+        {
+          const uint32_t n_lsegs = grn_ii_n_logical_segments(ii);
+          for (uint32_t lseg = 0; lseg < n_lsegs; lseg++) {
+            if (grn_ii_get_buffer_pseg(ii, lseg) != GRN_II_PSEG_NOT_ASSIGNED) {
+              n_results++;
+            }
+          }
+        }
+        GRN_OUTPUT_ARRAY_OPEN("RESULT", n_results);
         {
           uint32_t i, j, g = 0, a = 0, b = 0;
           uint32_t max = 0;
