@@ -135,11 +135,5 @@ jobs:
           submodules: recursive
       - name: Setup
         run: |
-          # Workaround. pkg-config formula is deprecated but still
-          # installed in GitHub Actions runner. We can remove this
-          # when GitHub Actions runner doesn't include pkg-config
-          # formula by default.
-          brew uninstall pkg-config || :
-          brew uninstall pkg-config@0.29.2 || :
           ./setup.sh
           ./build.sh ./ /tmp/build /tmp/local
