@@ -111,7 +111,7 @@ check --obj Terms.memos_content
       "max id of physical segment in use": 1,
       "number of unmanaged segments": 0,
       "total chunk size": 1048576,
-      "max id of chunk segments in use": 1,
+      "max id of chunk segments in use": 0,
       "number of garbage chunk": [
         0,
         0,

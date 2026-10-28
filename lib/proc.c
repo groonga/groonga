@@ -2356,7 +2356,7 @@ proc_check(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_data)
               int k;
               for (k = 0; k < 8; k++) {
                 if ((j & (1 << k))) {
-                  max = (i << 3) + j;
+                  max = (i << 3) + k;
                 }
               }
             }
