@@ -44,5 +44,13 @@ fi
 
 cd "${onigmo_directory_in_build_directory}"
 
-echo ./configure ${options}
-./configure ${options}
+# Onigmo can't be built with C23 that is the default since GCC 15.
+# Autoconf 2.73 or later enables C23 by default even when "-std=gnu11"
+# is specified. "ac_cv_prog_cc_c23=no" disables it.
+#
+# We need to add more "ac_cv_prog_cc_cXX=no" when Autoconf supports a
+# newer C standard. We want to drop Autotools support before it.
+cc="${CC} -std=gnu11"
+
+echo ./configure ${options} CC="'${cc}'" ac_cv_prog_cc_c23=no
+./configure ${options} CC="${cc}" ac_cv_prog_cc_c23=no
