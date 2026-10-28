@@ -76,7 +76,7 @@ send_command(grn_ctx *ctx, grn_obj *buffer, const char *command,
 {
   const char *p = command;
   const char *dataset_place_holder = "${DATASET}";
-  char *dataset_place_holder_position;
+  const char *dataset_place_holder_position;
 
   if (ctx->rc != GRN_SUCCESS) {
     return;
