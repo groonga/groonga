@@ -2310,8 +2310,9 @@ proc_check(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_data)
               max = j;
             }
           }
-          for (i = 0; i < GRN_II_MAX_LSEG; i++) {
-            j = h->binfo[i];
+          const uint32_t n_logical_segments = grn_ii_n_logical_segments(ii);
+          for (i = 0; i < n_logical_segments; i++) {
+            j = grn_ii_get_buffer_pseg(ii, i);
             if (j != GRN_II_PSEG_NOT_ASSIGNED) {
               if (j > max) {
                 max = j;
@@ -2319,8 +2320,8 @@ proc_check(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_data)
               b++;
             }
           }
-          for (i = 0; i < GRN_II_MAX_LSEG; i++) {
-            j = h->ainfo[i];
+          for (i = 0; i < n_logical_segments; i++) {
+            j = grn_ii_get_array_pseg(ii, i);
             if (j != GRN_II_PSEG_NOT_ASSIGNED) {
               if (j > max) {
                 max = j;
@@ -2369,7 +2370,6 @@ proc_check(grn_ctx *ctx, int nargs, grn_obj **args, grn_user_data *user_data)
           }
           GRN_OUTPUT_ARRAY_CLOSE();
           GRN_OUTPUT_MAP_CLOSE();
-          const uint32_t n_logical_segments = grn_ii_n_logical_segments(ii);
           for (uint32_t lseg = 0; lseg < n_logical_segments; lseg++) {
             const uint32_t pseg = grn_ii_get_buffer_pseg(ii, lseg);
             if (pseg != GRN_II_PSEG_NOT_ASSIGNED) {
