@@ -1574,6 +1574,8 @@ if test "x$with_onigmo" != "xno"; then
     AC_MSG_ERROR("No Onigmo found")
   fi
   if test "x$with_onigmo" = "xbundled" -o "$have_onigmo" = "no"; then
+    # vendor/onigmo/configure uses this
+    export CC
     AC_CONFIG_SUBDIRS([vendor/onigmo])
     ONIGMO_CFLAGS="-I\$(top_srcdir)/vendor/onigmo-source"
     ONIGMO_LIBS="\$(top_builddir)/vendor/onigmo-source/libonigmo.la"
