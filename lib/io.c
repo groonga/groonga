@@ -150,6 +150,20 @@ grn_msync(grn_ctx *ctx, fileinfo *fi, void *start, size_t length);
 #define GRN_MSYNC(ctx, fi, start, length)                                      \
   (grn_msync((ctx), (fi), (start), (length)))
 
+/* On Linux, changes through shared file mappings are in the page
+ * cache. So one fdatasync() for each file writes back all changed
+ * segments in the file. It's much faster than msync() for each
+ * segment because msync(MS_SYNC) for each segment may flush
+ * file system journal for each segment. msync(MS_SYNC) is
+ * implemented by fdatasync() for the range on Linux:
+ * https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/mm/msync.c
+ */
+#ifdef __linux__
+#  define GRN_IO_FLUSH_BY_FDATASYNC
+static inline int
+grn_fdatasync(grn_ctx *ctx, fileinfo *fi);
+#endif
+
 #ifdef __wasi__
 static inline void
 grn_mmap_emulation_free(grn_ctx *ctx, void *start, size_t length);
@@ -237,6 +251,7 @@ grn_io_max_n_files(grn_io *io)
                                     file_size);
 }
 
+#ifndef GRN_IO_FLUSH_BY_FDATASYNC
 static inline uint32_t
 grn_io_compute_nth_file_info(grn_io *io, uint32_t nth_segment)
 {
@@ -251,6 +266,7 @@ grn_io_compute_nth_file_info(grn_io *io, uint32_t nth_segment)
   resolved_nth_segment = nth_segment + io->base_seg;
   return resolved_nth_segment / n_segments_per_file;
 }
+#endif
 
 static grn_io *
 grn_io_create_tmp(grn_ctx *ctx,
@@ -1697,15 +1713,29 @@ grn_rc
 grn_io_flush(grn_ctx *ctx, grn_io *io)
 {
   grn_rc rc = GRN_SUCCESS;
-  struct _grn_io_header *header;
-  uint32_t aligned_header_size;
 
   if (io->path[0] == '\0') {
     return GRN_SUCCESS;
   }
 
-  header = io->header;
-  aligned_header_size = grn_io_compute_base(header->header_size);
+#ifdef GRN_IO_FLUSH_BY_FDATASYNC
+  {
+    uint32_t n_files = grn_io_n_files(ctx, io);
+    uint32_t i;
+    for (i = 0; i < n_files; i++) {
+      fileinfo *fi = &(io->fis[i]);
+      if (!grn_fileinfo_opened(fi)) {
+        continue;
+      }
+      if (grn_fdatasync(ctx, fi) != 0) {
+        rc = ctx->rc;
+        break;
+      }
+    }
+  }
+#else
+  struct _grn_io_header *header = io->header;
+  uint32_t aligned_header_size = grn_io_compute_base(header->header_size);
 
   if (GRN_MSYNC(ctx, &(io->fis[0]), header, aligned_header_size) != 0) {
     return ctx->rc;
@@ -1731,7 +1761,7 @@ grn_io_flush(grn_ctx *ctx, grn_io *io)
 
       pnref = &info->nref;
       GRN_ATOMIC_ADD_EX(pnref, 1, nref);
-#ifndef __wasi__
+#  ifndef __wasi__
       /* WASI is single thread. So nobody is changing or expiring this
        * segment now. Somebody just keeps a reference. The mmap()
        * emulation for WASI writes back the content only on msync()
@@ -1742,7 +1772,7 @@ grn_io_flush(grn_ctx *ctx, grn_io *io)
         GRN_ATOMIC_ADD_EX(pnref, -1, nref);
         continue;
       }
-#endif
+#  endif
 
       if (!info->map) {
         GRN_ATOMIC_ADD_EX(pnref, -1, nref);
@@ -1762,6 +1792,7 @@ grn_io_flush(grn_ctx *ctx, grn_io *io)
       }
     }
   }
+#endif
 
   return rc;
 }
@@ -2713,14 +2744,9 @@ grn_mmap(grn_ctx *ctx,
 }
 
 static inline int
-grn_msync(grn_ctx *ctx, fileinfo *fi, void *start, size_t length)
+grn_fileinfo_touch(grn_ctx *ctx, fileinfo *fi)
 {
-  int r = msync(start, length, MS_SYNC);
-  if (r == -1) {
-    SERR("msync");
-    return r;
-  }
-
+  int r = 0;
   if (fi->fd > 0) {
     struct timeval time_values[2];
     struct timespec time_specs[2];
@@ -2737,6 +2763,32 @@ grn_msync(grn_ctx *ctx, fileinfo *fi, void *start, size_t length)
 
   return r;
 }
+
+static inline int
+grn_msync(grn_ctx *ctx, fileinfo *fi, void *start, size_t length)
+{
+  int r = msync(start, length, MS_SYNC);
+  if (r == -1) {
+    SERR("msync");
+    return r;
+  }
+
+  return grn_fileinfo_touch(ctx, fi);
+}
+
+#    ifdef GRN_IO_FLUSH_BY_FDATASYNC
+static inline int
+grn_fdatasync(grn_ctx *ctx, fileinfo *fi)
+{
+  int r = fdatasync(fi->fd);
+  if (r == -1) {
+    SERR("fdatasync failed: <%s>", fi->path);
+    return r;
+  }
+
+  return grn_fileinfo_touch(ctx, fi);
+}
+#    endif
 
 static inline int
 grn_munmap(grn_ctx *ctx, grn_io *io, fileinfo *fi, void *start, size_t length)
