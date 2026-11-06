@@ -2518,9 +2518,8 @@ grn_ja_n_maximum_ginfo_segments(grn_ja *ja)
    * + 14 (the number of variations).
    */
   uint32_t grn_ja_n_max_released_chunk = GRN_ID_MAX;
-  return (
-    (grn_ja_n_max_released_chunk / grn_ja_n_garbages_in_a_segment) +
-    ja->header->n_element_variations);
+  return ((grn_ja_n_max_released_chunk / grn_ja_n_garbages_in_a_segment) +
+          ja->header->n_element_variations);
 }
 
 static inline bool
