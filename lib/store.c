@@ -2450,15 +2450,102 @@ grn_ja_find_free_segment(grn_ja *ja)
 }
 
 /*
- * Temporarily disable this function to suppress the unused-function error.
- * This function will be used for column partitioning.
+ * A GINFO segment records freed (but not yet reused) slots in **CHUNK
+ * segments**. A GINFO segment is allocated from the same segment pool as
+ * CHUNK segments. Therefore, if we remove a value from a ja whose CHUNK
+ * segments are full, the remove fails because there is no free segment left
+ * to allocate a GINFO segment that records the freed slot.
+ *
+ * When we use multiple ja partitions, do not use CHUNK segments to the limit.
+ * The number of usable CHUNK segments is
+ * (the number of max segments - the number of maximum GINFO segments).
+ *
+ * This function calculates and returns the number of maximum GINFO segments.
  */
-// static inline bool
-// grn_ja_is_full(grn_ja *ja)
-// {
-//   uint32_t seg = grn_ja_find_free_segment(ja);
-//   return (seg == grn_ja_n_data_segments);
-// }
+static inline uint32_t
+grn_ja_n_maximum_ginfo_segments(grn_ja *ja)
+{
+  /*
+   * The maximum number of GINFO segments is estimated using the following
+   * formula:
+   *   "(GRN_ID_MAX / grn_ja_n_garbages_in_a_segment) + 1 + 13".
+   *
+   * The reasons are as follows:
+   *
+   * The maximum number of items that can be registered in ginfo is GRN_ID_MAX.
+   * The maximum number of ginfo that can be registered in a GINFO segment is
+   * grn_ja_n_garbages_in_a_segment.
+   *
+   * A ja file has 14 variations of CHUNK segments, each divided into
+   * fixed-size slots. Each CHUNK segment belongs to exactly one variation.
+   * The 14 variations are distinguished by their slot sizes.
+   * The slot sizes are 8B, 16B, 32B, 64B, 128B, 256B, 512B, 1KiB, 2KiB, 4KiB,
+   * 8KiB, 16KiB, 32KiB, and 64KiB.
+   * The slot sizes range from 8B to 64KiB because the values stored in a CHUNK
+   * segment range from 8B to 64KiB.
+   * Values outside this size range are stored in a different area, not in a
+   * CHUNK segment.
+   *
+   * For example, if the size of a value to be stored is 10B, the variation with
+   * 16B slots is used.
+   * If the size is 133B, the variation with 256B slots is used.
+   *
+   * However, a ginfo record itself always has a fixed size of 8B.
+   * Only the 8B data ("grn_ja_ginfo->ja_pos->seg" and
+   * "grn_ja_ginfo->ja_pos->pos") is stored in a GINFO segment.
+   * Each variation has its own chain of GINFO segments. A ginfo record of a
+   * freed slot is stored in the chain of the variation that the freed slot
+   * belongs to.
+   * For example, if a value in the variation with 16B slots is deleted, ginfo
+   * is stored in that same variation.
+   * In other words, ginfo keeps track of the location of freed data in the
+   * variation it belongs to.
+   *
+   * The minimum number of GINFO segments is used when all ginfo entries
+   * belong to the same variation.
+   * In this case, the number of GINFO segments is
+   * "(GRN_ID_MAX / grn_ja_n_garbages_in_a_segment) + 1".
+   * The "+1" is needed to store the remaining entries because "GRN_ID_MAX" may
+   * not be evenly divisible by "grn_ja_n_garbages_in_a_segment".
+   *
+   * The maximum number of GINFO segments is reached when every variation has
+   * at least one freed-but-not-yet-reused record, because each such variation
+   * needs its own tail segment even if it holds only one record.
+   * One of those tail segments is the remainder segment already counted by
+   * "+1", so the worst-case estimate is the previous formula + 13.
+   * In summary, the worst-case value is
+   * "(GRN_ID_MAX / grn_ja_n_garbages_in_a_segment)"
+   * + 14 (the number of variations).
+   */
+  uint32_t grn_ja_n_max_released_chunk = GRN_ID_MAX;
+  return (
+    (grn_ja_n_max_released_chunk / grn_ja_n_garbages_in_a_segment) +
+    ja->header->n_element_variations);
+}
+
+static inline bool
+grn_ja_is_full(grn_ja *ja)
+{
+  uint32_t seg = grn_ja_find_free_segment(ja);
+  return ((seg + grn_ja_n_maximum_ginfo_segments(ja)) >=
+          grn_ja_n_data_segments);
+}
+
+grn_ja *
+grn_ja_get(grn_ctx *ctx, grn_obj *obj)
+{
+  grn_ja *ja = (grn_ja *)obj;
+
+  if ((ja->header->flags & GRN_OBJ_COLUMN_LARGE) && (ja->io->path[0] != '\0')) {
+    if ((ja->header->flags & GRN_OBJ_COLUMN_TYPE_MASK) ==
+        GRN_OBJ_COLUMN_SCALAR) {
+      if (grn_ja_is_full(ja)) {
+        ; // TODO: implement ensuring partition map and create a new partition
+      }
+    }
+  }
+  return ja;
+}
 
 static grn_rc
 grn_ja_free_huge(grn_ctx *ctx, grn_ja_wal_add_entry_data *wal_data)
