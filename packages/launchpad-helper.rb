@@ -94,7 +94,24 @@ allow_unsigned_uploads = 0
     apt_prepare_debian_dir(tmp_dir, "ubuntu-#{code_name}")
     cd(tmp_dir) do
       deb_archive_base_name = File.basename(absoulte_deb_archive_name, ".tar.gz")
-      sh("tar", "xf", absoulte_deb_archive_name)
+      # Extract the source archive like dpkg-source does. If the
+      # archive has only one top-level directory, use it as the source
+      # directory whatever its name is. Otherwise, use the extracted
+      # directory as is.
+      source_tmp_dir = "#{deb_archive_base_name}.tmp"
+      mkdir_p(source_tmp_dir)
+      sh("tar", "xf", absoulte_deb_archive_name, "-C", source_tmp_dir)
+      top_level_paths = Dir.children(source_tmp_dir).collect do |entry|
+        File.join(source_tmp_dir, entry)
+      end
+      if top_level_paths.size == 1 and
+          File.directory?(top_level_paths[0]) and
+          not File.symlink?(top_level_paths[0])
+        mv(top_level_paths[0], deb_archive_base_name)
+        rm_rf(source_tmp_dir)
+      else
+        mv(source_tmp_dir, deb_archive_base_name)
+      end
       cp(absoulte_deb_archive_name,
          "#{@package}_#{@deb_upstream_version}.orig.tar.gz")
       cd(deb_archive_base_name) do
