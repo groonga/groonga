@@ -22,6 +22,7 @@
 typedef struct {
   bool remove_tag;
   bool expand_character_reference;
+  grn_obj selector;
 } html_extract_options;
 
 static void
@@ -29,11 +30,13 @@ html_extract_options_init(grn_ctx *ctx, html_extract_options *options)
 {
   options->remove_tag = true;
   options->expand_character_reference = true;
+  GRN_TEXT_INIT(&(options->selector), 0);
 }
 
 static void
 html_extract_options_fin(grn_ctx *ctx, html_extract_options *options)
 {
+  GRN_OBJ_FIN(ctx, &(options->selector));
 }
 
 static void
@@ -77,6 +80,14 @@ html_extract_open_options(grn_ctx *ctx,
                                     raw_options,
                                     i,
                                     options->expand_character_reference);
+    } else if (GRN_RAW_STRING_EQUAL_CSTRING(name_raw, "selector")) {
+      const char *selector;
+      grn_id domain;
+      unsigned int selector_length =
+        grn_vector_get_element(ctx, raw_options, i, &selector, NULL, &domain);
+      if (grn_type_id_is_text_family(ctx, domain)) {
+        GRN_TEXT_SET(ctx, &(options->selector), selector, selector_length);
+      }
     }
   }
   GRN_OPTION_VALUES_EACH_END();
@@ -188,6 +199,30 @@ typedef enum {
   HTML_STATE_IN_CHAR_REF,
 } html_state;
 
+static bool
+html_tag_match_selector(grn_ctx *ctx,
+                        const char *start,
+                        const char *end,
+                        html_extract_options *options,
+                        bool *is_end_tag)
+{
+  const char *current = start + 1;
+  *is_end_tag = (current < end && *current == '/');
+  if (*is_end_tag) {
+    current++;
+  }
+  grn_raw_string name;
+  name.value = current;
+  while (current < end && *current != '/' &&
+         !grn_isspace(current, ctx->encoding)) {
+    current++;
+  }
+  name.length = (size_t)(current - name.value);
+  grn_raw_string selector;
+  GRN_RAW_STRING_SET(selector, &(options->selector));
+  return GRN_RAW_STRING_EQUAL(name, selector);
+}
+
 static grn_obj *
 html_extract(grn_ctx *ctx, grn_obj *extractor, grn_extract_data *data)
 {
@@ -225,6 +260,9 @@ html_extract(grn_ctx *ctx, grn_obj *extractor, grn_extract_data *data)
   const char *start_tag = NULL;
   const char *start_char_ref = NULL;
 
+  const bool use_selector = (GRN_TEXT_LEN(&(options->selector)) > 0);
+  bool in_matched_element = false;
+
   int char_length = 0;
   for (; current < end; current += char_length) {
     char_length = grn_charlen(ctx, current, end);
@@ -238,7 +276,26 @@ html_extract(grn_ctx *ctx, grn_obj *extractor, grn_extract_data *data)
       switch (state) {
       case HTML_STATE_IN_TAG:
         if (*current == '>') {
-          if (!options->remove_tag) {
+          bool need_output_tag = !options->remove_tag;
+          if (use_selector) {
+            bool is_end_tag;
+            if (html_tag_match_selector(ctx,
+                                        start_tag,
+                                        current,
+                                        options,
+                                        &is_end_tag)) {
+              /* TODO: Support nested elements.
+               * Only the content until the first `</div>` is processed for
+               * `<div><div></div>...</div>` for now.
+               */
+              in_matched_element = !is_end_tag;
+              /* We don't output the tags of the matched element. */
+              need_output_tag = false;
+            } else if (!in_matched_element) {
+              need_output_tag = false;
+            }
+          }
+          if (need_output_tag) {
             GRN_TEXT_PUT(ctx, output, start_tag, (current - start_tag + 1));
           }
           state = HTML_STATE_TEXT;
@@ -293,9 +350,12 @@ html_extract(grn_ctx *ctx, grn_obj *extractor, grn_extract_data *data)
         }
         break;
       default:
-        if (options->remove_tag && *current == '<') {
+        if ((options->remove_tag || use_selector) && *current == '<') {
           state = HTML_STATE_IN_TAG;
           start_tag = current;
+          processed = true;
+        } else if (use_selector && !in_matched_element) {
+          /* Ignore the content out of the matched element. */
           processed = true;
         } else if (options->expand_character_reference && *current == '&') {
           state = HTML_STATE_IN_CHAR_REF;
@@ -323,12 +383,16 @@ html_extract(grn_ctx *ctx, grn_obj *extractor, grn_extract_data *data)
       }
       break;
     default:
+      if (use_selector && !in_matched_element) {
+        /* Ignore the content out of the matched element. */
+        break;
+      }
       GRN_TEXT_PUT(ctx, output, current, (size_t)char_length);
       break;
     }
   }
   if (state == HTML_STATE_IN_TAG) {
-    if (!options->remove_tag) {
+    if (!options->remove_tag && (!use_selector || in_matched_element)) {
       GRN_TEXT_PUT(ctx, output, start_tag, (size_t)(current - start_tag));
     }
   }

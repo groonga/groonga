@@ -1,0 +1,3 @@
+extract \
+  --extractors 'ExtractorHTML("selector", "article")' \
+  --value "<nav>nav</nav><article>Hello <b>World</b></article><footer>footer</footer>"

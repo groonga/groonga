@@ -1,0 +1,2 @@
+extract   --extractors 'ExtractorHTML("selector", "article")'   --value "<nav>nav</nav><main>Hello <b>World</b></main><footer>footer</footer>"
+[[0,0.0,0.0],{"extracted":""}]
