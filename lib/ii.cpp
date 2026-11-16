@@ -7135,6 +7135,26 @@ grn_ii_wal_touch(grn_ctx *ctx, grn_ii *ii, const char *tag)
   return rc;
 }
 
+static inline void
+grn_ii_updspec_init_embedded(grn_ii *ii,
+                             const uint32_t *a,
+                             grn_ii_updspec *u,
+                             struct _grn_ii_pos *pos)
+{
+  pos->pos = a[1];
+  pos->next = NULL;
+  u->pos = pos;
+  if ((ii->header.common->flags & GRN_OBJ_WITH_SECTION)) {
+    u->rid = POS_RID_SID_EXTRACT_RID(a[0]);
+    u->sid = POS_RID_SID_EXTRACT_SID(a[0]);
+  } else {
+    u->rid = POS_RID_EXTRACT(a[0]);
+    u->sid = 1;
+  }
+  u->tf = 1;
+  u->weight = 0;
+}
+
 static inline grn_rc
 grn_ii_update_one_internal(
   grn_ctx *ctx, grn_ii *ii, grn_id tid, grn_ii_updspec *u, grn_hash *h)
@@ -7400,20 +7420,9 @@ grn_ii_update_one_internal(
                             b->header.buffer_free);
       } else {
         grn_ii_updspec u2;
-        uint32_t size2 = 0, v = a[0];
+        uint32_t size2 = 0;
         struct _grn_ii_pos pos2;
-        pos2.pos = a[1];
-        pos2.next = NULL;
-        u2.pos = &pos2;
-        if ((ii->header.common->flags & GRN_OBJ_WITH_SECTION)) {
-          u2.rid = POS_RID_SID_EXTRACT_RID(v);
-          u2.sid = POS_RID_SID_EXTRACT_SID(v);
-        } else {
-          u2.rid = POS_RID_EXTRACT(v);
-          u2.sid = 1;
-        }
-        u2.tf = 1;
-        u2.weight = 0;
+        grn_ii_updspec_init_embedded(ii, a, &u2, &pos2);
         if (u2.rid != u->rid || u2.sid != u->sid) {
           uint8_t *bs2 = encode_rec(ctx, ii, &u2, &size2, 0);
           if (!bs2) {
