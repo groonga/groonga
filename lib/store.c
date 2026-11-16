@@ -2522,8 +2522,8 @@ grn_ja_n_maximum_ginfo_segments(grn_ja *ja)
           ja->header->n_element_variations);
 }
 
-static inline bool
-grn_ja_is_full(grn_ja *ja)
+bool
+grn_ja_is_full(grn_ctx *ctx, grn_ja *ja)
 {
   uint32_t seg = grn_ja_find_free_segment(ja);
   return ((seg + grn_ja_n_maximum_ginfo_segments(ja)) >=
@@ -2531,16 +2531,14 @@ grn_ja_is_full(grn_ja *ja)
 }
 
 grn_ja *
-grn_ja_get(grn_ctx *ctx, grn_obj *obj)
+grn_ja_ensure_partition(grn_ctx *ctx, grn_obj *obj)
 {
   grn_ja *ja = (grn_ja *)obj;
 
   if ((ja->header->flags & GRN_OBJ_COLUMN_LARGE) && (ja->io->path[0] != '\0')) {
     if ((ja->header->flags & GRN_OBJ_COLUMN_TYPE_MASK) ==
         GRN_OBJ_COLUMN_SCALAR) {
-      if (grn_ja_is_full(ja)) {
-        ; // TODO: implement ensuring partition map and create a new partition
-      }
+      ; // TODO: implement ensuring partition map and create a new partition
     }
   }
   return ja;
