@@ -1,0 +1,41 @@
+# This is too slow with HTTP.
+#@require-interface stdio
+
+# A posting for "a" in the last record can be stored in an empty
+# buffer but it can't be stored in the buffer for "a" even after
+# flushing because the buffer has many terms. It's merged into a
+# chunk directly.
+table_create Memos TABLE_NO_KEY
+column_create Memos content COLUMN_SCALAR LongText
+
+table_create Terms TABLE_PAT_KEY ShortText --default_tokenizer TokenDelimit
+column_create Terms index COLUMN_INDEX|WITH_POSITION Memos content
+
+# Increase the total chunk size to avoid splitting the buffer for "a".
+#@timeout 60
+#@disable-logging
+#@generate-series 1 200000 Memos '{"content" => (0...20).collect {|j| "z#{(i * (j + 1)) % 997}"}.join(" ")}'
+#@enable-logging
+#@timeout default
+
+# Put many terms to the buffer for "a".
+#@disable-logging
+#@generate-series 1 1000 Memos '{"content" => format("a%05d a%05d", 1001 - i, 1001 - i)}'
+#@enable-logging
+
+load --table Memos
+[
+{"content": "a a"}
+]
+
+#@timeout 60
+#@disable-logging
+#@generate-series 1 1 Memos '{"content" => ("a " + "b " * 142) * 125000}'
+#@enable-logging
+#@timeout default
+
+select Memos \
+  --match_columns content \
+  --query a \
+  --output_columns _id,_score \
+  --sort_keys _id

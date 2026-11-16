@@ -7686,33 +7686,18 @@ grn_ii_update_one_internal(
                   b->header.nterms,
                   b->header.nterms_void);
           if (b->header.buffer_free < size) {
-            grn_obj term;
-            GRN_DEFINE_NAME(ii);
-            GRN_TEXT_INIT(&term, 0);
-            grn_ii_get_term(ctx, ii, tid, &term);
-            MERR("%s buffer is full: "
-                 "<%.*s>: "
-                 "<%.*s>(%u): "
-                 "(%u:%u): "
-                 "segment:<%u>, "
-                 "new-segment:<%u>, "
-                 "free:<%u>, "
-                 "required:<%u>",
-                 tag,
-                 name_size,
-                 name,
-                 (int)GRN_TEXT_LEN(&term),
-                 GRN_TEXT_VALUE(&term),
-                 tid,
-                 u->rid,
-                 u->sid,
-                 pos,
-                 a[0],
-                 b->header.buffer_free,
-                 size);
-            GRN_OBJ_FIN(ctx, &term);
+            /* The buffer has too many terms to store the posting even
+             * after flushing. */
             buffer_close(ctx, ii, pseg);
-            /* todo: direct merge */
+            grn_ii_update_one_large_posting(ctx,
+                                            ii,
+                                            tid,
+                                            u,
+                                            a,
+                                            bs,
+                                            size,
+                                            h,
+                                            tag);
             goto exit;
           }
         }
