@@ -1,3 +1,6 @@
+# This is too slow with HTTP.
+#@require-interface stdio
+
 # A posting for "a" in the 2nd record can be stored in a buffer but
 # it can't be stored with the embedded posting for "a" in the 1st
 # record. It's merged into a chunk directly.

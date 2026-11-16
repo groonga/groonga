@@ -1,3 +1,6 @@
+# This is too slow with HTTP.
+#@require-interface stdio
+
 # A posting for "a" in the 30001st record is too large to be stored
 # in a buffer. It's merged into a chunk directly with postings for "a"
 # in the chunk.

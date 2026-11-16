@@ -1,3 +1,6 @@
+# This is too slow with HTTP.
+#@require-interface stdio
+
 # A posting for "a" in the "k1" record is too large to be stored in a
 # buffer. It's merged into a chunk directly and replaces the existing
 # posting for "a" in the "k1" record in the buffer.
@@ -25,10 +28,13 @@ select Memos \
   --output_columns _key,_score \
   --sort_keys _key
 
+# Removing the large posting is also slow.
+#@timeout 60
 load --table Memos
 [
 {"_key": "k1", "content": "a e"}
 ]
+#@timeout default
 
 select Memos \
   --match_columns content \
