@@ -4152,17 +4152,33 @@ merge_dump_source(grn_ctx *ctx,
 }
 
 typedef struct {
+  grn_id term_id;
+  /* This is the same format as the data in buffer_rec. */
+  const uint8_t *data;
+  uint32_t size;
+} grn_ii_large_posting;
+
+typedef struct {
   grn_ii *ii;
   bool succeeded;
   grn_obj source_chunks;
   grn_obj dest_chunks;
+  /* A posting that is too large to be stored in a buffer. It's merged
+   * into the chunk directly. */
+  const grn_ii_large_posting *large_posting;
+  bool large_posting_merged;
 } grn_merging_data;
 
 static void
-grn_merging_data_init(grn_ctx *ctx, grn_merging_data *data, grn_ii *ii)
+grn_merging_data_init(grn_ctx *ctx,
+                      grn_merging_data *data,
+                      grn_ii *ii,
+                      const grn_ii_large_posting *large_posting)
 {
   data->ii = ii;
   data->succeeded = false;
+  data->large_posting = large_posting;
+  data->large_posting_merged = false;
   GRN_UINT32_INIT(&(data->source_chunks), GRN_OBJ_VECTOR);
   GRN_UINT32_INIT(&(data->dest_chunks), GRN_OBJ_VECTOR);
 }
@@ -4220,6 +4236,11 @@ typedef struct {
   /* The next record in the buffer. */
   uint16_t next_position;
   merger_buffer_posting record;
+  /* The large posting that isn't stored in the buffer. This is newer
+   * than records in the buffer. large_posting.data is NULL when there
+   * is no large posting or it's already used. */
+  merger_buffer_posting large_posting;
+  uint32_t large_posting_size;
 } merger_buffer_data;
 
 typedef struct {
@@ -4508,7 +4529,26 @@ static inline void
 merger_get_next_buffer(grn_ctx *ctx, merger_data *data)
 {
   merger_buffer_data *buffer_data = &(data->source.buffer);
-  if (buffer_data->record.id.rid == 0) {
+  const docinfo *record_id = &(buffer_data->record.id);
+  if (buffer_data->large_posting.data) {
+    const docinfo *large_posting_id = &(buffer_data->large_posting.id);
+    if (record_id->rid == 0 || large_posting_id->rid < record_id->rid ||
+        (large_posting_id->rid == record_id->rid &&
+         large_posting_id->sid <= record_id->sid)) {
+      if (large_posting_id->rid == record_id->rid &&
+          large_posting_id->sid == record_id->sid) {
+        /* The large posting is newer than the record in the buffer. */
+        merger_read_next_buffer_record(ctx, data);
+        if (ctx->rc != GRN_SUCCESS) {
+          return;
+        }
+      }
+      buffer_data->current = buffer_data->large_posting;
+      buffer_data->large_posting.data = NULL;
+      return;
+    }
+  }
+  if (record_id->rid == 0) {
     buffer_data->current.id.rid = 0;
     return;
   }
@@ -4520,11 +4560,24 @@ static inline void
 merger_start_buffer(grn_ctx *ctx,
                     merger_data *data,
                     buffer *buf,
-                    uint16_t position)
+                    uint16_t position,
+                    const grn_ii_large_posting *large_posting)
 {
   merger_buffer_data *buffer_data = &(data->source.buffer);
   buffer_data->buf = buf;
   buffer_data->next_position = position;
+  if (large_posting &&
+      large_posting->term_id == CHUNK_SPLIT_OFF(data->term_id)) {
+    const uint8_t *large_posting_data = large_posting->data;
+    GRN_B_DEC(buffer_data->large_posting.id.rid, large_posting_data);
+    if ((data->ii->header.common->flags & GRN_OBJ_WITH_SECTION)) {
+      GRN_B_DEC(buffer_data->large_posting.id.sid, large_posting_data);
+    } else {
+      buffer_data->large_posting.id.sid = 1;
+    }
+    buffer_data->large_posting.data = large_posting_data;
+    buffer_data->large_posting_size = large_posting->size;
+  }
   merger_read_next_buffer_record(ctx, data);
   if (ctx->rc != GRN_SUCCESS) {
     return;
@@ -4715,7 +4768,9 @@ chunk_merge(grn_ctx *ctx,
   auto scp = static_cast<const uint8_t *>(
     WIN_MAP(ctx, ii->chunk, &sw, segno, 0, size, GRN_IO_RDONLY));
   datavec rdv[MAX_N_ELEMENTS + 1];
-  size_t bufsize = S_SEGMENT * ii->n_elements;
+  /* The max size of postings in the buffer for this term. */
+  const size_t max_buffer_size = S_SEGMENT + buffer_data->large_posting_size;
+  size_t bufsize = max_buffer_size * ii->n_elements;
 
   if (!scp) {
     grn_obj term;
@@ -4787,7 +4842,11 @@ chunk_merge(grn_ctx *ctx,
   }
   merger_init_chunk_data(ctx, data, rdv);
   /* (df in chunk list) = a[1] - chunk_data->n_documents; */
-  datavec_reset(ctx, ii, dv, chunk_data->n_documents + S_SEGMENT, bufsize);
+  datavec_reset(ctx,
+                ii,
+                dv,
+                chunk_data->n_documents + max_buffer_size,
+                bufsize);
   if (ctx->rc != GRN_SUCCESS) {
     grn_obj term;
     GRN_DEFINE_NAME(ii);
@@ -5168,7 +5227,12 @@ buffer_merge_internal(grn_ctx *ctx,
     data.merging_data = merging_data;
     chunk_data->data_start = sc;
 
-    if (bt->pos_in_buffer == 0) {
+    const grn_ii_large_posting *large_posting = merging_data->large_posting;
+    if (large_posting && large_posting->term_id != CHUNK_SPLIT_OFF(bt->tid)) {
+      large_posting = NULL;
+    }
+
+    if (bt->pos_in_buffer == 0 && !large_posting) {
       if (bt->size_in_buffer > 0) {
         grn_obj term;
         GRN_DEFINE_NAME(ii);
@@ -5209,12 +5273,24 @@ buffer_merge_internal(grn_ctx *ctx,
       continue;
     }
 
-    merger_start_buffer(ctx, &data, sb, bt->pos_in_buffer);
+    merger_start_buffer(ctx, &data, sb, bt->pos_in_buffer, large_posting);
     if (ctx->rc != GRN_SUCCESS) {
       goto exit;
     }
+    /* The max size of postings in the buffer for this term. */
+    const size_t max_buffer_size = S_SEGMENT + buffer_data->large_posting_size;
+    if (large_posting) {
+      datavec_reset(ctx,
+                    ii,
+                    dv,
+                    max_buffer_size,
+                    max_buffer_size * ii->n_elements);
+      if (ctx->rc != GRN_SUCCESS) {
+        goto exit;
+      }
+    }
     if (chunk_data->data_start && bt->size_in_chunk > 0) {
-      size_t size = S_SEGMENT * ii->n_elements;
+      size_t size = max_buffer_size * ii->n_elements;
       chunk_data->data = chunk_data->data_start + bt->pos_in_chunk;
       chunk_data->data_end = chunk_data->data + bt->size_in_chunk;
       if ((bt->tid & CHUNK_SPLIT)) {
@@ -5326,7 +5402,11 @@ buffer_merge_internal(grn_ctx *ctx,
         }
         size += decoded_size;
         merger_init_chunk_data(ctx, &data, rdv);
-        datavec_reset(ctx, ii, dv, chunk_data->n_documents + S_SEGMENT, size);
+        datavec_reset(ctx,
+                      ii,
+                      dv,
+                      chunk_data->n_documents + max_buffer_size,
+                      size);
         if (ctx->rc != GRN_SUCCESS) {
           if (cinfo) {
             GRN_FREE(cinfo);
@@ -5347,7 +5427,7 @@ buffer_merge_internal(grn_ctx *ctx,
                 (int)GRN_TEXT_LEN(&term),
                 GRN_TEXT_VALUE(&term),
                 CHUNK_SPLIT_OFF(bt->tid),
-                (size_t)(chunk_data->n_documents + S_SEGMENT),
+                (size_t)(chunk_data->n_documents + max_buffer_size),
                 size);
             GRN_OBJ_FIN(ctx, &term);
           }
@@ -5400,6 +5480,9 @@ buffer_merge_internal(grn_ctx *ctx,
         GRN_OBJ_FIN(ctx, &term);
       }
       goto exit;
+    }
+    if (large_posting && !buffer_data->large_posting.data) {
+      merging_data->large_posting_merged = true;
     }
     {
       /* TODO: Is n_documents better? */
@@ -5584,6 +5667,26 @@ buffer_merge_internal(grn_ctx *ctx,
       GRN_FREE(cinfo);
     }
   }
+  if (merging_data->large_posting && !merging_data->large_posting_merged) {
+    grn_obj term;
+    GRN_DEFINE_NAME(ii);
+    GRN_TEXT_INIT(&term, 0);
+    grn_ii_get_term(ctx, ii, merging_data->large_posting->term_id, &term);
+    CRIT(GRN_FILE_CORRUPT,
+         "[ii][buffer][merge] the large posting's term isn't in buffer: "
+         "<%.*s>: "
+         "<%.*s>(%u): "
+         "segment:<%u>",
+         name_size,
+         name,
+         (int)GRN_TEXT_LEN(&term),
+         GRN_TEXT_VALUE(&term),
+         merging_data->large_posting->term_id,
+         seg);
+    GRN_OBJ_FIN(ctx, &term);
+    goto exit;
+  }
+
   db->header.chunk_size = (uint32_t)(dcp - dc);
   db->header.buffer_free =
     S_SEGMENT - sizeof(buffer_header) - db->header.nterms * sizeof(buffer_term);
@@ -5660,7 +5763,11 @@ fake_map(grn_ctx *ctx,
 }
 
 static inline grn_rc
-buffer_flush_internal(grn_ctx *ctx, grn_ii *ii, uint32_t lseg, grn_hash *h)
+buffer_flush_internal(grn_ctx *ctx,
+                      grn_ii *ii,
+                      uint32_t lseg,
+                      grn_hash *h,
+                      const grn_ii_large_posting *large_posting)
 {
   grn_io_win sw, dw;
   buffer *sb;
@@ -5731,7 +5838,7 @@ buffer_flush_internal(grn_ctx *ctx, grn_ii *ii, uint32_t lseg, grn_hash *h)
         db->header.nterms = n;
         uint8_t *dc = NULL;
         grn_merging_data merging_data;
-        grn_merging_data_init(ctx, &merging_data, ii);
+        grn_merging_data_init(ctx, &merging_data, ii, large_posting);
         buffer_merge(ctx, ii, lseg, h, sb, sc, db, &dc, &merging_data);
         if (ctx->rc == GRN_SUCCESS) {
           const uint32_t actual_chunk_size = db->header.chunk_size;
@@ -5810,10 +5917,14 @@ buffer_flush_internal(grn_ctx *ctx, grn_ii *ii, uint32_t lseg, grn_hash *h)
 }
 
 static grn_rc
-buffer_flush(grn_ctx *ctx, grn_ii *ii, uint32_t lseg, grn_hash *h)
+buffer_flush(grn_ctx *ctx,
+             grn_ii *ii,
+             uint32_t lseg,
+             grn_hash *h,
+             const grn_ii_large_posting *large_posting)
 {
   GRN_SLOW_LOG_PUSH(ctx, GRN_LOG_DEBUG);
-  grn_rc rc = buffer_flush_internal(ctx, ii, lseg, h);
+  grn_rc rc = buffer_flush_internal(ctx, ii, lseg, h, large_posting);
   GRN_SLOW_LOG_POP_BEGIN(ctx, GRN_LOG_DEBUG, elapsed_time)
   {
     GRN_DEFINE_NAME(ii);
@@ -6240,7 +6351,7 @@ buffer_split_internal(grn_ctx *ctx, grn_ii *ii, uint32_t lseg, grn_hash *h)
           term_split(ctx, ii->lexicon, sb, db0, db1);
           uint8_t *dc0 = NULL;
           grn_merging_data merging_data;
-          grn_merging_data_init(ctx, &merging_data, ii);
+          grn_merging_data_init(ctx, &merging_data, ii, NULL);
           buffer_merge(ctx, ii, lseg, h, sb, sc, db0, &dc0, &merging_data);
           if (ctx->rc == GRN_SUCCESS) {
             const uint32_t actual_db0_chunk_size = db0->header.chunk_size;
@@ -6487,7 +6598,7 @@ buffer_new_find_segment(grn_ctx *ctx,
           size + sizeof(buffer_term)) {
         break;
       }
-      if (buffer_flush(ctx, ii, grn_ii_pos_lseg(ii, pos), h)) {
+      if (buffer_flush(ctx, ii, grn_ii_pos_lseg(ii, pos), h, NULL)) {
         break;
       }
     }
@@ -7342,7 +7453,7 @@ grn_ii_update_one_internal(
             }
             continue;
           }
-          buffer_flush(ctx, ii, grn_ii_pos_lseg(ii, pos), h);
+          buffer_flush(ctx, ii, grn_ii_pos_lseg(ii, pos), h, NULL);
           if (ctx->rc != GRN_SUCCESS) {
             grn_obj term;
             char errbuf[GRN_CTX_MSGSIZE];
@@ -7776,7 +7887,7 @@ grn_ii_delete_one_internal(
               b->header.buffer_free,
               grn_ii_pos_lseg(ii, pos));
       buffer_close(ctx, ii, pseg);
-      buffer_flush(ctx, ii, grn_ii_pos_lseg(ii, pos), h);
+      buffer_flush(ctx, ii, grn_ii_pos_lseg(ii, pos), h, NULL);
       if (ctx->rc != GRN_SUCCESS) {
         grn_obj term;
         char errbuf[GRN_CTX_MSGSIZE];
