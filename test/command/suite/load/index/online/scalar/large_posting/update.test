@@ -1,0 +1,37 @@
+# A posting for "a" in the "k1" record is too large to be stored in a
+# buffer. It's merged into a chunk directly and replaces the existing
+# posting for "a" in the "k1" record in the buffer.
+table_create Memos TABLE_HASH_KEY ShortText
+column_create Memos content COLUMN_SCALAR LongText
+
+table_create Terms TABLE_PAT_KEY ShortText --default_tokenizer TokenDelimit
+column_create Terms index COLUMN_INDEX|WITH_POSITION Memos content
+
+load --table Memos
+[
+{"_key": "k1", "content": "a c"},
+{"_key": "k2", "content": "a d"}
+]
+
+#@timeout 60
+#@disable-logging
+#@generate-series 1 1 Memos '{"_key" => "k1", "content" => ("a " + "b " * 142) * 131071}'
+#@enable-logging
+#@timeout default
+
+select Memos \
+  --match_columns content \
+  --query a \
+  --output_columns _key,_score \
+  --sort_keys _key
+
+load --table Memos
+[
+{"_key": "k1", "content": "a e"}
+]
+
+select Memos \
+  --match_columns content \
+  --query a \
+  --output_columns _key,_score \
+  --sort_keys _key

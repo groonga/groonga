@@ -1,0 +1,86 @@
+table_create Memos TABLE_HASH_KEY ShortText
+[[0,0.0,0.0],true]
+column_create Memos content COLUMN_SCALAR LongText
+[[0,0.0,0.0],true]
+table_create Terms TABLE_PAT_KEY ShortText --default_tokenizer TokenDelimit
+[[0,0.0,0.0],true]
+column_create Terms index COLUMN_INDEX|WITH_POSITION Memos content
+[[0,0.0,0.0],true]
+load --table Memos
+[
+{"_key": "k1", "content": "a c"},
+{"_key": "k2", "content": "a d"}
+]
+[[0,0.0,0.0],2]
+#|w| [ii][update][one] too many postings: <Terms.index>: <"b">(4): record:<Memos>(1:1), n-postings:<18612082>, n-discarded-postings:<18481011>
+select Memos   --match_columns content   --query a   --output_columns _key,_score   --sort_keys _key
+[
+  [
+    0,
+    0.0,
+    0.0
+  ],
+  [
+    [
+      [
+        2
+      ],
+      [
+        [
+          "_key",
+          "ShortText"
+        ],
+        [
+          "_score",
+          "Int32"
+        ]
+      ],
+      [
+        "k1",
+        131071
+      ],
+      [
+        "k2",
+        1
+      ]
+    ]
+  ]
+]
+load --table Memos
+[
+{"_key": "k1", "content": "a e"}
+]
+[[0,0.0,0.0],1]
+select Memos   --match_columns content   --query a   --output_columns _key,_score   --sort_keys _key
+[
+  [
+    0,
+    0.0,
+    0.0
+  ],
+  [
+    [
+      [
+        2
+      ],
+      [
+        [
+          "_key",
+          "ShortText"
+        ],
+        [
+          "_score",
+          "Int32"
+        ]
+      ],
+      [
+        "k1",
+        1
+      ],
+      [
+        "k2",
+        1
+      ]
+    ]
+  ]
+]
