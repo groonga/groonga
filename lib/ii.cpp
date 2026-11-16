@@ -7286,6 +7286,18 @@ grn_ii_wal_touch(grn_ctx *ctx, grn_ii *ii, const char *tag)
   return rc;
 }
 
+static inline bool
+grn_ii_is_too_large_for_buffer(uint32_t record_size)
+{
+  return S_SEGMENT - sizeof(buffer_header) < record_size + sizeof(buffer_term);
+}
+
+/* The max size of a buffer record for an embedded posting. It has
+ * record ID, section ID, term frequency, weight and position. They're
+ * aligned to 4 bytes. */
+#define EMBEDDED_RECORD_MAX_SIZE                                               \
+  (sizeof(buffer_rec) + ((GRN_B_ENC_MAX_SIZE * 5 + 3) & ~3))
+
 static inline void
 grn_ii_updspec_init_embedded(grn_ii *ii,
                              const uint32_t *a,
@@ -7304,6 +7316,131 @@ grn_ii_updspec_init_embedded(grn_ii *ii,
   }
   u->tf = 1;
   u->weight = 0;
+}
+
+/* A posting that is too large to be stored in a buffer is merged into
+ * the chunk directly. We only add the term to a buffer without the
+ * posting and flush the buffer with the posting. */
+static grn_rc
+grn_ii_update_one_large_posting(grn_ctx *ctx,
+                                grn_ii *ii,
+                                grn_id tid,
+                                grn_ii_updspec *u,
+                                uint32_t *a,
+                                const uint8_t *bs,
+                                uint32_t size,
+                                grn_hash *h,
+                                const char *tag)
+{
+  uint32_t pos;
+  if (a[0] && !POS_IS_EMBED(a[0])) {
+    pos = a[0];
+  } else {
+    grn_ii_updspec embedded_u;
+    struct _grn_ii_pos embedded_pos;
+    uint8_t *embedded_bs = NULL;
+    uint32_t embedded_size = 0;
+    if (a[0]) {
+      grn_ii_updspec_init_embedded(ii, a, &embedded_u, &embedded_pos);
+      /* If the embedded posting is for the same record, the large
+       * posting replaces it. */
+      if (embedded_u.rid != u->rid || embedded_u.sid != u->sid) {
+        embedded_bs = encode_rec(ctx, ii, &embedded_u, &embedded_size, 0);
+        if (!embedded_bs) {
+          grn_obj term;
+          GRN_DEFINE_NAME(ii);
+          GRN_TEXT_INIT(&term, 0);
+          grn_ii_get_term(ctx, ii, tid, &term);
+          MERR("%s[large-posting] failed to encode the embedded record: "
+               "<%.*s>: "
+               "<%.*s>(%u): "
+               "(%u:%u)",
+               tag,
+               name_size,
+               name,
+               (int)GRN_TEXT_LEN(&term),
+               GRN_TEXT_VALUE(&term),
+               tid,
+               embedded_u.rid,
+               embedded_u.sid);
+          GRN_OBJ_FIN(ctx, &term);
+          return ctx->rc;
+        }
+      }
+    }
+    buffer *b;
+    buffer_term *bt;
+    buffer_rec *br;
+    uint32_t pseg =
+      buffer_new(ctx, ii, embedded_size, &pos, &bt, &br, &b, tid, h);
+    if (pseg == GRN_II_PSEG_NOT_ASSIGNED) {
+      if (embedded_bs) {
+        GRN_FREE(embedded_bs);
+      }
+      grn_obj term;
+      GRN_DEFINE_NAME(ii);
+      GRN_TEXT_INIT(&term, 0);
+      grn_ii_get_term(ctx, ii, tid, &term);
+      MERR("%s[large-posting] failed to create a buffer: "
+           "<%.*s>: "
+           "<%.*s>(%u): "
+           "(%u:%u)",
+           tag,
+           name_size,
+           name,
+           (int)GRN_TEXT_LEN(&term),
+           GRN_TEXT_VALUE(&term),
+           tid,
+           u->rid,
+           u->sid);
+      GRN_OBJ_FIN(ctx, &term);
+      return ctx->rc;
+    }
+    bt->tid = tid;
+    bt->size_in_chunk = 0;
+    bt->pos_in_chunk = 0;
+    bt->size_in_buffer = 0;
+    bt->pos_in_buffer = 0;
+    if (embedded_bs) {
+      buffer_put(ctx, ii, b, bt, br, embedded_bs, &embedded_u, embedded_size);
+      GRN_FREE(embedded_bs);
+    }
+    buffer_close(ctx, ii, pseg);
+    if (ctx->rc != GRN_SUCCESS) {
+      return ctx->rc;
+    }
+    a[0] = pos;
+  }
+
+  grn_ii_large_posting large_posting;
+  large_posting.term_id = tid;
+  large_posting.data = bs;
+  large_posting.size = size - sizeof(buffer_rec);
+  if (grn_logger_pass(ctx, GRN_LOG_DEBUG)) {
+    GRN_DEFINE_NAME(ii);
+    grn_obj term;
+    GRN_TEXT_INIT(&term, 0);
+    grn_ii_get_term(ctx, ii, tid, &term);
+    GRN_LOG(ctx,
+            GRN_LOG_DEBUG,
+            "%s[large-posting] merge into chunk directly: "
+            "<%.*s>: "
+            "<%.*s>(%u): "
+            "(%u:%u): "
+            "size:<%u>",
+            tag,
+            name_size,
+            name,
+            (int)GRN_TEXT_LEN(&term),
+            GRN_TEXT_VALUE(&term),
+            tid,
+            u->rid,
+            u->sid,
+            size);
+    GRN_OBJ_FIN(ctx, &term);
+  }
+  buffer_flush(ctx, ii, grn_ii_pos_lseg(ii, pos), h, &large_posting);
+  return ctx->rc;
 }
 
 static inline grn_rc
@@ -7369,6 +7506,19 @@ grn_ii_update_one_internal(
     goto exit;
   }
   for (;;) {
+    /* This is checked in each loop because a[0] may be changed by
+     * flushing or splitting. */
+    {
+      uint32_t required_size = size;
+      if (a[0] && POS_IS_EMBED(a[0])) {
+        /* The embedded posting may be stored with the posting. */
+        required_size += EMBEDDED_RECORD_MAX_SIZE;
+      }
+      if (grn_ii_is_too_large_for_buffer(required_size)) {
+        grn_ii_update_one_large_posting(ctx, ii, tid, u, a, bs, size, h, tag);
+        goto exit;
+      }
+    }
     if (a[0]) {
       if (!POS_IS_EMBED(a[0])) {
         pos = a[0];

@@ -1,0 +1,47 @@
+# This is too slow with HTTP.
+#@require-interface stdio
+
+# A posting for "a" in the content section of the 2nd record is too
+# large to be stored in a buffer. It's merged into a chunk directly
+# with the posting for "a" in the title section of the same record.
+table_create Memos TABLE_NO_KEY
+column_create Memos title COLUMN_SCALAR ShortText
+column_create Memos content COLUMN_SCALAR LongText
+
+table_create Terms TABLE_PAT_KEY ShortText --default_tokenizer TokenDelimit
+column_create Terms index COLUMN_INDEX|WITH_SECTION|WITH_POSITION \
+  Memos title,content
+
+load --table Memos
+[
+{"title": "a", "content": "a c"}
+]
+
+#@timeout 60
+#@disable-logging
+#@generate-series 1 1 Memos '{"title" => "a b", "content" => ("a " + "b " * 142) * 131071}'
+#@enable-logging
+#@timeout default
+
+load --table Memos
+[
+{"title": "c", "content": "a d"}
+]
+
+select Memos \
+  --match_columns title \
+  --query a \
+  --output_columns _id,_score \
+  --sort_keys _id
+
+select Memos \
+  --match_columns content \
+  --query a \
+  --output_columns _id,_score \
+  --sort_keys _id
+
+select Memos \
+  --match_columns 'title || content' \
+  --query a \
+  --output_columns _id,_score \
+  --sort_keys _id

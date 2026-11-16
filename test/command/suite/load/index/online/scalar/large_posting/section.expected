@@ -1,0 +1,97 @@
+table_create Memos TABLE_NO_KEY
+[[0,0.0,0.0],true]
+column_create Memos title COLUMN_SCALAR ShortText
+[[0,0.0,0.0],true]
+column_create Memos content COLUMN_SCALAR LongText
+[[0,0.0,0.0],true]
+table_create Terms TABLE_PAT_KEY ShortText --default_tokenizer TokenDelimit
+[[0,0.0,0.0],true]
+column_create Terms index COLUMN_INDEX|WITH_SECTION|WITH_POSITION   Memos title,content
+[[0,0.0,0.0],true]
+load --table Memos
+[
+{"title": "a", "content": "a c"}
+]
+[[0,0.0,0.0],1]
+#|w| [ii][update][one] too many postings: <Terms.index>: <"b">(3): record:<Memos>(2:2), n-postings:<18612082>, n-discarded-postings:<18481011>
+load --table Memos
+[
+{"title": "c", "content": "a d"}
+]
+[[0,0.0,0.0],1]
+select Memos   --match_columns title   --query a   --output_columns _id,_score   --sort_keys _id
+[[0,0.0,0.0],[[[2],[["_id","UInt32"],["_score","Int32"]],[1,1],[2,1]]]]
+select Memos   --match_columns content   --query a   --output_columns _id,_score   --sort_keys _id
+[
+  [
+    0,
+    0.0,
+    0.0
+  ],
+  [
+    [
+      [
+        3
+      ],
+      [
+        [
+          "_id",
+          "UInt32"
+        ],
+        [
+          "_score",
+          "Int32"
+        ]
+      ],
+      [
+        1,
+        1
+      ],
+      [
+        2,
+        131071
+      ],
+      [
+        3,
+        1
+      ]
+    ]
+  ]
+]
+select Memos   --match_columns 'title || content'   --query a   --output_columns _id,_score   --sort_keys _id
+[
+  [
+    0,
+    0.0,
+    0.0
+  ],
+  [
+    [
+      [
+        3
+      ],
+      [
+        [
+          "_id",
+          "UInt32"
+        ],
+        [
+          "_score",
+          "Int32"
+        ]
+      ],
+      [
+        1,
+        2
+      ],
+      [
+        2,
+        131072
+      ],
+      [
+        3,
+        1
+      ]
+    ]
+  ]
+]

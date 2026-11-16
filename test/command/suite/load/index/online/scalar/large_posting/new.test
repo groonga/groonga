@@ -1,0 +1,27 @@
+# This is too slow with HTTP.
+#@require-interface stdio
+
+# A posting for "a" in the 1st record is too large to be stored in a
+# buffer. It's merged into a chunk directly.
+table_create Memos TABLE_NO_KEY
+column_create Memos content COLUMN_SCALAR LongText
+
+table_create Terms TABLE_PAT_KEY ShortText --default_tokenizer TokenDelimit
+column_create Terms index COLUMN_INDEX|WITH_POSITION Memos content
+
+#@timeout 60
+#@disable-logging
+#@generate-series 1 1 Memos '{"content" => ("a " + "b " * 142) * 131071}'
+#@enable-logging
+#@timeout default
+
+load --table Memos
+[
+{"content": "a c"}
+]
+
+select Memos \
+  --match_columns content \
+  --query a \
+  --output_columns _id,_score \
+  --sort_keys _id
