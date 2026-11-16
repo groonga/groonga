@@ -4208,10 +4208,18 @@ grn_merging_data_add_dest_chunk(grn_ctx *ctx,
 }
 
 typedef struct {
-  buffer *buf;
-  const uint8_t *data;
   docinfo id;
+  /* This points to the data after the record ID and the section ID. */
+  const uint8_t *data;
+} merger_buffer_posting;
+
+typedef struct {
+  buffer *buf;
+  /* The current posting. */
+  merger_buffer_posting current;
+  /* The next record in the buffer. */
   uint16_t next_position;
+  merger_buffer_posting record;
 } merger_buffer_data;
 
 typedef struct {
@@ -4462,30 +4470,34 @@ merger_put_next_chunk(grn_ctx *ctx, merger_data *data)
 }
 
 static inline void
-merger_get_next_buffer(grn_ctx *ctx, merger_data *data)
+merger_read_next_buffer_record(grn_ctx *ctx, merger_data *data)
 {
   merger_buffer_data *buffer_data = &(data->source.buffer);
   if (buffer_data->next_position == 0) {
-    buffer_data->id.rid = 0;
+    buffer_data->record.id.rid = 0;
   } else {
-    docinfo last_id = {buffer_data->id.rid, buffer_data->id.sid, 0, 0, 0};
+    docinfo last_id = {buffer_data->record.id.rid,
+                       buffer_data->record.id.sid,
+                       0,
+                       0,
+                       0};
     buffer_rec *record =
       BUFFER_REC_AT(buffer_data->buf, buffer_data->next_position);
-    buffer_data->data = GRN_NEXT_ADDR(record);
-    GRN_B_DEC(buffer_data->id.rid, buffer_data->data);
+    buffer_data->record.data = GRN_NEXT_ADDR(record);
+    GRN_B_DEC(buffer_data->record.id.rid, buffer_data->record.data);
     if ((data->ii->header.common->flags & GRN_OBJ_WITH_SECTION)) {
-      GRN_B_DEC(buffer_data->id.sid, buffer_data->data);
+      GRN_B_DEC(buffer_data->record.id.sid, buffer_data->record.data);
     } else {
-      buffer_data->id.sid = 1;
+      buffer_data->record.id.sid = 1;
     }
-    if (last_id.rid > buffer_data->id.rid ||
-        (last_id.rid == buffer_data->id.rid &&
-         last_id.sid >= buffer_data->id.sid)) {
+    if (last_id.rid > buffer_data->record.id.rid ||
+        (last_id.rid == buffer_data->record.id.rid &&
+         last_id.sid >= buffer_data->record.id.sid)) {
       merger_report_error(ctx,
                           data,
                           "postings in block aren't sorted",
                           &last_id,
-                          &(buffer_data->id));
+                          &(buffer_data->record.id));
       return;
     }
     buffer_data->next_position = record->step;
@@ -4493,31 +4505,59 @@ merger_get_next_buffer(grn_ctx *ctx, merger_data *data)
 }
 
 static inline void
+merger_get_next_buffer(grn_ctx *ctx, merger_data *data)
+{
+  merger_buffer_data *buffer_data = &(data->source.buffer);
+  if (buffer_data->record.id.rid == 0) {
+    buffer_data->current.id.rid = 0;
+    return;
+  }
+  buffer_data->current = buffer_data->record;
+  merger_read_next_buffer_record(ctx, data);
+}
+
+static inline void
+merger_start_buffer(grn_ctx *ctx,
+                    merger_data *data,
+                    buffer *buf,
+                    uint16_t position)
+{
+  merger_buffer_data *buffer_data = &(data->source.buffer);
+  buffer_data->buf = buf;
+  buffer_data->next_position = position;
+  merger_read_next_buffer_record(ctx, data);
+  if (ctx->rc != GRN_SUCCESS) {
+    return;
+  }
+  merger_get_next_buffer(ctx, data);
+}
+
+static inline void
 merger_put_next_buffer(grn_ctx *ctx, merger_data *data)
 {
   merger_buffer_data *buffer_data = &(data->source.buffer);
-  if (buffer_data->id.rid > 0 && buffer_data->id.sid > 0) {
-    GRN_B_DEC(buffer_data->id.tf, buffer_data->data);
-    if (buffer_data->id.tf > 0) {
-      if (data->last_id.rid > buffer_data->id.rid ||
-          (data->last_id.rid == buffer_data->id.rid &&
-           data->last_id.sid >= buffer_data->id.sid)) {
+  if (buffer_data->current.id.rid > 0 && buffer_data->current.id.sid > 0) {
+    GRN_B_DEC(buffer_data->current.id.tf, buffer_data->current.data);
+    if (buffer_data->current.id.tf > 0) {
+      if (data->last_id.rid > buffer_data->current.id.rid ||
+          (data->last_id.rid == buffer_data->current.id.rid &&
+           data->last_id.sid >= buffer_data->current.id.sid)) {
         merger_report_error(ctx,
                             data,
                             "the last posting is larger than "
                             "the next posting in buffer",
                             &(data->last_id),
-                            &(buffer_data->id));
+                            &(buffer_data->current.id));
         return;
       }
       if ((data->ii->header.common->flags & GRN_OBJ_WITH_WEIGHT)) {
-        GRN_B_DEC(buffer_data->id.weight, buffer_data->data);
+        GRN_B_DEC(buffer_data->current.id.weight, buffer_data->current.data);
       }
-      merger_put_next_id(ctx, data, &(buffer_data->id));
+      merger_put_next_id(ctx, data, &(buffer_data->current.id));
       if ((data->ii->header.common->flags & GRN_OBJ_WITH_POSITION)) {
         uint32_t rest_n_dest_positiongs =
           (uint32_t)(data->dest.position_gaps_end - data->dest.position_gaps);
-        if (buffer_data->id.tf > rest_n_dest_positiongs) {
+        if (buffer_data->current.id.tf > rest_n_dest_positiongs) {
           /* TODO: Make this case error. */
           merger_buffer_data *buffer_data = &(data->source.buffer);
           grn_obj term;
@@ -4535,14 +4575,14 @@ merger_put_next_buffer(grn_ctx *ctx, merger_data *data)
                   (int)GRN_TEXT_LEN(&term),
                   GRN_TEXT_VALUE(&term),
                   CHUNK_SPLIT_OFF(data->term_id),
-                  buffer_data->id.rid,
-                  buffer_data->id.sid,
-                  buffer_data->id.tf,
+                  buffer_data->current.id.rid,
+                  buffer_data->current.id.sid,
+                  buffer_data->current.id.tf,
                   rest_n_dest_positiongs);
           GRN_OBJ_FIN(ctx, &term);
         }
-        while (buffer_data->id.tf--) {
-          GRN_B_DEC(*(data->dest.position_gaps), buffer_data->data);
+        while (buffer_data->current.id.tf--) {
+          GRN_B_DEC(*(data->dest.position_gaps), buffer_data->current.data);
           data->position += *(data->dest.position_gaps);
           data->dest.position_gaps++;
         }
@@ -4560,28 +4600,28 @@ merger_merge(grn_ctx *ctx, merger_data *data)
 {
   merger_buffer_data *buffer_data = &(data->source.buffer);
   merger_chunk_data *chunk_data = &(data->source.chunk);
-  if (buffer_data->id.rid > 0) {
+  if (buffer_data->current.id.rid > 0) {
     if (chunk_data->id.rid > 0) {
-      if (chunk_data->id.rid < buffer_data->id.rid) {
+      if (chunk_data->id.rid < buffer_data->current.id.rid) {
         merger_put_next_chunk(ctx, data);
         if (ctx->rc != GRN_SUCCESS) {
           return false;
         }
       } else {
-        if (buffer_data->id.rid < chunk_data->id.rid) {
+        if (buffer_data->current.id.rid < chunk_data->id.rid) {
           merger_put_next_buffer(ctx, data);
           if (ctx->rc != GRN_SUCCESS) {
             return false;
           }
         } else {
-          if (buffer_data->id.sid > 0) {
-            if (chunk_data->id.sid < buffer_data->id.sid) {
+          if (buffer_data->current.id.sid > 0) {
+            if (chunk_data->id.sid < buffer_data->current.id.sid) {
               merger_put_next_chunk(ctx, data);
               if (ctx->rc != GRN_SUCCESS) {
                 return false;
               }
             } else {
-              if (buffer_data->id.sid == chunk_data->id.sid) {
+              if (buffer_data->current.id.sid == chunk_data->id.sid) {
                 merger_get_next_chunk(ctx, data);
                 if (ctx->rc != GRN_SUCCESS) {
                   return false;
@@ -4801,7 +4841,7 @@ chunk_merge(grn_ctx *ctx,
     if (!merger_merge(ctx, data)) {
       break;
     }
-  } while (buffer_data->id.rid <= rid || chunk_data->id.rid);
+  } while (buffer_data->current.id.rid <= rid || chunk_data->id.rid);
   if (ctx->rc != GRN_SUCCESS) {
     grn_obj term;
     GRN_DEFINE_NAME(ii);
@@ -5126,7 +5166,6 @@ buffer_merge_internal(grn_ctx *ctx,
     data.ii = ii;
     data.term_id = bt->tid;
     data.merging_data = merging_data;
-    buffer_data->buf = sb;
     chunk_data->data_start = sc;
 
     if (bt->pos_in_buffer == 0) {
@@ -5170,8 +5209,7 @@ buffer_merge_internal(grn_ctx *ctx,
       continue;
     }
 
-    buffer_data->next_position = bt->pos_in_buffer;
-    merger_get_next_buffer(ctx, &data);
+    merger_start_buffer(ctx, &data, sb, bt->pos_in_buffer);
     if (ctx->rc != GRN_SUCCESS) {
       goto exit;
     }
@@ -5212,7 +5250,7 @@ buffer_merge_internal(grn_ctx *ctx,
           GRN_B_DEC(cinfo[i].size, chunk_data->data);
           GRN_B_DEC(cinfo[i].dgap, chunk_data->data);
           crid += cinfo[i].dgap;
-          if (buffer_data->id.rid <= crid) {
+          if (buffer_data->current.id.rid <= crid) {
             chunk_merge(ctx, &data, &cinfo[i], crid, dv, &balance);
             if (ctx->rc != GRN_SUCCESS) {
               if (cinfo) {
@@ -5887,10 +5925,12 @@ grn_ii_buffer_check(grn_ctx *ctx, grn_ii *ii, uint32_t lseg)
 
     data.ii = ii;
     data.term_id = bt->tid;
+    chunk_data->data_start = sc;
+    /* We don't use merged postings. We just need to read the first
+     * record. */
     data.source.buffer.buf = sb;
     data.source.buffer.next_position = bt->pos_in_buffer;
-    chunk_data->data_start = sc;
-    merger_get_next_buffer(ctx, &data);
+    merger_read_next_buffer_record(ctx, &data);
     if (sc && bt->size_in_chunk) {
       size_t size = S_SEGMENT * ii->n_elements;
       chunk_data->data = chunk_data->data_start + bt->pos_in_chunk;
