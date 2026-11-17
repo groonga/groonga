@@ -1,0 +1,27 @@
+table_create Blog TABLE_NO_KEY
+column_create Blog html COLUMN_SCALAR Text
+
+load --table Blog
+[
+{"html": "<nav>nav</nav><article>Groonga article</article>"},
+{"html": "<nav>nav</nav><article>Mroonga article</article>"},
+{"html": "<nav>nav</nav><article>Blog article</article>"}
+]
+
+table_create Terms TABLE_PAT_KEY ShortText \
+  --default_tokenizer TokenBigram \
+  --normalizers NormalizerNFKC \
+  --extractors 'ExtractorHTML("selector", "article")'
+column_create Terms blog_html COLUMN_INDEX|WITH_POSITION Blog html
+
+select Blog \
+  --match_columns html \
+  --query "groonga" \
+  --output_columns html
+
+select Blog \
+  --match_columns html \
+  --query "nav" \
+  --output_columns html
+
+index_column_diff Terms blog_html

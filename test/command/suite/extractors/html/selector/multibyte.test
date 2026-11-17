@@ -1,0 +1,3 @@
+extract \
+  --extractors 'ExtractorHTML("selector", "article")' \
+  --value "<nav>ナビ</nav><article>こんにちは<b>世界</b></article><footer>フッター</footer>"
