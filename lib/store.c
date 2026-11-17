@@ -2561,10 +2561,8 @@ grn_ja_is_full(grn_ja *ja)
  * until partition creation is implemented.)
  */
 grn_ja *
-grn_ja_ensure_partition(grn_ctx *ctx, grn_obj *obj)
+grn_ja_ensure_partition(grn_ctx *ctx, grn_ja *ja)
 {
-  grn_ja *ja = (grn_ja *)obj;
-
   if (grn_ja_is_partitioning_available(ja)) {
     if (grn_ja_is_full(ja)) {
       ; // TODO: implement ensuring partition map and create a new partition

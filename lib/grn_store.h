@@ -191,7 +191,7 @@ GRN_API void *
 grn_ja_ref(
   grn_ctx *ctx, grn_ja *ja, grn_id id, grn_io_win *iw, uint32_t *value_len);
 grn_ja *
-grn_ja_ensure_partition(grn_ctx *ctx, grn_obj *obj);
+grn_ja_ensure_partition(grn_ctx *ctx, grn_ja *ja);
 grn_obj *
 grn_ja_get_value(grn_ctx *ctx, grn_ja *ja, grn_id id, grn_obj *value);
 
