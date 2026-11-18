@@ -1,0 +1,10 @@
+table_create Data TABLE_NO_KEY
+column_create Data page COLUMN_SCALAR Int32
+
+load --table Data
+[
+{"page": 29}
+]
+
+select Data \
+  --output_columns 'html_extract(page)'

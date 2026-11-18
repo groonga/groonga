@@ -1,0 +1,37 @@
+table_create Data TABLE_NO_KEY
+[[0,0.0,0.0],true]
+column_create Data content COLUMN_SCALAR Text
+[[0,0.0,0.0],true]
+load --table Data
+[
+{"content": "<html><head><title>title text</title></head><body>body contents</body></html>"}
+]
+[[0,0.0,0.0],1]
+select Data   --output_columns 'html_extract(content, 29)'
+[
+  [
+    [
+      -22,
+      0.0,
+      0.0
+    ],
+    "[html-extract][options][parse] options must be a hash table: 29"
+  ],
+  [
+    [
+      [
+        1
+      ],
+      [
+        [
+          "html_extract",
+          null
+        ]
+      ],
+      [
+        "[html-extract][options][parse] options must be a hash table: 29"
+      ]
+    ]
+  ]
+]
+#|e| [html-extract][options][parse] options must be a hash table: 29
