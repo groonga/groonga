@@ -220,7 +220,7 @@ html_tag_match_selector(grn_ctx *ctx,
   name.length = (size_t)(current - name.value);
   grn_raw_string selector;
   GRN_RAW_STRING_SET(selector, &(options->selector));
-  return GRN_RAW_STRING_EQUAL(name, selector);
+  return GRN_RAW_STRING_EQUAL_CI(name, selector);
 }
 
 static grn_obj *

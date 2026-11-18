@@ -54,6 +54,10 @@ extern "C" {
   (string.length == other_string.length &&                              \
    memcmp(string.value, other_string.value, string.length) == 0)
 
+#define GRN_RAW_STRING_EQUAL_CI(string, other_string)                   \
+  (string.length == other_string.length &&                              \
+   grn_strncasecmp(string.value, other_string.value, string.length) == 0)
+
 #define GRN_RAW_STRING_EQUAL_CSTRING(string, cstring)           \
   (cstring == NULL ?                                            \
    (string.length == 0) :                                       \
