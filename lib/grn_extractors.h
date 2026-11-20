@@ -21,6 +21,14 @@
 grn_rc
 grn_db_init_builtin_extractors(grn_ctx *ctx);
 
+void
+grn_html_extract(grn_ctx *ctx,
+                 const char *html,
+                 size_t html_length,
+                 const char *selector,
+                 size_t selector_length,
+                 grn_obj *output);
+
 #ifdef __cplusplus
 }
 #endif

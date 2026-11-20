@@ -223,38 +223,15 @@ html_tag_match_selector(grn_ctx *ctx,
   return GRN_RAW_STRING_EQUAL_CI(name, selector);
 }
 
-static grn_obj *
-html_extract(grn_ctx *ctx, grn_obj *extractor, grn_extract_data *data)
+static void
+html_extract_raw(grn_ctx *ctx,
+                 html_extract_options *options,
+                 const char *html,
+                 size_t html_length,
+                 grn_obj *output)
 {
-  const char *tag = "[extractor][html]";
-
-  grn_obj *value = grn_extract_data_get_value(ctx, data);
-  if (!grn_type_id_is_text_family(ctx, value->header.domain)) {
-    /* Do nothing */
-    return NULL;
-  }
-
-  grn_obj *table = grn_extract_data_get_table(ctx, data);
-  if (!table) {
-    ERR(GRN_INVALID_ARGUMENT, "%s related table information is missing", tag);
-    return NULL;
-  }
-
-  uint32_t i = grn_extract_data_get_index(ctx, data);
-  html_extract_options *options =
-    grn_table_cache_extractors_options(ctx,
-                                       table,
-                                       i,
-                                       html_extract_open_options,
-                                       html_extract_close_options,
-                                       NULL);
-  if (ctx->rc != GRN_SUCCESS) {
-    return NULL;
-  }
-
-  grn_obj *output = grn_obj_open(ctx, GRN_BULK, 0, GRN_DB_TEXT);
-  const char *current = GRN_TEXT_VALUE(value);
-  const char *end = current + GRN_TEXT_LEN(value);
+  const char *current = html;
+  const char *end = current + html_length;
 
   html_state state = HTML_STATE_TEXT;
   const char *start_tag = NULL;
@@ -396,8 +373,59 @@ html_extract(grn_ctx *ctx, grn_obj *extractor, grn_extract_data *data)
       GRN_TEXT_PUT(ctx, output, start_tag, (size_t)(current - start_tag));
     }
   }
+}
 
+static grn_obj *
+html_extract(grn_ctx *ctx, grn_obj *extractor, grn_extract_data *data)
+{
+  const char *tag = "[extractor][html]";
+
+  grn_obj *value = grn_extract_data_get_value(ctx, data);
+  if (!grn_type_id_is_text_family(ctx, value->header.domain)) {
+    /* Do nothing */
+    return NULL;
+  }
+
+  grn_obj *table = grn_extract_data_get_table(ctx, data);
+  if (!table) {
+    ERR(GRN_INVALID_ARGUMENT, "%s related table information is missing", tag);
+    return NULL;
+  }
+
+  uint32_t i = grn_extract_data_get_index(ctx, data);
+  html_extract_options *options =
+    grn_table_cache_extractors_options(ctx,
+                                       table,
+                                       i,
+                                       html_extract_open_options,
+                                       html_extract_close_options,
+                                       NULL);
+  if (ctx->rc != GRN_SUCCESS) {
+    return NULL;
+  }
+
+  grn_obj *output = grn_obj_open(ctx, GRN_BULK, 0, GRN_DB_TEXT);
+  html_extract_raw(ctx,
+                   options,
+                   GRN_TEXT_VALUE(value),
+                   GRN_TEXT_LEN(value),
+                   output);
   return output;
+}
+
+void
+grn_html_extract(grn_ctx *ctx,
+                 const char *html,
+                 size_t html_length,
+                 const char *selector,
+                 size_t selector_length,
+                 grn_obj *output)
+{
+  html_extract_options options;
+  html_extract_options_init(ctx, &options);
+  GRN_TEXT_SET(ctx, &(options.selector), selector, selector_length);
+  html_extract_raw(ctx, &options, html, html_length, output);
+  html_extract_options_fin(ctx, &options);
 }
 
 typedef struct {

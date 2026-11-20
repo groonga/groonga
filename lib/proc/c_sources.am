@@ -9,6 +9,7 @@ libgrnproc_c_sources =				\
 	proc_extract.c				\
 	proc_fuzzy_search.c			\
 	proc_highlight.c			\
+	proc_html.c				\
 	proc_in_records.c			\
 	proc_index_column.c			\
 	proc_json.c				\
