@@ -71,9 +71,6 @@ typedef struct {
   void *map;
   uint32_t nref;
   uint32_t count;
-#ifdef WIN32
-  HANDLE fmo;
-#endif /* WIN32 */
 } grn_io_mapinfo;
 
 typedef struct _grn_io_array_info grn_io_array_info;
