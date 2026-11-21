@@ -83,73 +83,108 @@ typedef struct _grn_io_fileinfo {
 
 static uint32_t grn_io_version_default = GRN_IO_VERSION_DEFAULT;
 
-static inline grn_rc
-grn_fileinfo_open(grn_ctx *ctx, fileinfo *fi, const char *path, int flags);
+/* File operations for grn_io. Each platform provides an
+ * implementation. */
+typedef struct {
+  void (*init)(fileinfo *fis, uint32_t n_fis);
+  grn_rc (*open)(grn_ctx *ctx, fileinfo *fi, const char *path, int flags);
+  bool (*is_opened)(fileinfo *fi);
+  grn_rc (*close)(grn_ctx *ctx, fileinfo *fi);
+  grn_rc (*read)(
+    grn_ctx *ctx, fileinfo *fi, void *buf, size_t count, off_t offset);
+  grn_rc (*write)(
+    grn_ctx *ctx, fileinfo *fi, void *buf, size_t count, off_t offset);
+  /* fi is NULL for an anonymous mapping. */
+  void *(*map)(grn_ctx *ctx,
+               grn_io *io,
+               fileinfo *fi,
+               int64_t offset,
+               size_t length,
+               const char *file,
+               int line,
+               const char *func);
+  int (*unmap)(
+    grn_ctx *ctx, grn_io *io, fileinfo *fi, void *start, size_t length);
+  /* Discards the mapping without writing back. This is for the case
+   * that unmap() failed and there is no chance to retry. This is
+   * optional. */
+  void (*discard)(grn_ctx *ctx, void *start, size_t length);
+  int (*sync)(grn_ctx *ctx, fileinfo *fi, void *start, size_t length);
+  /* Writes back all changes in the file. If this is available,
+   * grn_io_flush() uses this instead of sync() for each mapping. This
+   * is optional. */
+  int (*sync_file)(grn_ctx *ctx, fileinfo *fi);
+  /* Writes back the lock in the header. This is needed when changes
+   * in a mapping aren't written back until sync() or unmap(). Returns
+   * -1 with errno on error. This is optional. */
+  int (*sync_lock)(grn_ctx *ctx, grn_io *io);
+  /* Whether sync() must be called for a mapping that is referenced
+   * by someone. This is needed when changes in a mapping aren't
+   * written back until sync() or unmap(). */
+  bool sync_referenced_map;
+} grn_io_file_operations;
+
+static const grn_io_file_operations *
+grn_io_get_file_operations(void);
+
 static inline void
-grn_fileinfo_init(fileinfo *fis, uint32_t nfis);
-static inline int
-grn_fileinfo_opened(fileinfo *fi);
+grn_fileinfo_init(fileinfo *fis, uint32_t n_fis)
+{
+  grn_io_get_file_operations()->init(fis, n_fis);
+}
+
 static inline grn_rc
-grn_fileinfo_close(grn_ctx *ctx, fileinfo *fi);
-static inline void *
-grn_mmap(grn_ctx *ctx,
-         grn_io *io,
-         fileinfo *fi,
-         int64_t offset,
-         size_t length,
-         const char *file,
-         int line,
-         const char *func);
-static inline int
-grn_munmap(grn_ctx *ctx, grn_io *io, fileinfo *fi, void *start, size_t length);
+grn_fileinfo_open(grn_ctx *ctx, fileinfo *fi, const char *path, int flags)
+{
+  return grn_io_get_file_operations()->open(ctx, fi, path, flags);
+}
+
+static inline bool
+grn_fileinfo_opened(fileinfo *fi)
+{
+  return grn_io_get_file_operations()->is_opened(fi);
+}
+
+static inline grn_rc
+grn_fileinfo_close(grn_ctx *ctx, fileinfo *fi)
+{
+  return grn_io_get_file_operations()->close(ctx, fi);
+}
+
+static inline grn_rc
+grn_pread(grn_ctx *ctx, fileinfo *fi, void *buf, size_t count, off_t offset)
+{
+  return grn_io_get_file_operations()->read(ctx, fi, buf, count, offset);
+}
+
+static inline grn_rc
+grn_pwrite(grn_ctx *ctx, fileinfo *fi, void *buf, size_t count, off_t offset)
+{
+  return grn_io_get_file_operations()->write(ctx, fi, buf, count, offset);
+}
+
 #define GRN_MMAP(ctx, io, fi, offset, length)                                  \
-  (grn_mmap((ctx),                                                             \
-            (io),                                                              \
-            (fi),                                                              \
-            (offset),                                                          \
-            (length),                                                          \
-            __FILE__,                                                          \
-            __LINE__,                                                          \
-            __FUNCTION__))
+  (grn_io_get_file_operations()->map((ctx),                                    \
+                                     (io),                                     \
+                                     (fi),                                     \
+                                     (offset),                                 \
+                                     (length),                                 \
+                                     __FILE__,                                 \
+                                     __LINE__,                                 \
+                                     __FUNCTION__))
 #define GRN_MUNMAP(ctx, io, fi, start, length)                                 \
-  (grn_munmap((ctx), (io), (fi), (start), (length)))
-
-inline static int
-grn_msync(grn_ctx *ctx, fileinfo *fi, void *start, size_t length);
+  (grn_io_get_file_operations()->unmap((ctx), (io), (fi), (start), (length)))
 #define GRN_MSYNC(ctx, fi, start, length)                                      \
-  (grn_msync((ctx), (fi), (start), (length)))
+  (grn_io_get_file_operations()->sync((ctx), (fi), (start), (length)))
 
-/* On Linux, changes through shared file mappings are in the page
- * cache. So one fdatasync() for each file writes back all changed
- * segments in the file. It's much faster than msync() for each
- * segment because msync(MS_SYNC) for each segment may flush
- * file system journal for each segment. msync(MS_SYNC) is
- * implemented by fdatasync() for the range on Linux:
- * https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/mm/msync.c
- */
-#ifdef __linux__
-#  define GRN_IO_FLUSH_BY_FDATASYNC
-static inline int
-grn_fdatasync(grn_ctx *ctx, fileinfo *fi);
-#endif
-
-#ifdef __wasi__
 static inline void
-grn_mmap_emulation_free(grn_ctx *ctx, void *start, size_t length);
-static inline int
-grn_io_lock_write_back(grn_io *io);
-/* Discards the mapping without writing back. This is for the case
- * that GRN_MUNMAP() failed and there is no chance to retry. */
-#  define GRN_MUNMAP_DISCARD(ctx, start, length)                               \
-    grn_mmap_emulation_free((ctx), (start), (length))
-#else /* __wasi__ */
-#  define GRN_MUNMAP_DISCARD(ctx, start, length)
-#endif /* __wasi__ */
-
-inline static grn_rc
-grn_pread(grn_ctx *ctx, fileinfo *fi, void *buf, size_t count, off_t offset);
-static inline grn_rc
-grn_pwrite(grn_ctx *ctx, fileinfo *fi, void *buf, size_t count, off_t offset);
+grn_munmap_discard(grn_ctx *ctx, void *start, size_t length)
+{
+  const grn_io_file_operations *operations = grn_io_get_file_operations();
+  if (operations->discard) {
+    operations->discard(ctx, start, length);
+  }
+}
 
 void
 grn_io_init_from_env(void)
@@ -220,7 +255,6 @@ grn_io_max_n_files(grn_io *io)
                                     file_size);
 }
 
-#ifndef GRN_IO_FLUSH_BY_FDATASYNC
 static inline uint32_t
 grn_io_compute_nth_file_info(grn_io *io, uint32_t nth_segment)
 {
@@ -235,7 +269,6 @@ grn_io_compute_nth_file_info(grn_io *io, uint32_t nth_segment)
   resolved_nth_segment = nth_segment + io->base_seg;
   return resolved_nth_segment / n_segments_per_file;
 }
-#endif
 
 static grn_io *
 grn_io_create_tmp(grn_ctx *ctx,
@@ -806,14 +839,14 @@ grn_io_close(grn_ctx *ctx, grn_io *io)
           fi = &io->fis[fno];
         }
         if (GRN_MUNMAP(ctx, io, fi, mi->map, segment_size) != 0) {
-          GRN_MUNMAP_DISCARD(ctx, mi->map, segment_size);
+          grn_munmap_discard(ctx, mi->map, segment_size);
         }
       }
     }
     GRN_FREE(io->maps);
   }
   if (GRN_MUNMAP(ctx, io, io->fis, io->header, io->base) != 0) {
-    GRN_MUNMAP_DISCARD(ctx, io->header, io->base);
+    grn_munmap_discard(ctx, io->header, io->base);
   }
   if (io->fis) {
     uint32_t i;
@@ -1620,13 +1653,12 @@ grn_io_lock(grn_ctx *ctx, grn_io *io, int timeout)
       grn_nanosleep(GRN_LOCK_WAIT_TIME_NANOSECOND);
       continue;
     }
-#ifdef __wasi__
-    if (grn_io_lock_write_back(io) == -1) {
+    const grn_io_file_operations *operations = grn_io_get_file_operations();
+    if (operations->sync_lock && operations->sync_lock(ctx, io) == -1) {
       GRN_ATOMIC_ADD_EX(io->lock, -1, lock);
       SERR("[io][lock] failed to write lock marker: <%s>", io->path);
       return ctx->rc;
     }
-#endif
     return GRN_SUCCESS;
   }
   ERR(GRN_RESOURCE_DEADLOCK_AVOIDED, "grn_io_lock failed");
@@ -1639,15 +1671,14 @@ grn_io_unlock(grn_ctx *ctx, grn_io *io)
   if (io) {
     uint32_t lock;
     GRN_ATOMIC_ADD_EX(io->lock, -1, lock);
-#ifdef __wasi__
-    if (grn_io_lock_write_back(io) == -1) {
+    const grn_io_file_operations *operations = grn_io_get_file_operations();
+    if (operations->sync_lock && operations->sync_lock(ctx, io) == -1) {
       GRN_LOG(ctx,
               GRN_LOG_ERROR,
               "[io][unlock] failed to write lock marker: <%s>: %s",
               io->path,
               strerror(errno));
     }
-#endif
   }
 }
 
@@ -1674,8 +1705,8 @@ grn_io_flush(grn_ctx *ctx, grn_io *io)
     return GRN_SUCCESS;
   }
 
-#ifdef GRN_IO_FLUSH_BY_FDATASYNC
-  {
+  const grn_io_file_operations *operations = grn_io_get_file_operations();
+  if (operations->sync_file) {
     uint32_t n_files = grn_io_n_files(ctx, io);
     uint32_t i;
     for (i = 0; i < n_files; i++) {
@@ -1683,72 +1714,63 @@ grn_io_flush(grn_ctx *ctx, grn_io *io)
       if (!grn_fileinfo_opened(fi)) {
         continue;
       }
-      if (grn_fdatasync(ctx, fi) != 0) {
+      if (operations->sync_file(ctx, fi) != 0) {
         rc = ctx->rc;
         break;
       }
     }
-  }
-#else
-  struct _grn_io_header *header = io->header;
-  uint32_t aligned_header_size = grn_io_compute_base(header->header_size);
+  } else {
+    struct _grn_io_header *header = io->header;
+    uint32_t aligned_header_size = grn_io_compute_base(header->header_size);
 
-  if (GRN_MSYNC(ctx, &(io->fis[0]), header, aligned_header_size) != 0) {
-    return ctx->rc;
-  }
+    if (GRN_MSYNC(ctx, &(io->fis[0]), header, aligned_header_size) != 0) {
+      return ctx->rc;
+    }
 
-  if (io->maps) {
-    uint32_t i;
-    uint32_t max_mapped_segment;
-    uint32_t segment_size;
+    if (io->maps) {
+      uint32_t i;
+      uint32_t max_mapped_segment;
+      uint32_t segment_size;
 
-    max_mapped_segment = grn_io_max_segment(io);
-    segment_size = header->segment_size;
-    for (i = 0; i < max_mapped_segment; i++) {
-      grn_io_mapinfo *info = &(io->maps[i]);
-      uint32_t nth_file_info;
-      uint32_t *pnref;
-      uint32_t nref;
-      int msync_result;
+      max_mapped_segment = grn_io_max_segment(io);
+      segment_size = header->segment_size;
+      for (i = 0; i < max_mapped_segment; i++) {
+        grn_io_mapinfo *info = &(io->maps[i]);
+        uint32_t nth_file_info;
+        uint32_t *pnref;
+        uint32_t nref;
+        int msync_result;
 
-      if (!info) {
-        continue;
-      }
+        if (!info) {
+          continue;
+        }
 
-      pnref = &info->nref;
-      GRN_ATOMIC_ADD_EX(pnref, 1, nref);
-#  ifndef __wasi__
-      /* WASI is single thread. So nobody is changing or expiring this
-       * segment now. Somebody just keeps a reference. The mmap()
-       * emulation for WASI writes back the content only on msync()
-       * and munmap(). So we must write back the content here even if
-       * the segment is referenced. Otherwise, the changes aren't
-       * persisted but this function returns GRN_SUCCESS. */
-      if (nref != 0) {
-        GRN_ATOMIC_ADD_EX(pnref, -1, nref);
-        continue;
-      }
-#  endif
+        pnref = &info->nref;
+        GRN_ATOMIC_ADD_EX(pnref, 1, nref);
+        if (nref != 0 && !operations->sync_referenced_map) {
+          GRN_ATOMIC_ADD_EX(pnref, -1, nref);
+          continue;
+        }
 
-      if (!info->map) {
+        if (!info->map) {
+          GRN_ATOMIC_ADD_EX(pnref, -1, nref);
+          GRN_FUTEX_WAKE(pnref);
+          continue;
+        }
+
+        nth_file_info = grn_io_compute_nth_file_info(io, i);
+        msync_result =
+          GRN_MSYNC(ctx, &(io->fis[nth_file_info]), info->map, segment_size);
         GRN_ATOMIC_ADD_EX(pnref, -1, nref);
         GRN_FUTEX_WAKE(pnref);
-        continue;
-      }
 
-      nth_file_info = grn_io_compute_nth_file_info(io, i);
-      msync_result =
-        GRN_MSYNC(ctx, &(io->fis[nth_file_info]), info->map, segment_size);
-      GRN_ATOMIC_ADD_EX(pnref, -1, nref);
-      GRN_FUTEX_WAKE(pnref);
-
-      if (msync_result != 0) {
-        rc = ctx->rc;
-        break;
+        if (msync_result != 0) {
+          rc = ctx->rc;
+          break;
+        }
       }
     }
   }
-#endif
 
   return rc;
 }
@@ -2156,7 +2178,10 @@ exit:
 }
 
 static inline grn_rc
-grn_fileinfo_open(grn_ctx *ctx, fileinfo *fi, const char *path, int flags)
+grn_io_file_windows_open(grn_ctx *ctx,
+                         fileinfo *fi,
+                         const char *path,
+                         int flags)
 {
   struct _grn_io_header io_header;
   LARGE_INTEGER file_size;
@@ -2207,14 +2232,14 @@ grn_guess_io_version(grn_ctx *ctx, grn_io *io, fileinfo *fi)
 }
 
 static inline void *
-grn_mmap(grn_ctx *ctx,
-         grn_io *io,
-         fileinfo *fi,
-         int64_t offset,
-         size_t length,
-         const char *file,
-         int line,
-         const char *func)
+grn_io_file_windows_map(grn_ctx *ctx,
+                        grn_io *io,
+                        fileinfo *fi,
+                        int64_t offset,
+                        size_t length,
+                        const char *file,
+                        int line,
+                        const char *func)
 {
   if (grn_fail_malloc_should_fail(length, file, line, func)) {
     MERR("[alloc][fail][mmap] <%u>: <%" GRN_FMT_SIZE ">: <%s>: "
@@ -2244,7 +2269,8 @@ grn_mmap(grn_ctx *ctx,
 }
 
 static inline int
-grn_munmap(grn_ctx *ctx, grn_io *io, fileinfo *fi, void *start, size_t length)
+grn_io_file_windows_unmap(
+  grn_ctx *ctx, grn_io *io, fileinfo *fi, void *start, size_t length)
 {
   int version;
 
@@ -2258,7 +2284,7 @@ grn_munmap(grn_ctx *ctx, grn_io *io, fileinfo *fi, void *start, size_t length)
 }
 
 static inline grn_rc
-grn_fileinfo_close(grn_ctx *ctx, fileinfo *fi)
+grn_io_file_windows_close(grn_ctx *ctx, fileinfo *fi)
 {
   if (fi->fmo != NULL) {
     CloseHandle(fi->fmo);
@@ -2280,7 +2306,7 @@ grn_fileinfo_close(grn_ctx *ctx, fileinfo *fi)
 }
 
 static inline void
-grn_fileinfo_init(fileinfo *fis, uint32_t nfis)
+grn_io_file_windows_init(fileinfo *fis, uint32_t nfis)
 {
   for (; nfis--; fis++) {
     fis->path = NULL;
@@ -2289,14 +2315,14 @@ grn_fileinfo_init(fileinfo *fis, uint32_t nfis)
   }
 }
 
-static inline int
-grn_fileinfo_opened(fileinfo *fi)
+static inline bool
+grn_io_file_windows_is_opened(fileinfo *fi)
 {
   return fi->fh != INVALID_HANDLE_VALUE;
 }
 
 static inline int
-grn_msync(grn_ctx *ctx, fileinfo *fi, void *start, size_t length)
+grn_io_file_windows_sync(grn_ctx *ctx, fileinfo *fi, void *start, size_t length)
 {
   BOOL succeeded;
   SYSTEMTIME system_time;
@@ -2341,7 +2367,8 @@ grn_msync(grn_ctx *ctx, fileinfo *fi, void *start, size_t length)
 }
 
 static inline grn_rc
-grn_pread(grn_ctx *ctx, fileinfo *fi, void *buf, size_t count, off_t offset)
+grn_io_file_windows_read(
+  grn_ctx *ctx, fileinfo *fi, void *buf, size_t count, off_t offset)
 {
   DWORD r, len;
   CRITICAL_SECTION_ENTER(fi->cs);
@@ -2364,7 +2391,8 @@ grn_pread(grn_ctx *ctx, fileinfo *fi, void *buf, size_t count, off_t offset)
 }
 
 static inline grn_rc
-grn_pwrite(grn_ctx *ctx, fileinfo *fi, void *buf, size_t count, off_t offset)
+grn_io_file_windows_write(
+  grn_ctx *ctx, fileinfo *fi, void *buf, size_t count, off_t offset)
 {
   DWORD r, len;
   CRITICAL_SECTION_ENTER(fi->cs);
@@ -2389,7 +2417,7 @@ grn_pwrite(grn_ctx *ctx, fileinfo *fi, void *buf, size_t count, off_t offset)
 #else /* WIN32 */
 
 inline static grn_rc
-grn_fileinfo_open(grn_ctx *ctx, fileinfo *fi, const char *path, int flags)
+grn_io_file_posix_open(grn_ctx *ctx, fileinfo *fi, const char *path, int flags)
 {
   struct stat st;
   fi->path = grn_strdup_raw(path);
@@ -2414,7 +2442,7 @@ grn_fileinfo_open(grn_ctx *ctx, fileinfo *fi, const char *path, int flags)
 }
 
 static inline void
-grn_fileinfo_init(fileinfo *fis, uint32_t nfis)
+grn_io_file_posix_init(fileinfo *fis, uint32_t nfis)
 {
   for (; nfis--; fis++) {
     fis->path = NULL;
@@ -2422,14 +2450,14 @@ grn_fileinfo_init(fileinfo *fis, uint32_t nfis)
   }
 }
 
-static inline int
-grn_fileinfo_opened(fileinfo *fi)
+static inline bool
+grn_io_file_posix_is_opened(fileinfo *fi)
 {
   return fi->fd != -1;
 }
 
 static inline grn_rc
-grn_fileinfo_close(grn_ctx *ctx, fileinfo *fi)
+grn_io_file_posix_close(grn_ctx *ctx, fileinfo *fi)
 {
   if (fi->fd != -1) {
     if (grn_close(fi->fd) == -1) {
@@ -2487,7 +2515,7 @@ grn_mmap_emulation_write_back(grn_ctx *ctx, void *start, size_t length)
  * work. This writes only the lock marker to the file. Returns -1 with
  * errno on error. */
 static inline int
-grn_io_lock_write_back(grn_io *io)
+grn_io_file_wasi_sync_lock(grn_ctx *ctx, grn_io *io)
 {
   grn_mmap_emulation_header *header =
     ((grn_mmap_emulation_header *)io->header) - 1;
@@ -2509,15 +2537,21 @@ grn_mmap_emulation_free(grn_ctx *ctx, void *start, size_t length)
   mmap_size -= length;
 }
 
+static void
+grn_io_file_wasi_discard(grn_ctx *ctx, void *start, size_t length)
+{
+  grn_mmap_emulation_free(ctx, start, length);
+}
+
 static inline void *
-grn_mmap(grn_ctx *ctx,
-         grn_io *io,
-         fileinfo *fi,
-         int64_t offset,
-         size_t length,
-         const char *file,
-         int line,
-         const char *func)
+grn_io_file_wasi_map(grn_ctx *ctx,
+                     grn_io *io,
+                     fileinfo *fi,
+                     int64_t offset,
+                     size_t length,
+                     const char *file,
+                     int line,
+                     const char *func)
 {
   if (grn_fail_malloc_should_fail(length, file, line, func)) {
     MERR("[alloc][fail][mmap] <%u>: <%" GRN_FMT_SIZE ">: <%s>: "
@@ -2597,7 +2631,7 @@ grn_mmap(grn_ctx *ctx,
 }
 
 static inline int
-grn_msync(grn_ctx *ctx, fileinfo *fi, void *start, size_t length)
+grn_io_file_wasi_sync(grn_ctx *ctx, fileinfo *fi, void *start, size_t length)
 {
   /* pwrite() updates the modification time of the file. So we don't
    * need to update it explicitly like the mmap() version. */
@@ -2605,7 +2639,8 @@ grn_msync(grn_ctx *ctx, fileinfo *fi, void *start, size_t length)
 }
 
 static inline int
-grn_munmap(grn_ctx *ctx, grn_io *io, fileinfo *fi, void *start, size_t length)
+grn_io_file_wasi_unmap(
+  grn_ctx *ctx, grn_io *io, fileinfo *fi, void *start, size_t length)
 {
   if (grn_mmap_emulation_write_back(ctx, start, length) != 0) {
     /* The buffer is the only copy of the modified content. Keep it so
@@ -2624,14 +2659,14 @@ grn_munmap(grn_ctx *ctx, grn_io *io, fileinfo *fi, void *start, size_t length)
 #    include <sys/mman.h>
 
 inline static void *
-grn_mmap(grn_ctx *ctx,
-         grn_io *io,
-         fileinfo *fi,
-         int64_t offset,
-         size_t length,
-         const char *file,
-         int line,
-         const char *func)
+grn_io_file_posix_map(grn_ctx *ctx,
+                      grn_io *io,
+                      fileinfo *fi,
+                      int64_t offset,
+                      size_t length,
+                      const char *file,
+                      int line,
+                      const char *func)
 {
   if (grn_fail_malloc_should_fail(length, file, line, func)) {
     MERR("[alloc][fail][mmap] <%u>: <%" GRN_FMT_SIZE ">: <%s>: "
@@ -2705,7 +2740,7 @@ grn_fileinfo_touch(grn_ctx *ctx, fileinfo *fi)
 }
 
 static inline int
-grn_msync(grn_ctx *ctx, fileinfo *fi, void *start, size_t length)
+grn_io_file_posix_sync(grn_ctx *ctx, fileinfo *fi, void *start, size_t length)
 {
   int r = msync(start, length, MS_SYNC);
   if (r == -1) {
@@ -2716,9 +2751,18 @@ grn_msync(grn_ctx *ctx, fileinfo *fi, void *start, size_t length)
   return grn_fileinfo_touch(ctx, fi);
 }
 
-#    ifdef GRN_IO_FLUSH_BY_FDATASYNC
+/* On Linux, changes through shared file mappings are in the page
+ * cache. So one fdatasync() for each file writes back all changed
+ * segments in the file. It's much faster than msync() for each
+ * segment because msync(MS_SYNC) for each segment may flush
+ * file system journal for each segment. msync(MS_SYNC) is
+ * implemented by fdatasync() for the range on Linux:
+ * https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/mm/msync.c
+ */
+#    ifdef __linux__
+#      define GRN_IO_FILE_POSIX_SYNC_FILE
 static inline int
-grn_fdatasync(grn_ctx *ctx, fileinfo *fi)
+grn_io_file_posix_sync_file(grn_ctx *ctx, fileinfo *fi)
 {
   int r = fdatasync(fi->fd);
   if (r == -1) {
@@ -2731,7 +2775,8 @@ grn_fdatasync(grn_ctx *ctx, fileinfo *fi)
 #    endif
 
 static inline int
-grn_munmap(grn_ctx *ctx, grn_io *io, fileinfo *fi, void *start, size_t length)
+grn_io_file_posix_unmap(
+  grn_ctx *ctx, grn_io *io, fileinfo *fi, void *start, size_t length)
 {
   int res;
   res = munmap(start, length);
@@ -2748,7 +2793,8 @@ grn_munmap(grn_ctx *ctx, grn_io *io, fileinfo *fi, void *start, size_t length)
 #  endif /* __wasi__ */
 
 static inline grn_rc
-grn_pread(grn_ctx *ctx, fileinfo *fi, void *buf, size_t count, off_t offset)
+grn_io_file_posix_read(
+  grn_ctx *ctx, fileinfo *fi, void *buf, size_t count, off_t offset)
 {
   ssize_t r = pread(fi->fd, buf, count, offset);
   if (r == -1) {
@@ -2767,7 +2813,8 @@ grn_pread(grn_ctx *ctx, fileinfo *fi, void *buf, size_t count, off_t offset)
 }
 
 static inline grn_rc
-grn_pwrite(grn_ctx *ctx, fileinfo *fi, void *buf, size_t count, off_t offset)
+grn_io_file_posix_write(
+  grn_ctx *ctx, fileinfo *fi, void *buf, size_t count, off_t offset)
 {
   ssize_t r = pwrite(fi->fd, buf, count, offset);
   if (r == -1) {
@@ -2786,6 +2833,72 @@ grn_pwrite(grn_ctx *ctx, fileinfo *fi, void *buf, size_t count, off_t offset)
 }
 
 #endif /* WIN32 */
+
+#if defined(WIN32)
+static const grn_io_file_operations grn_io_file_operations_default = {
+  .init = grn_io_file_windows_init,
+  .open = grn_io_file_windows_open,
+  .is_opened = grn_io_file_windows_is_opened,
+  .close = grn_io_file_windows_close,
+  .read = grn_io_file_windows_read,
+  .write = grn_io_file_windows_write,
+  .map = grn_io_file_windows_map,
+  .unmap = grn_io_file_windows_unmap,
+  .discard = NULL,
+  .sync = grn_io_file_windows_sync,
+  .sync_file = NULL,
+  .sync_lock = NULL,
+  .sync_referenced_map = false,
+};
+#elif defined(__wasi__)
+static const grn_io_file_operations grn_io_file_operations_default = {
+  .init = grn_io_file_posix_init,
+  .open = grn_io_file_posix_open,
+  .is_opened = grn_io_file_posix_is_opened,
+  .close = grn_io_file_posix_close,
+  .read = grn_io_file_posix_read,
+  .write = grn_io_file_posix_write,
+  .map = grn_io_file_wasi_map,
+  .unmap = grn_io_file_wasi_unmap,
+  .discard = grn_io_file_wasi_discard,
+  .sync = grn_io_file_wasi_sync,
+  .sync_file = NULL,
+  .sync_lock = grn_io_file_wasi_sync_lock,
+  /* WASI is single thread. So nobody is changing or expiring a
+   * referenced mapping while grn_io_flush(). Somebody just keeps a
+   * reference. The mmap() emulation for WASI writes back the content
+   * only on sync() and unmap(). So we must write back the content of
+   * a referenced mapping too. Otherwise, the changes aren't persisted
+   * but grn_io_flush() returns GRN_SUCCESS. */
+  .sync_referenced_map = true,
+};
+#else
+static const grn_io_file_operations grn_io_file_operations_default = {
+  .init = grn_io_file_posix_init,
+  .open = grn_io_file_posix_open,
+  .is_opened = grn_io_file_posix_is_opened,
+  .close = grn_io_file_posix_close,
+  .read = grn_io_file_posix_read,
+  .write = grn_io_file_posix_write,
+  .map = grn_io_file_posix_map,
+  .unmap = grn_io_file_posix_unmap,
+  .discard = NULL,
+  .sync = grn_io_file_posix_sync,
+#  ifdef GRN_IO_FILE_POSIX_SYNC_FILE
+  .sync_file = grn_io_file_posix_sync_file,
+#  else
+  .sync_file = NULL,
+#  endif
+  .sync_lock = NULL,
+  .sync_referenced_map = false,
+};
+#endif
+
+static const grn_io_file_operations *
+grn_io_get_file_operations(void)
+{
+  return &grn_io_file_operations_default;
+}
 
 bool
 grn_io_warm_path(grn_ctx *ctx, grn_io *io, const char *path)
