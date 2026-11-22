@@ -18,12 +18,12 @@
 
 #pragma once
 
-/* Helpers for the mmap() emulation for WASI. WASI doesn't provide
- * mmap(). We emulate a file backed mapping by reading the target
- * region into a heap buffer on map and writing it back on sync and
- * unmap. */
+/* Helpers for the mmap() emulation. This is mainly for WASI. WASI
+ * doesn't provide mmap(). We emulate a file backed mapping by reading
+ * the target region into a heap buffer on map and writing it back on
+ * sync and unmap. */
 
-#ifdef __wasi__
+#ifndef WIN32
 
 #  include <errno.h>
 #  include <stdint.h>
@@ -87,4 +87,4 @@ grn_mmap_emulation_pwrite(int fd,
   return 0;
 }
 
-#endif /* __wasi__ */
+#endif /* WIN32 */
