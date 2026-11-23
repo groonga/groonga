@@ -138,6 +138,10 @@ typedef struct {
    * them except path_exist() report an error with the given tag by
    * themselves on error. */
   bool (*path_exist)(grn_ctx *ctx, const char *path);
+  grn_rc (*path_get_size)(grn_ctx *ctx,
+                          const char *path,
+                          uint64_t *size,
+                          const char *tag);
   grn_rc (*path_remove)(grn_ctx *ctx, const char *path, const char *tag);
   grn_rc (*path_rename)(grn_ctx *ctx,
                         const char *old_path,
@@ -196,6 +200,15 @@ bool
 grn_io_path_exist(grn_ctx *ctx, const char *path)
 {
   return grn_io_get_file_operations()->path_exist(ctx, path);
+}
+
+static inline grn_rc
+grn_io_path_get_size(grn_ctx *ctx,
+                     const char *path,
+                     uint64_t *size,
+                     const char *tag)
+{
+  return grn_io_get_file_operations()->path_get_size(ctx, path, size, tag);
 }
 
 grn_rc
@@ -981,18 +994,17 @@ grn_rc
 grn_io_size(grn_ctx *ctx, grn_io *io, uint64_t *size)
 {
   uint32_t fno;
-  struct stat s;
   uint64_t tsize = 0;
   char buffer[PATH_MAX];
   uint32_t n_files;
 
   n_files = grn_io_n_files(ctx, io);
   for (fno = 0; fno < n_files; fno++) {
+    uint64_t file_size;
     gen_pathname(io->path, buffer, fno);
-    if (stat(buffer, &s)) {
-      SERR("failed to stat path to compute size: <%s>", buffer);
-    } else {
-      tsize += (uint64_t)(s.st_size);
+    if (grn_io_path_get_size(ctx, buffer, &file_size, "[io][size]") ==
+        GRN_SUCCESS) {
+      tsize += file_size;
     }
   }
   *size = tsize;
@@ -1868,12 +1880,16 @@ grn_io_get_disk_usage(grn_ctx *ctx, grn_io *io)
   n_files = grn_io_n_files(ctx, io);
   for (i = 0; i < n_files; i++) {
     char path[PATH_MAX];
-    struct stat s;
     gen_pathname(io->path, path, i);
-    if (stat(path, &s) != 0) {
+    if (!grn_io_path_exist(ctx, path)) {
       continue;
     }
-    usage += (size_t)(s.st_size);
+    uint64_t size;
+    if (grn_io_path_get_size(ctx, path, &size, "[io][disk-usage]") !=
+        GRN_SUCCESS) {
+      continue;
+    }
+    usage += (size_t)size;
   }
 
   return usage;
@@ -2962,6 +2978,21 @@ grn_io_path_local_exist(grn_ctx *ctx, const char *path)
 }
 
 static grn_rc
+grn_io_path_local_get_size(grn_ctx *ctx,
+                           const char *path,
+                           uint64_t *size,
+                           const char *tag)
+{
+  struct stat s;
+  if (stat(path, &s) != 0) {
+    SERR("%s failed to get size: <%s>", tag, path);
+    return ctx->rc;
+  }
+  *size = (uint64_t)(s.st_size);
+  return GRN_SUCCESS;
+}
+
+static grn_rc
 grn_io_path_local_remove(grn_ctx *ctx, const char *path, const char *tag)
 {
   if (grn_unlink(path) != 0) {
@@ -3001,6 +3032,7 @@ static const grn_io_file_operations grn_io_file_operations_windows = {
   .sync_lock = NULL,
   .write_back_on_sync = false,
   .path_exist = grn_io_path_local_exist,
+  .path_get_size = grn_io_path_local_get_size,
   .path_remove = grn_io_path_local_remove,
   .path_rename = grn_io_path_local_rename,
 };
@@ -3032,6 +3064,7 @@ static const grn_io_file_operations grn_io_file_operations_emulation = {
    * is written back by the next sync() or unmap(). */
   .write_back_on_sync = true,
   .path_exist = grn_io_path_local_exist,
+  .path_get_size = grn_io_path_local_get_size,
   .path_remove = grn_io_path_local_remove,
   .path_rename = grn_io_path_local_rename,
 };
@@ -3057,6 +3090,7 @@ static const grn_io_file_operations grn_io_file_operations_mmap = {
   .sync_lock = NULL,
   .write_back_on_sync = false,
   .path_exist = grn_io_path_local_exist,
+  .path_get_size = grn_io_path_local_get_size,
   .path_remove = grn_io_path_local_remove,
   .path_rename = grn_io_path_local_rename,
 };
