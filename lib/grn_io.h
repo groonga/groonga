@@ -131,6 +131,8 @@ grn_io_rename(grn_ctx *ctx, const char *old_name, const char *new_name);
 bool
 grn_io_path_exist(grn_ctx *ctx, const char *path);
 grn_rc
+grn_io_path_create(grn_ctx *ctx, const char *path, const char *tag);
+grn_rc
 grn_io_path_remove(grn_ctx *ctx, const char *path, const char *tag);
 GRN_API void *
 grn_io_header(grn_io *io);

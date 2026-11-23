@@ -8,10 +8,11 @@ table_remove Users
       0.0,
       0.0
     ],
-    "system call error: Is a directory: [ctx][removing][mark] failed to create a removing marker: <db/db.0000100.removing>"
+    "[ctx][removing][mark] failed to create path: <db/db.0000100.removing>: system call error: Is a directory: failed to open file i"
   ],
   false
 ]
-#|e| system call error: Is a directory: [ctx][removing][mark] failed to create a removing marker: <db/db.0000100.removing>
+#|e| system call error: Is a directory: failed to open file info path: <db/db.0000100.removing>
+#|e| [ctx][removing][mark] failed to create path: <db/db.0000100.removing>: system call error: Is a directory: failed to open file info path: <db/db.0000100.removing>
 object_exist Users
 [[0,0.0,0.0],true]

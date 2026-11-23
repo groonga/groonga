@@ -229,6 +229,21 @@ grn_io_path_rename(grn_ctx *ctx,
                                                    tag);
 }
 
+grn_rc
+grn_io_path_create(grn_ctx *ctx, const char *path, const char *tag)
+{
+  fileinfo fi;
+  grn_fileinfo_init(&fi, 1);
+  grn_rc rc = grn_fileinfo_open(ctx, &fi, path, O_RDWR | O_CREAT);
+  if (rc != GRN_SUCCESS) {
+    char errbuf[GRN_CTX_MSGSIZE];
+    grn_strcpy(errbuf, GRN_CTX_MSGSIZE, ctx->errbuf);
+    ERR(rc, "%s failed to create path: <%s>: %s", tag, path, errbuf);
+    return ctx->rc;
+  }
+  return grn_fileinfo_close(ctx, &fi);
+}
+
 #define GRN_MMAP(ctx, io, fi, offset, length)                                  \
   (grn_io_get_file_operations()->map((ctx),                                    \
                                      (io),                                     \
