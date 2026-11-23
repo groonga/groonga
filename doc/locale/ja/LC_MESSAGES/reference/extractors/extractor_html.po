@@ -56,6 +56,9 @@ msgstr "{ref}`extractor-html-remove-tag` を `false` に設定すると、HTML�
 msgid "You can keep character references as-is by setting {ref}`extractor-html-expand-character-reference` to `false`. HTML tags are still removed in this case:"
 msgstr "{ref}`extractor-html-expand-character-reference` を `false` に設定すると、文字参照をそのまま残せます。この場合でも、HTMLタグは取り除かれます。"
 
+msgid "You can extract only the content in the specified HTML tag by {ref}`extractor-html-selector`. This is useful when you want to extract only the main content of a page:"
+msgstr "{ref}`extractor-html-selector`を使うと、指定されたHTMLタグ内のコンテンツのみを抽出できます。これはページのメインコンテンツのみを抽出したいときに便利です。"
+
 msgid "When you attach `ExtractorHTML` to a lexicon, the lexicon indexes the extracted text content. The original HTML is kept in the data column:"
 msgstr "`ExtractorHTML` を語彙表に割り当てると、語彙表は抽出されたテキストの内容をインデックスします。元のHTMLはデータカラムに保持されます。"
 
@@ -88,6 +91,33 @@ msgstr "文字参照（HTMLエンティティ）を展開するかどうかを�
 
 msgid "If this is `true`, both named character references such as `&lt;` and numeric character references such as `&#x3042;` are expanded to the corresponding characters. If this is `false`, character references are kept as-is."
 msgstr "これが `true` の場合、 `&lt;` などの名前付き文字参照と `&#x3042;` などの数値文字参照の両方が、対応する文字に展開されます。 `false` の場合、文字参照はそのまま残されます。"
+
+msgid "`selector`"
+msgstr ""
+
+msgid "Specifies elements to extract text content from. Text content out of the elements is ignored."
+msgstr "テキストコンテンツを抽出したい要素を指定します。要素外のテキストコンテンツは無視されます。"
+
+msgid "Only a tag name such as `article` and `h1` is supported. Tag names are compared case-insensitively. For example, `article` matches both of `<article>` and `<ARTICLE>`."
+msgstr "`article`や`h1`などのタグ名のみがサポートされています。タグ名は大文字と小文字を区別しません。例えば`article`は`<article>`と`<ARTICLE>`の両方を対象にします。"
+
+msgid "If multiple elements match, text content in all of them is concatenated. The tags of the matched elements themselves aren't included even when {ref}`extractor-html-remove-tag` is `false`."
+msgstr "一致する要素が複数ある場合は、すべてのテキストコンテンツが連結されます。{ref}`extractor-html-remove-tag`が`false`の場合でも、一致した要素のタグは削除されます。"
+
+msgid "There are the following limitations:"
+msgstr "以下の制限事項があります。"
+
+msgid "ID selectors and class selectors such as `article#main` and `article.main` aren't supported."
+msgstr "`article#main`や`article.main`のようなIDセレクタやクラスセレクタはサポートされていません。"
+
+msgid "Nested elements that have the same tag name such as `<div><div></div>...</div>` aren't supported. The first end tag of the specified tag name ends the matched element."
+msgstr "`<div><div></div>...</div>`のように、同じタグが入れ子になっている要素はサポートされていません。指定されたタグ名の最初の終了タグまでが抽出されます。"
+
+msgid "Elements whose end tags are omitted such as `<p>` without `</p>` aren't supported."
+msgstr "`</p>`のない`<p>`のように、終了タグが省略された要素はサポートされていません。"
+
+msgid "The default value is no selector. It means that all text content is extracted."
+msgstr "デフォルト値はセレクタなしです。すべてのテキストコンテンツが抽出されます。"
 
 msgid "See also"
 msgstr "参考"

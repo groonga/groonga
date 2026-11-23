@@ -40,6 +40,8 @@ Specify options:
 ExtractorHTML("remove_tag", true)
 
 ExtractorHTML("expand_character_reference", true)
+
+ExtractorHTML("selector", "article")
 ```
 
 ## Usage
@@ -77,6 +79,17 @@ are still removed in this case:
 extract \
   --extractors 'ExtractorHTML("expand_character_reference", false)' \
   --value "<html><body>He&lt;ll&gt;o</body></html>"
+```
+
+You can extract only the content in the specified HTML tag by {ref}`extractor-html-selector`.
+This is useful when you want to extract only the main content of a page:
+
+<!-- groonga-command -->
+
+```{include} ../../example/reference/extractors/extractor_html/selector.md
+extract \
+  --extractors 'ExtractorHTML("selector", "article")' \
+  --value "<nav>Menu</nav><article>Hello</article><footer>Footer</footer>"
 ```
 
 When you attach `ExtractorHTML` to a lexicon, the lexicon indexes the
@@ -140,6 +153,36 @@ corresponding characters. If this is `false`, character references are
 kept as-is.
 
 The default value is `true`.
+
+(extractor-html-selector)=
+
+#### `selector`
+
+```{versionadded} 16.1.6
+
+```
+
+Specifies elements to extract text content from.
+Text content out of the elements is ignored.
+
+Only a tag name such as `article` and `h1` is supported.
+Tag names are compared case-insensitively.
+For example, `article` matches both of `<article>` and `<ARTICLE>`.
+
+If multiple elements match, text content in all of them is concatenated.
+The tags of the matched elements themselves aren't included even when {ref}`extractor-html-remove-tag` is `false`.
+
+There are the following limitations:
+
+- ID selectors and class selectors such as `article#main` and `article.main` aren't supported.
+
+- Nested elements that have the same tag name such as `<div><div></div>...</div>` aren't supported.
+  The first end tag of the specified tag name ends the matched element.
+
+- Elements whose end tags are omitted such as `<p>` without `</p>` aren't supported.
+
+The default value is no selector.
+It means that all text content is extracted.
 
 ## See also
 

@@ -449,6 +449,7 @@ absolute_source_files = \
 	$(top_srcdir)/doc/source/example/reference/extractors/extractor_html/expand_character_reference.md \
 	$(top_srcdir)/doc/source/example/reference/extractors/extractor_html/index.md \
 	$(top_srcdir)/doc/source/example/reference/extractors/extractor_html/remove_tag.md \
+	$(top_srcdir)/doc/source/example/reference/extractors/extractor_html/selector.md \
 	$(top_srcdir)/doc/source/example/reference/extractors/extractor_json/index.md \
 	$(top_srcdir)/doc/source/example/reference/extractors/extractor_json/nested.md \
 	$(top_srcdir)/doc/source/example/reference/extractors/extractor_json/string.md \
@@ -1867,6 +1868,7 @@ source_files_relative_from_doc_dir = \
 	source/example/reference/extractors/extractor_html/expand_character_reference.md \
 	source/example/reference/extractors/extractor_html/index.md \
 	source/example/reference/extractors/extractor_html/remove_tag.md \
+	source/example/reference/extractors/extractor_html/selector.md \
 	source/example/reference/extractors/extractor_json/index.md \
 	source/example/reference/extractors/extractor_json/nested.md \
 	source/example/reference/extractors/extractor_json/string.md \
