@@ -139,6 +139,10 @@ typedef struct {
    * themselves on error. */
   bool (*path_exist)(grn_ctx *ctx, const char *path);
   grn_rc (*path_remove)(grn_ctx *ctx, const char *path, const char *tag);
+  grn_rc (*path_rename)(grn_ctx *ctx,
+                        const char *old_path,
+                        const char *new_path,
+                        const char *tag);
 } grn_io_file_operations;
 
 static const grn_io_file_operations *
@@ -198,6 +202,18 @@ grn_rc
 grn_io_path_remove(grn_ctx *ctx, const char *path, const char *tag)
 {
   return grn_io_get_file_operations()->path_remove(ctx, path, tag);
+}
+
+static inline grn_rc
+grn_io_path_rename(grn_ctx *ctx,
+                   const char *old_path,
+                   const char *new_path,
+                   const char *tag)
+{
+  return grn_io_get_file_operations()->path_rename(ctx,
+                                                   old_path,
+                                                   new_path,
+                                                   tag);
 }
 
 #define GRN_MMAP(ctx, io, fi, offset, length)                                  \
@@ -1046,8 +1062,7 @@ grn_io_rename(grn_ctx *ctx, const char *old_name, const char *new_name)
         tag,
         old_name);
     return ctx->rc;
-  } else if (rename(old_name, new_name)) {
-    SERR("%s failed to rename path: <%s> -> <%s>", tag, old_name, new_name);
+  } else if (grn_io_path_rename(ctx, old_name, new_name, tag) != GRN_SUCCESS) {
     return ctx->rc;
   } else {
     grn_rc rc = GRN_SUCCESS;
@@ -1060,11 +1075,7 @@ grn_io_rename(grn_ctx *ctx, const char *old_name, const char *new_name)
         break;
       }
       gen_pathname(new_name, new_buffer, fno);
-      if (rename(old_buffer, new_buffer)) {
-        SERR("%s failed to rename path: <%s> -> <%s>",
-             tag,
-             old_buffer,
-             new_buffer);
+      if (grn_io_path_rename(ctx, old_buffer, new_buffer, tag) != GRN_SUCCESS) {
         rc = ctx->rc;
       }
     }
@@ -2960,6 +2971,19 @@ grn_io_path_local_remove(grn_ctx *ctx, const char *path, const char *tag)
   return GRN_SUCCESS;
 }
 
+static grn_rc
+grn_io_path_local_rename(grn_ctx *ctx,
+                         const char *old_path,
+                         const char *new_path,
+                         const char *tag)
+{
+  if (rename(old_path, new_path) != 0) {
+    SERR("%s failed to rename path: <%s> -> <%s>", tag, old_path, new_path);
+    return ctx->rc;
+  }
+  return GRN_SUCCESS;
+}
+
 #ifdef WIN32
 static const grn_io_file_operations grn_io_file_operations_windows = {
   .init = grn_io_file_windows_init,
@@ -2978,6 +3002,7 @@ static const grn_io_file_operations grn_io_file_operations_windows = {
   .write_back_on_sync = false,
   .path_exist = grn_io_path_local_exist,
   .path_remove = grn_io_path_local_remove,
+  .path_rename = grn_io_path_local_rename,
 };
 #else /* WIN32 */
 static const grn_io_file_operations grn_io_file_operations_emulation = {
@@ -3008,6 +3033,7 @@ static const grn_io_file_operations grn_io_file_operations_emulation = {
   .write_back_on_sync = true,
   .path_exist = grn_io_path_local_exist,
   .path_remove = grn_io_path_local_remove,
+  .path_rename = grn_io_path_local_rename,
 };
 
 #  ifndef __wasi__
@@ -3032,6 +3058,7 @@ static const grn_io_file_operations grn_io_file_operations_mmap = {
   .write_back_on_sync = false,
   .path_exist = grn_io_path_local_exist,
   .path_remove = grn_io_path_local_remove,
+  .path_rename = grn_io_path_local_rename,
 };
 #  endif /* !__wasi__ */
 #endif   /* WIN32 */
