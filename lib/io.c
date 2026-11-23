@@ -126,6 +126,8 @@ typedef struct {
 
 static const grn_io_file_operations *
 grn_io_get_file_operations(void);
+static void
+grn_io_file_operations_init_from_env(void);
 
 static inline void
 grn_fileinfo_init(fileinfo *fis, uint32_t n_fis)
@@ -197,6 +199,8 @@ grn_io_init_from_env(void)
       grn_io_version_default = (uint32_t)atoi(version_env);
     }
   }
+
+  grn_io_file_operations_init_from_env();
 }
 
 static inline uint32_t
@@ -2476,7 +2480,6 @@ grn_io_file_posix_close(grn_ctx *ctx, fileinfo *fi)
   return GRN_SUCCESS;
 }
 
-#  ifdef __wasi__
 /* WASI doesn't have mmap(). wasi-libc provides an emulation but it
  * doesn't write back changes to the file: munmap() just frees the
  * buffer and msync() doesn't exist. We use mmap() for persistent
@@ -2484,7 +2487,12 @@ grn_io_file_posix_close(grn_ctx *ctx, fileinfo *fi)
  * that reads the file content on mmap() and writes back the buffer
  * to the file on msync() and munmap(). The file descriptor and the
  * offset are kept in a header that is placed before the returned
- * address because munmap() may be called without fileinfo. */
+ * address because munmap() may be called without fileinfo.
+ *
+ * This is also available on other POSIX platforms by
+ * GRN_IO_MMAP_EMULATION_ENABLE=yes. It's for testing this emulation
+ * without WASI runtime. The emulation doesn't share changes between
+ * processes. So it must not be used with multiple processes. */
 typedef struct {
   int fd;
   int64_t offset;
@@ -2515,7 +2523,7 @@ grn_mmap_emulation_write_back(grn_ctx *ctx, void *start, size_t length)
  * work. This writes only the lock marker to the file. Returns -1 with
  * errno on error. */
 static inline int
-grn_io_file_wasi_sync_lock(grn_ctx *ctx, grn_io *io)
+grn_io_file_emulation_sync_lock(grn_ctx *ctx, grn_io *io)
 {
   grn_mmap_emulation_header *header =
     ((grn_mmap_emulation_header *)io->header) - 1;
@@ -2538,20 +2546,20 @@ grn_mmap_emulation_free(grn_ctx *ctx, void *start, size_t length)
 }
 
 static void
-grn_io_file_wasi_discard(grn_ctx *ctx, void *start, size_t length)
+grn_io_file_emulation_discard(grn_ctx *ctx, void *start, size_t length)
 {
   grn_mmap_emulation_free(ctx, start, length);
 }
 
 static inline void *
-grn_io_file_wasi_map(grn_ctx *ctx,
-                     grn_io *io,
-                     fileinfo *fi,
-                     int64_t offset,
-                     size_t length,
-                     const char *file,
-                     int line,
-                     const char *func)
+grn_io_file_emulation_map(grn_ctx *ctx,
+                          grn_io *io,
+                          fileinfo *fi,
+                          int64_t offset,
+                          size_t length,
+                          const char *file,
+                          int line,
+                          const char *func)
 {
   if (grn_fail_malloc_should_fail(length, file, line, func)) {
     MERR("[alloc][fail][mmap] <%u>: <%" GRN_FMT_SIZE ">: <%s>: "
@@ -2631,7 +2639,10 @@ grn_io_file_wasi_map(grn_ctx *ctx,
 }
 
 static inline int
-grn_io_file_wasi_sync(grn_ctx *ctx, fileinfo *fi, void *start, size_t length)
+grn_io_file_emulation_sync(grn_ctx *ctx,
+                           fileinfo *fi,
+                           void *start,
+                           size_t length)
 {
   /* pwrite() updates the modification time of the file. So we don't
    * need to update it explicitly like the mmap() version. */
@@ -2639,7 +2650,7 @@ grn_io_file_wasi_sync(grn_ctx *ctx, fileinfo *fi, void *start, size_t length)
 }
 
 static inline int
-grn_io_file_wasi_unmap(
+grn_io_file_emulation_unmap(
   grn_ctx *ctx, grn_io *io, fileinfo *fi, void *start, size_t length)
 {
   if (grn_mmap_emulation_write_back(ctx, start, length) != 0) {
@@ -2651,7 +2662,8 @@ grn_io_file_wasi_unmap(
   grn_mmap_emulation_free(ctx, start, length);
   return 0;
 }
-#  else /* __wasi__ */
+
+#  ifndef __wasi__
 #    if defined(MAP_ANON) && !defined(MAP_ANONYMOUS)
 #      define MAP_ANONYMOUS MAP_ANON
 #    endif
@@ -2790,7 +2802,7 @@ grn_io_file_posix_unmap(
   }
   return res;
 }
-#  endif /* __wasi__ */
+#  endif /* !__wasi__ */
 
 static inline grn_rc
 grn_io_file_posix_read(
@@ -2834,8 +2846,8 @@ grn_io_file_posix_write(
 
 #endif /* WIN32 */
 
-#if defined(WIN32)
-static const grn_io_file_operations grn_io_file_operations_default = {
+#ifdef WIN32
+static const grn_io_file_operations grn_io_file_operations_windows = {
   .init = grn_io_file_windows_init,
   .open = grn_io_file_windows_open,
   .is_opened = grn_io_file_windows_is_opened,
@@ -2850,30 +2862,35 @@ static const grn_io_file_operations grn_io_file_operations_default = {
   .sync_lock = NULL,
   .sync_referenced_map = false,
 };
-#elif defined(__wasi__)
-static const grn_io_file_operations grn_io_file_operations_default = {
+#else /* WIN32 */
+static const grn_io_file_operations grn_io_file_operations_emulation = {
   .init = grn_io_file_posix_init,
   .open = grn_io_file_posix_open,
   .is_opened = grn_io_file_posix_is_opened,
   .close = grn_io_file_posix_close,
   .read = grn_io_file_posix_read,
   .write = grn_io_file_posix_write,
-  .map = grn_io_file_wasi_map,
-  .unmap = grn_io_file_wasi_unmap,
-  .discard = grn_io_file_wasi_discard,
-  .sync = grn_io_file_wasi_sync,
+  .map = grn_io_file_emulation_map,
+  .unmap = grn_io_file_emulation_unmap,
+  .discard = grn_io_file_emulation_discard,
+  .sync = grn_io_file_emulation_sync,
   .sync_file = NULL,
-  .sync_lock = grn_io_file_wasi_sync_lock,
-  /* WASI is single thread. So nobody is changing or expiring a
-   * referenced mapping while grn_io_flush(). Somebody just keeps a
-   * reference. The mmap() emulation for WASI writes back the content
-   * only on sync() and unmap(). So we must write back the content of
-   * a referenced mapping too. Otherwise, the changes aren't persisted
-   * but grn_io_flush() returns GRN_SUCCESS. */
+  .sync_lock = grn_io_file_emulation_sync_lock,
+  /* The mmap() emulation writes back the content only on sync() and
+   * unmap(). So we must write back the content of a referenced
+   * mapping too. Otherwise, the changes aren't persisted but
+   * grn_io_flush() returns GRN_SUCCESS.
+   *
+   * Someone may be changing the referenced mapping while we're
+   * writing it back with multiple threads. In this case, the file may
+   * have partially changed content. But it's the same as the kernel
+   * writes back dirty pages of mmap() at any time. The latest content
+   * is written back by the next sync() or unmap(). */
   .sync_referenced_map = true,
 };
-#else
-static const grn_io_file_operations grn_io_file_operations_default = {
+
+#  ifndef __wasi__
+static const grn_io_file_operations grn_io_file_operations_mmap = {
   .init = grn_io_file_posix_init,
   .open = grn_io_file_posix_open,
   .is_opened = grn_io_file_posix_is_opened,
@@ -2884,20 +2901,44 @@ static const grn_io_file_operations grn_io_file_operations_default = {
   .unmap = grn_io_file_posix_unmap,
   .discard = NULL,
   .sync = grn_io_file_posix_sync,
-#  ifdef GRN_IO_FILE_POSIX_SYNC_FILE
+#    ifdef GRN_IO_FILE_POSIX_SYNC_FILE
   .sync_file = grn_io_file_posix_sync_file,
-#  else
+#    else
   .sync_file = NULL,
-#  endif
+#    endif
   .sync_lock = NULL,
   .sync_referenced_map = false,
 };
+#  endif /* !__wasi__ */
+#endif   /* WIN32 */
+
+/* This is changed only in grn_init() by grn_io_init_from_env(). So
+ * we don't need to care about thread safety. */
+static const grn_io_file_operations *grn_io_file_operations_current =
+#if defined(WIN32)
+  &grn_io_file_operations_windows;
+#elif defined(__wasi__)
+  &grn_io_file_operations_emulation;
+#else
+  &grn_io_file_operations_mmap;
 #endif
+
+static void
+grn_io_file_operations_init_from_env(void)
+{
+#if !defined(WIN32) && !defined(__wasi__)
+  char env[GRN_ENV_BUFFER_SIZE];
+  grn_getenv("GRN_IO_MMAP_EMULATION_ENABLE", env, GRN_ENV_BUFFER_SIZE);
+  if (strcmp(env, "yes") == 0) {
+    grn_io_file_operations_current = &grn_io_file_operations_emulation;
+  }
+#endif
+}
 
 static const grn_io_file_operations *
 grn_io_get_file_operations(void)
 {
-  return &grn_io_file_operations_default;
+  return grn_io_file_operations_current;
 }
 
 bool
