@@ -110,18 +110,29 @@ typedef struct {
    * optional. */
   void (*discard)(grn_ctx *ctx, void *start, size_t length);
   int (*sync)(grn_ctx *ctx, fileinfo *fi, void *start, size_t length);
-  /* Writes back all changes in the file. If this is available,
-   * grn_io_flush() uses this instead of sync() for each mapping. This
-   * is optional. */
+  /* Writes back all changes in the file to the storage. This is
+   * optional.
+   *
+   * If write_back_on_sync is false, grn_io_flush() uses this instead
+   * of sync() for each mapping. Changes in mappings are already in
+   * the file. For example, they are in the page cache with mmap().
+   *
+   * If write_back_on_sync is true, grn_io_flush() uses this after
+   * sync() for each mapping. sync() writes back changes in mappings
+   * to the file and this writes them to the storage. */
   int (*sync_file)(grn_ctx *ctx, fileinfo *fi);
-  /* Writes back the lock in the header. This is needed when changes
-   * in a mapping aren't written back until sync() or unmap(). Returns
-   * -1 with errno on error. This is optional. */
+  /* Writes back the lock in the header. This is needed when
+   * write_back_on_sync is true. Returns -1 with errno on error. This
+   * is optional. */
   int (*sync_lock)(grn_ctx *ctx, grn_io *io);
-  /* Whether sync() must be called for a mapping that is referenced
-   * by someone. This is needed when changes in a mapping aren't
-   * written back until sync() or unmap(). */
-  bool sync_referenced_map;
+  /* Whether changes in a mapping are kept in memory until sync() or
+   * unmap() write them back to the file. If this is true:
+   *
+   * * grn_io_flush() calls sync() for a mapping that is referenced by
+   *   someone too.
+   * * grn_io_flush() calls sync() for each mapping before
+   *   sync_file(). */
+  bool write_back_on_sync;
 } grn_io_file_operations;
 
 static const grn_io_file_operations *
@@ -1710,20 +1721,7 @@ grn_io_flush(grn_ctx *ctx, grn_io *io)
   }
 
   const grn_io_file_operations *operations = grn_io_get_file_operations();
-  if (operations->sync_file) {
-    uint32_t n_files = grn_io_n_files(ctx, io);
-    uint32_t i;
-    for (i = 0; i < n_files; i++) {
-      fileinfo *fi = &(io->fis[i]);
-      if (!grn_fileinfo_opened(fi)) {
-        continue;
-      }
-      if (operations->sync_file(ctx, fi) != 0) {
-        rc = ctx->rc;
-        break;
-      }
-    }
-  } else {
+  if (!operations->sync_file || operations->write_back_on_sync) {
     struct _grn_io_header *header = io->header;
     uint32_t aligned_header_size = grn_io_compute_base(header->header_size);
 
@@ -1751,7 +1749,7 @@ grn_io_flush(grn_ctx *ctx, grn_io *io)
 
         pnref = &info->nref;
         GRN_ATOMIC_ADD_EX(pnref, 1, nref);
-        if (nref != 0 && !operations->sync_referenced_map) {
+        if (nref != 0 && !operations->write_back_on_sync) {
           GRN_ATOMIC_ADD_EX(pnref, -1, nref);
           continue;
         }
@@ -1772,6 +1770,24 @@ grn_io_flush(grn_ctx *ctx, grn_io *io)
           rc = ctx->rc;
           break;
         }
+      }
+    }
+    if (rc != GRN_SUCCESS) {
+      return rc;
+    }
+  }
+
+  if (operations->sync_file) {
+    uint32_t n_files = grn_io_n_files(ctx, io);
+    uint32_t i;
+    for (i = 0; i < n_files; i++) {
+      fileinfo *fi = &(io->fis[i]);
+      if (!grn_fileinfo_opened(fi)) {
+        continue;
+      }
+      if (operations->sync_file(ctx, fi) != 0) {
+        rc = ctx->rc;
+        break;
       }
     }
   }
@@ -2653,6 +2669,23 @@ grn_io_file_emulation_sync(grn_ctx *ctx,
   return grn_mmap_emulation_write_back(ctx, start, length);
 }
 
+/* grn_io_file_emulation_sync() just writes changes to the file. They
+ * may be only in the page cache. This writes them to the storage. */
+static inline int
+grn_io_file_emulation_sync_file(grn_ctx *ctx, fileinfo *fi)
+{
+#  if defined(__linux__) || defined(__wasi__)
+  int r = fdatasync(fi->fd);
+#  else
+  int r = fsync(fi->fd);
+#  endif
+  if (r == -1) {
+    SERR("[io][mmap][emulation] failed to sync file: <%s>", fi->path);
+    return r;
+  }
+  return 0;
+}
+
 static inline int
 grn_io_file_emulation_unmap(
   grn_ctx *ctx, grn_io *io, fileinfo *fi, void *start, size_t length)
@@ -2864,7 +2897,7 @@ static const grn_io_file_operations grn_io_file_operations_windows = {
   .sync = grn_io_file_windows_sync,
   .sync_file = NULL,
   .sync_lock = NULL,
-  .sync_referenced_map = false,
+  .write_back_on_sync = false,
 };
 #else /* WIN32 */
 static const grn_io_file_operations grn_io_file_operations_emulation = {
@@ -2878,19 +2911,20 @@ static const grn_io_file_operations grn_io_file_operations_emulation = {
   .unmap = grn_io_file_emulation_unmap,
   .discard = grn_io_file_emulation_discard,
   .sync = grn_io_file_emulation_sync,
-  .sync_file = NULL,
+  .sync_file = grn_io_file_emulation_sync_file,
   .sync_lock = grn_io_file_emulation_sync_lock,
   /* The mmap() emulation writes back the content only on sync() and
-   * unmap(). So we must write back the content of a referenced
-   * mapping too. Otherwise, the changes aren't persisted but
-   * grn_io_flush() returns GRN_SUCCESS.
+   * unmap(). So grn_io_flush() must write back the content of all
+   * mappings including referenced mappings before sync_file().
+   * Otherwise, the changes aren't persisted but grn_io_flush()
+   * returns GRN_SUCCESS.
    *
    * Someone may be changing the referenced mapping while we're
    * writing it back with multiple threads. In this case, the file may
    * have partially changed content. But it's the same as the kernel
    * writes back dirty pages of mmap() at any time. The latest content
    * is written back by the next sync() or unmap(). */
-  .sync_referenced_map = true,
+  .write_back_on_sync = true,
 };
 
 #  ifndef __wasi__
@@ -2911,7 +2945,7 @@ static const grn_io_file_operations grn_io_file_operations_mmap = {
   .sync_file = NULL,
 #    endif
   .sync_lock = NULL,
-  .sync_referenced_map = false,
+  .write_back_on_sync = false,
 };
 #  endif /* !__wasi__ */
 #endif   /* WIN32 */
