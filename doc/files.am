@@ -484,6 +484,10 @@ absolute_source_files = \
 	$(top_srcdir)/doc/source/example/reference/functions/highlight_html/usage_sequential_class_tag_mode.log \
 	$(top_srcdir)/doc/source/example/reference/functions/highlight_html/usage_setup.log \
 	$(top_srcdir)/doc/source/example/reference/functions/highlight_html/usage_string_literal.log \
+	$(top_srcdir)/doc/source/example/reference/functions/html_extract/usage_default.md \
+	$(top_srcdir)/doc/source/example/reference/functions/html_extract/usage_generated_column.md \
+	$(top_srcdir)/doc/source/example/reference/functions/html_extract/usage_selector.md \
+	$(top_srcdir)/doc/source/example/reference/functions/html_extract/usage_setup.md \
 	$(top_srcdir)/doc/source/example/reference/functions/html_untag/usage_html_untag.log \
 	$(top_srcdir)/doc/source/example/reference/functions/html_untag/usage_setup_data.log \
 	$(top_srcdir)/doc/source/example/reference/functions/html_untag/usage_setup_schema.log \
@@ -1287,6 +1291,7 @@ absolute_source_files = \
 	$(top_srcdir)/doc/source/reference/functions/highlight.rst \
 	$(top_srcdir)/doc/source/reference/functions/highlight_full.rst \
 	$(top_srcdir)/doc/source/reference/functions/highlight_html.rst \
+	$(top_srcdir)/doc/source/reference/functions/html_extract.md \
 	$(top_srcdir)/doc/source/reference/functions/html_untag.rst \
 	$(top_srcdir)/doc/source/reference/functions/in_records.rst \
 	$(top_srcdir)/doc/source/reference/functions/in_values.rst \
@@ -1903,6 +1908,10 @@ source_files_relative_from_doc_dir = \
 	source/example/reference/functions/highlight_html/usage_sequential_class_tag_mode.log \
 	source/example/reference/functions/highlight_html/usage_setup.log \
 	source/example/reference/functions/highlight_html/usage_string_literal.log \
+	source/example/reference/functions/html_extract/usage_default.md \
+	source/example/reference/functions/html_extract/usage_generated_column.md \
+	source/example/reference/functions/html_extract/usage_selector.md \
+	source/example/reference/functions/html_extract/usage_setup.md \
 	source/example/reference/functions/html_untag/usage_html_untag.log \
 	source/example/reference/functions/html_untag/usage_setup_data.log \
 	source/example/reference/functions/html_untag/usage_setup_schema.log \
@@ -2706,6 +2715,7 @@ source_files_relative_from_doc_dir = \
 	source/reference/functions/highlight.rst \
 	source/reference/functions/highlight_full.rst \
 	source/reference/functions/highlight_html.rst \
+	source/reference/functions/html_extract.md \
 	source/reference/functions/html_untag.rst \
 	source/reference/functions/in_records.rst \
 	source/reference/functions/in_values.rst \
@@ -3037,6 +3047,7 @@ po_files = \
 	reference/functions/highlight.po \
 	reference/functions/highlight_full.po \
 	reference/functions/highlight_html.po \
+	reference/functions/html_extract.po \
 	reference/functions/html_untag.po \
 	reference/functions/in_records.po \
 	reference/functions/in_values.po \
@@ -3366,6 +3377,7 @@ po_files_relative_from_locale_dir = \
 	LC_MESSAGES/reference/functions/highlight.po \
 	LC_MESSAGES/reference/functions/highlight_full.po \
 	LC_MESSAGES/reference/functions/highlight_html.po \
+	LC_MESSAGES/reference/functions/html_extract.po \
 	LC_MESSAGES/reference/functions/html_untag.po \
 	LC_MESSAGES/reference/functions/in_records.po \
 	LC_MESSAGES/reference/functions/in_values.po \
@@ -3695,6 +3707,7 @@ edit_po_files = \
 	reference/functions/highlight.edit \
 	reference/functions/highlight_full.edit \
 	reference/functions/highlight_html.edit \
+	reference/functions/html_extract.edit \
 	reference/functions/html_untag.edit \
 	reference/functions/in_records.edit \
 	reference/functions/in_values.edit \
@@ -4024,6 +4037,7 @@ edit_po_files_relative_from_locale_dir = \
 	LC_MESSAGES/reference/functions/highlight.edit \
 	LC_MESSAGES/reference/functions/highlight_full.edit \
 	LC_MESSAGES/reference/functions/highlight_html.edit \
+	LC_MESSAGES/reference/functions/html_extract.edit \
 	LC_MESSAGES/reference/functions/html_untag.edit \
 	LC_MESSAGES/reference/functions/in_records.edit \
 	LC_MESSAGES/reference/functions/in_values.edit \
@@ -4353,6 +4367,7 @@ mo_files = \
 	reference/functions/highlight.mo \
 	reference/functions/highlight_full.mo \
 	reference/functions/highlight_html.mo \
+	reference/functions/html_extract.mo \
 	reference/functions/html_untag.mo \
 	reference/functions/in_records.mo \
 	reference/functions/in_values.mo \
@@ -4682,6 +4697,7 @@ mo_files_relative_from_locale_dir = \
 	LC_MESSAGES/reference/functions/highlight.mo \
 	LC_MESSAGES/reference/functions/highlight_full.mo \
 	LC_MESSAGES/reference/functions/highlight_html.mo \
+	LC_MESSAGES/reference/functions/html_extract.mo \
 	LC_MESSAGES/reference/functions/html_untag.mo \
 	LC_MESSAGES/reference/functions/in_records.mo \
 	LC_MESSAGES/reference/functions/in_values.mo \
@@ -5044,6 +5060,7 @@ html_files_relative_from_locale_dir = \
 	html/reference/functions/highlight.html \
 	html/reference/functions/highlight_full.html \
 	html/reference/functions/highlight_html.html \
+	html/reference/functions/html_extract.html \
 	html/reference/functions/html_untag.html \
 	html/reference/functions/in_records.html \
 	html/reference/functions/in_values.html \

@@ -1,0 +1,117 @@
+# Japanese translations for Groonga package.
+# Copyright (C) 2009-2026 Groonga Project
+# This file is distributed under the same license as the Groonga package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, 2026.
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: Groonga 16.1.6\n"
+"Report-Msgid-Bugs-To: \n"
+"PO-Revision-Date: 2026-11-23 07:27+0000\n"
+"Language-Team: Japanese\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=1; plural=0;\n"
+
+msgid "Execution example:"
+msgstr "実行例："
+
+msgid "`html_extract`"
+msgstr ""
+
+msgid "This is an experimental feature. Currently, this feature is still not stable."
+msgstr "これは実験的な機能です。現時点ではまだ安定しきっていません。"
+
+msgid "Summary"
+msgstr "概要"
+
+msgid "`html_extract` extracts text content from HTML. It removes HTML tags and expands character references such as `&lt;`."
+msgstr "`html_extract`はHTMLからテキストコンテンツを抽出します。HTMLタグを削除し、`&lt;`などの文字参照を展開します。"
+
+msgid "`html_extract` behaves the same as {ref}`extractor-html`. You can use `html_extract` to get the text content in HTML as a value. For example, you can output the main content of an HTML by {ref}`select-output-columns` or store it to a {ref}`generated-column`."
+msgstr "`html_extract`は{ref}`extractor-html`と同じ挙動です。`html_extract`を使うと、HTMLのテキストコンテンツを取得できます。例えば{ref}`select-output-columns`で使うとHTMLのメインコンテンツを出力したり、特定の要素を登録するために{ref}`generated-column`で利用することができます。"
+
+msgid "Syntax"
+msgstr "構文"
+
+msgid "`html_extract` requires one parameter. `options` is optional:"
+msgstr "`html_extract`には必須の引数が1つとオプションのパラメーターがあります。"
+
+msgid "`options` uses the following format. All of key-value pairs are optional:"
+msgstr "`options`には以下のキーを指定します。すべてのキー・値のペアは省略可能です。"
+
+msgid "Usage"
+msgstr "使い方"
+
+msgid "Here are a schema definition and sample data to show usage."
+msgstr "以下は、使い方を示すためのスキーマ定義とサンプルデータです。"
+
+msgid "Here is an example that extracts text content from HTML. HTML tags (`<html>`, `<body>` and so on) are removed and character references (`&lt;` and `&gt;`) are expanded:"
+msgstr "以下は、HTMLからテキストコンテンツを抽出する例です。HTMLタグ（`<html>`、`<body>`など）は削除され、文字参照（`&lt;`と`&gt;`）は展開されます。"
+
+msgid "You can extract only the content in the specified HTML tag by {ref}`html-extract-selector`. This is useful when you want to extract only the main content of a page. The first record doesn't have `<article>`. So an empty text is returned for it:"
+msgstr "{ref}`html-extract-selector`を使うと、指定されたHTMLタグ内のコンテンツのみを抽出できます。これはページのメインコンテンツのみを抽出したいときなどに便利です。最初のレコードには`<article>`がないため、空のテキストが返されます。"
+
+msgid "You can use `html_extract` in a {ref}`generated-column`. The following example stores the main content of each HTML to the `content` column automatically:"
+msgstr "`html_extract`は{ref}`generated-column`で使えます。次の例ではHTMLのメインコンテンツを`content`カラムに自動的に登録します。"
+
+msgid "Parameters"
+msgstr "引数"
+
+msgid "There is one required parameter. There is one optional parameter."
+msgstr "必須の引数が1つとオプションのパラメーターがあります。"
+
+msgid "Required parameters"
+msgstr "必須引数"
+
+msgid "`html`"
+msgstr ""
+
+msgid "`html` is the target HTML. It must be a value of a text type such as `ShortText`, `Text` and `LongText`."
+msgstr "`html`は対象のHTMLです。`ShortText`、`Text`、`LongText`などのテキスト型の値である必要があります。"
+
+msgid "`html_extract` reports an error if this parameter isn't a text."
+msgstr "`html_extract`は、このパラメーターがテキストでなければエラーを報告します。"
+
+msgid "Optional parameters"
+msgstr "省略可能引数"
+
+msgid "`options`"
+msgstr ""
+
+msgid "`options` can be passed as a JSON object."
+msgstr "`options`はJSONオブジェクトとして渡すことができます。"
+
+msgid "`selector`"
+msgstr ""
+
+msgid "Specifies elements to extract text content from. Text content out of the elements is ignored."
+msgstr "テキストコンテンツを抽出する要素を指定します。要素外のテキストコンテンツは無視されます。"
+
+msgid "This is the same as {ref}`extractor-html-selector` of {ref}`extractor-html`. It has the same limitations too. See {ref}`extractor-html-selector` for details."
+msgstr "これは{ref}`extractor-html`の{ref}`extractor-html-selector`と同じです。制限事項も同じです。詳細は{ref}`extractor-html-selector`を参照してください。"
+
+msgid "The default value is no selector. It means that all text content is extracted."
+msgstr "デフォルト値はセレクタなしです。すべてのテキストコンテンツが抽出されます。"
+
+msgid "Return value"
+msgstr "戻り値"
+
+msgid "`html_extract` returns the extracted text content as a `Text`."
+msgstr "`html_extract`は抽出されたテキストコンテンツを`Text`として返します。"
+
+msgid "If {ref}`html-extract-selector` is specified and no element matches it, `html_extract` returns an empty text."
+msgstr "{ref}`html-extract-selector`の指定があっても、それに一致する要素がない場合は`html_extract`は空のテキストを返します。"
+
+msgid "See also"
+msgstr "参考"
+
+msgid "{ref}`extractor-html`"
+msgstr ""
+
+msgid "{doc}`html_untag`"
+msgstr ""
+
+msgid "{doc}`/reference/commands/select`"
+msgstr ""

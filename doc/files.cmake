@@ -484,6 +484,10 @@ set(GRN_DOC_SOURCES
     example/reference/functions/highlight_html/usage_sequential_class_tag_mode.log
     example/reference/functions/highlight_html/usage_setup.log
     example/reference/functions/highlight_html/usage_string_literal.log
+    example/reference/functions/html_extract/usage_default.md
+    example/reference/functions/html_extract/usage_generated_column.md
+    example/reference/functions/html_extract/usage_selector.md
+    example/reference/functions/html_extract/usage_setup.md
     example/reference/functions/html_untag/usage_html_untag.log
     example/reference/functions/html_untag/usage_setup_data.log
     example/reference/functions/html_untag/usage_setup_schema.log
@@ -1287,6 +1291,7 @@ set(GRN_DOC_SOURCES
     reference/functions/highlight.rst
     reference/functions/highlight_full.rst
     reference/functions/highlight_html.rst
+    reference/functions/html_extract.md
     reference/functions/html_untag.rst
     reference/functions/in_records.rst
     reference/functions/in_values.rst
@@ -1650,6 +1655,7 @@ set(GRN_DOC_HTML_FILES
     reference/functions/highlight.html
     reference/functions/highlight_full.html
     reference/functions/highlight_html.html
+    reference/functions/html_extract.html
     reference/functions/html_untag.html
     reference/functions/in_records.html
     reference/functions/in_values.html
