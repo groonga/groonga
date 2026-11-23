@@ -94,6 +94,7 @@ typedef struct {
     grn_ctx *ctx, fileinfo *fi, void *buf, size_t count, off_t offset);
   grn_rc (*write)(
     grn_ctx *ctx, fileinfo *fi, void *buf, size_t count, off_t offset);
+  grn_rc (*get_size)(grn_ctx *ctx, fileinfo *fi, uint64_t *size);
   /* fi is NULL for an anonymous mapping. */
   void *(*map)(grn_ctx *ctx,
                grn_io *io,
@@ -176,6 +177,12 @@ static inline grn_rc
 grn_pwrite(grn_ctx *ctx, fileinfo *fi, void *buf, size_t count, off_t offset)
 {
   return grn_io_get_file_operations()->write(ctx, fi, buf, count, offset);
+}
+
+static inline grn_rc
+grn_fileinfo_get_size(grn_ctx *ctx, fileinfo *fi, uint64_t *size)
+{
+  return grn_io_get_file_operations()->get_size(ctx, fi, size);
 }
 
 bool
@@ -631,34 +638,30 @@ grn_io_segment_alloc(grn_ctx *ctx,
 
 static grn_rc
 grn_io_read_header(grn_ctx *ctx,
-                   int fd,
+                   fileinfo *fi,
                    const char *path,
                    struct _grn_io_header *header,
                    const char *tag)
 {
-  struct stat s;
-  if (fstat(fd, &s) == -1) {
-    ERRNO_ERR("%s failed to file status: <%s>", tag, path);
+  uint64_t size;
+  grn_rc rc = grn_fileinfo_get_size(ctx, fi, &size);
+  if (rc != GRN_SUCCESS) {
+    ERR(rc, "%s failed to get file size: <%s>", tag, path);
     return ctx->rc;
   }
-  if ((size_t)(s.st_size) < sizeof(struct _grn_io_header)) {
+  if (size < sizeof(struct _grn_io_header)) {
     ERR(GRN_INCOMPATIBLE_FILE_FORMAT,
         "%s file size is too small: "
-        "<%" GRN_FMT_INT64D ">(required: >= %" GRN_FMT_SIZE "): <%s>",
+        "<%" GRN_FMT_INT64U ">(required: >= %" GRN_FMT_SIZE "): <%s>",
         tag,
-        (int64_t)(s.st_size),
+        size,
         sizeof(struct _grn_io_header),
         path);
     return ctx->rc;
   }
-  ssize_t read_bytes = grn_read(fd, header, sizeof(struct _grn_io_header));
-  if (read_bytes != sizeof(struct _grn_io_header)) {
-    ERRNO_ERR("%s failed to read header data: "
-              "<%" GRN_FMT_SSIZE ">(expected: %" GRN_FMT_SSIZE "): <%s>",
-              tag,
-              read_bytes,
-              sizeof(struct _grn_io_header),
-              path);
+  rc = grn_pread(ctx, fi, header, sizeof(struct _grn_io_header), 0);
+  if (rc != GRN_SUCCESS) {
+    ERR(rc, "%s failed to read header data: <%s>", tag, path);
     return ctx->rc;
   }
   if (memcmp(header->idstr, GRN_IO_IDSTR, GRN_IO_IDSTR_LEN) != 0) {
@@ -677,15 +680,25 @@ uint32_t
 grn_io_detect_type(grn_ctx *ctx, const char *path)
 {
   const char *tag = "[io][detect-type]";
-  int fd;
-  grn_open(fd, path, O_RDONLY | GRN_OPEN_FLAG_BINARY);
-  if (fd == -1) {
-    ERRNO_ERR("%s failed to open path: <%s>", tag, path);
+  /* We check this explicitly to report the same error on all
+   * platforms. An error on open depends on file operations. */
+  if (!grn_io_path_exist(ctx, path)) {
+    ERR(GRN_NO_SUCH_FILE_OR_DIRECTORY,
+        "%s path doesn't exist: <%s>",
+        tag,
+        path);
+    return 0;
+  }
+  fileinfo fi;
+  grn_fileinfo_init(&fi, 1);
+  grn_rc rc = grn_fileinfo_open(ctx, &fi, path, O_RDONLY);
+  if (rc != GRN_SUCCESS) {
+    ERR(rc, "%s failed to open path: <%s>", tag, path);
     return 0;
   }
   struct _grn_io_header header;
-  grn_rc rc = grn_io_read_header(ctx, fd, path, &header, tag);
-  grn_close(fd);
+  rc = grn_io_read_header(ctx, &fi, path, &header, tag);
+  grn_fileinfo_close(ctx, &fi);
   if (rc != GRN_SUCCESS) {
     return 0;
   }
@@ -717,24 +730,32 @@ grn_io_open(grn_ctx *ctx, const char *path, grn_io_mode mode)
         path);
     return NULL;
   }
+  /* We check this explicitly to report the same error on all
+   * platforms. An error on open depends on file operations. */
+  if (!grn_io_path_exist(ctx, path)) {
+    ERR(GRN_NO_SUCH_FILE_OR_DIRECTORY,
+        "[io][open] path doesn't exist: <%s>",
+        path);
+    return NULL;
+  }
+  grn_fileinfo_init(&fi, 1);
+  grn_rc rc = grn_fileinfo_open(ctx, &fi, path, O_RDWR);
+  if (rc != GRN_SUCCESS) {
+    ERR(rc, "[io][open] failed to open fileinfo: <%s>", path);
+    return NULL;
+  }
   {
     struct _grn_io_header h;
-    int fd;
-    grn_open(fd, path, O_RDWR | GRN_OPEN_FLAG_BINARY);
-    if (fd == -1) {
-      ERRNO_ERR("[io][open] failed to open path: <%s>", path);
-      return NULL;
-    }
-    if (grn_io_read_header(ctx, fd, path, &h, "[io][open]") != GRN_SUCCESS) {
-      grn_close(fd);
+    if (grn_io_read_header(ctx, &fi, path, &h, "[io][open]") != GRN_SUCCESS) {
+      grn_fileinfo_close(ctx, &fi);
       return NULL;
     }
     header_size = h.header_size;
     segment_size = h.segment_size;
     max_segment = h.max_segment;
     flags = h.flags;
-    grn_close(fd);
     if (segment_size == 0) {
+      grn_fileinfo_close(ctx, &fi);
       ERR(GRN_INCOMPATIBLE_FILE_FORMAT,
           "[io][open] failed to open: segment size is 0: <%s>",
           path);
@@ -743,12 +764,6 @@ grn_io_open(grn_ctx *ctx, const char *path, grn_io_mode mode)
   }
   b = grn_io_compute_base(header_size);
   bs = grn_io_compute_base_segment(b, segment_size);
-  grn_fileinfo_init(&fi, 1);
-  grn_rc rc = grn_fileinfo_open(ctx, &fi, path, O_RDWR);
-  if (rc != GRN_SUCCESS) {
-    ERR(rc, "[io][open] failed to open fileinfo: <%s>", path);
-    return NULL;
-  }
 
   struct _grn_io_header *header;
   header = GRN_MMAP(ctx, NULL, &fi, 0, b);
@@ -2227,7 +2242,11 @@ grn_io_file_windows_open(grn_ctx *ctx,
     DWORD read_bytes;
     header_size = sizeof(struct _grn_io_header);
     ReadFile(fi->fh, &io_header, header_size, &read_bytes, NULL);
-    if (read_bytes == header_size) {
+    /* We must not trust the version of a non grn_io file. The version
+     * 0 format extends the file by CreateFileMapping(). The caller
+     * reports an error for a non grn_io file. */
+    if (read_bytes == header_size &&
+        memcmp(io_header.idstr, GRN_IO_IDSTR, GRN_IO_IDSTR_LEN) == 0) {
       version = io_header.version;
     }
     SetFilePointer(fi->fh, 0, NULL, FILE_BEGIN);
@@ -2397,24 +2416,30 @@ static inline grn_rc
 grn_io_file_windows_read(
   grn_ctx *ctx, fileinfo *fi, void *buf, size_t count, off_t offset)
 {
+  /* We must not return ctx->rc on success. ctx may already have an
+   * error that isn't related to this read. */
+  grn_rc rc = GRN_SUCCESS;
   DWORD r, len;
   CRITICAL_SECTION_ENTER(fi->cs);
   r = SetFilePointer(fi->fh, offset, NULL, FILE_BEGIN);
   if (r == INVALID_SET_FILE_POINTER) {
     SERR("SetFilePointer");
+    rc = ctx->rc;
   } else {
     if (!ReadFile(fi->fh, buf, (DWORD)count, &len, NULL)) {
       SERR("ReadFile");
+      rc = ctx->rc;
     } else if (len != count) {
       /* todo : should retry ? */
       ERR(GRN_INPUT_OUTPUT_ERROR,
           "ReadFile %" GRN_FMT_SIZE " != %lu",
           count,
           len);
+      rc = ctx->rc;
     }
   }
   CRITICAL_SECTION_LEAVE(fi->cs);
-  return ctx->rc;
+  return rc;
 }
 
 static inline grn_rc
@@ -2439,6 +2464,18 @@ grn_io_file_windows_write(
   }
   CRITICAL_SECTION_LEAVE(fi->cs);
   return ctx->rc;
+}
+
+static inline grn_rc
+grn_io_file_windows_get_size(grn_ctx *ctx, fileinfo *fi, uint64_t *size)
+{
+  LARGE_INTEGER file_size;
+  if (!GetFileSizeEx(fi->fh, &file_size)) {
+    SERR("GetFileSizeEx(<%s>) failed", fi->path);
+    return ctx->rc;
+  }
+  *size = (uint64_t)(file_size.QuadPart);
+  return GRN_SUCCESS;
 }
 
 #else /* WIN32 */
@@ -2888,6 +2925,18 @@ grn_io_file_posix_write(
   return GRN_SUCCESS;
 }
 
+static inline grn_rc
+grn_io_file_posix_get_size(grn_ctx *ctx, fileinfo *fi, uint64_t *size)
+{
+  struct stat st;
+  if (fstat(fi->fd, &st) == -1) {
+    SERR("fstat(<%s>) failed", fi->path);
+    return ctx->rc;
+  }
+  *size = (uint64_t)(st.st_size);
+  return GRN_SUCCESS;
+}
+
 #endif /* WIN32 */
 
 /* Path operations for the local file system. They are shared by all
@@ -2907,6 +2956,7 @@ static const grn_io_file_operations grn_io_file_operations_windows = {
   .close = grn_io_file_windows_close,
   .read = grn_io_file_windows_read,
   .write = grn_io_file_windows_write,
+  .get_size = grn_io_file_windows_get_size,
   .map = grn_io_file_windows_map,
   .unmap = grn_io_file_windows_unmap,
   .discard = NULL,
@@ -2924,6 +2974,7 @@ static const grn_io_file_operations grn_io_file_operations_emulation = {
   .close = grn_io_file_posix_close,
   .read = grn_io_file_posix_read,
   .write = grn_io_file_posix_write,
+  .get_size = grn_io_file_posix_get_size,
   .map = grn_io_file_emulation_map,
   .unmap = grn_io_file_emulation_unmap,
   .discard = grn_io_file_emulation_discard,
@@ -2953,6 +3004,7 @@ static const grn_io_file_operations grn_io_file_operations_mmap = {
   .close = grn_io_file_posix_close,
   .read = grn_io_file_posix_read,
   .write = grn_io_file_posix_write,
+  .get_size = grn_io_file_posix_get_size,
   .map = grn_io_file_posix_map,
   .unmap = grn_io_file_posix_unmap,
   .discard = NULL,
