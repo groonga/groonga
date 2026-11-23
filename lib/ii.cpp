@@ -3697,6 +3697,7 @@ typedef struct {
   const char *tag;
   grn_ii *ii;
   const uint8_t *chunk;
+  uint32_t chunk_size;
   buffer_term *term;
   uint16_t nth_term;
   uint16_t n_terms;
@@ -3733,12 +3734,57 @@ merge_dump_source_flush_entries(grn_ctx *ctx, merge_dump_source_data *data)
   data->n_inspected_entries = 0;
 }
 
+/* GRN_B_DEC() with boundary check. merge_dump_source() is used for
+ * reporting broken data. So we must not read data after data_end. */
+static inline bool
+merge_dump_source_decode(const uint8_t **data,
+                         const uint8_t *data_end,
+                         uint32_t *value)
+{
+  const uint8_t *current = *data;
+  if (!(current < data_end)) {
+    return false;
+  }
+  size_t size;
+  switch (*current >> 4) {
+  case 0x08:
+    size = (*current == 0x8f) ? 1 + sizeof(uint32_t) : 1;
+    break;
+  case 0x09:
+    size = 4;
+    break;
+  case 0x0a:
+  case 0x0b:
+    size = 3;
+    break;
+  case 0x0c:
+  case 0x0d:
+  case 0x0e:
+  case 0x0f:
+    size = 2;
+    break;
+  default:
+    size = 1;
+    break;
+  }
+  if (static_cast<size_t>(data_end - current) < size) {
+    return false;
+  }
+  GRN_B_DEC(*value, current);
+  *data = current;
+  return true;
+}
+
+/* position_gaps_end is used only for MERGE_DUMP_SOURCE_ENTRY_BUFFER.
+ * The caller must check the number of position gaps for
+ * MERGE_DUMP_SOURCE_ENTRY_CHUNK. */
 static void
 merge_dump_source_add_entry(grn_ctx *ctx,
                             merge_dump_source_data *data,
                             merge_dump_source_entry_type type,
                             docinfo *info,
-                            uint8_t *position_gaps)
+                            const uint8_t *position_gaps,
+                            const uint8_t *position_gaps_end)
 {
   if (GRN_TEXT_LEN(&(data->inspected_entries)) > 0) {
     GRN_TEXT_PUTC(ctx, &(data->inspected_entries), ' ');
@@ -3762,9 +3808,14 @@ merge_dump_source_add_entry(grn_ctx *ctx,
         GRN_TEXT_PUTC(ctx, &(data->inspected_entries), ',');
       }
       if (type == MERGE_DUMP_SOURCE_ENTRY_BUFFER) {
-        GRN_B_DEC(position_gap, position_gaps);
+        if (!merge_dump_source_decode(&position_gaps,
+                                      position_gaps_end,
+                                      &position_gap)) {
+          GRN_TEXT_PUTS(ctx, &(data->inspected_entries), "broken");
+          break;
+        }
       } else {
-        position_gap = ((uint32_t *)position_gaps)[i];
+        position_gap = reinterpret_cast<const uint32_t *>(position_gaps)[i];
       }
       position += position_gap;
       grn_text_printf(ctx, &(data->inspected_entries), "%u", position);
@@ -3833,6 +3884,7 @@ merge_dump_source_chunk_raw(grn_ctx *ctx,
     const uint32_t *n_terms_list;
     const uint32_t *weights = NULL;
     const uint32_t *position_gaps = NULL;
+    const uint32_t *position_gaps_end = nullptr;
 
     {
       int i = 0;
@@ -3846,7 +3898,9 @@ merge_dump_source_chunk_raw(grn_ctx *ctx,
         weights = data->data_vector[i++].data;
       }
       if (data->ii->header.common->flags & GRN_OBJ_WITH_POSITION) {
-        position_gaps = data->data_vector[i++].data;
+        position_gaps = data->data_vector[i].data;
+        position_gaps_end = position_gaps + data->data_vector[i].data_size;
+        i++;
       }
     }
 
@@ -3877,11 +3931,24 @@ merge_dump_source_chunk_raw(grn_ctx *ctx,
           info.weight = 0;
         }
 
-        merge_dump_source_add_entry(ctx,
-                                    data,
-                                    MERGE_DUMP_SOURCE_ENTRY_CHUNK,
-                                    &info,
-                                    (uint8_t *)position_gaps);
+        if (position_gaps &&
+            static_cast<size_t>(position_gaps_end - position_gaps) < info.tf) {
+          if (GRN_TEXT_LEN(&(data->inspected_entries)) > 0) {
+            GRN_TEXT_PUTC(ctx, &(data->inspected_entries), ' ');
+          }
+          GRN_TEXT_PUTS(ctx, &(data->inspected_entries), "broken");
+          break;
+        }
+        merge_dump_source_add_entry(
+          ctx,
+          data,
+          MERGE_DUMP_SOURCE_ENTRY_CHUNK,
+          &info,
+          reinterpret_cast<const uint8_t *>(position_gaps),
+          nullptr);
+        if (position_gaps) {
+          position_gaps += info.tf;
+        }
       }
       merge_dump_source_flush_entries(ctx, data);
     }
@@ -3891,13 +3958,48 @@ merge_dump_source_chunk_raw(grn_ctx *ctx,
 static void
 merge_dump_source_chunk(grn_ctx *ctx, merge_dump_source_data *data)
 {
+  if (data->term->pos_in_chunk > data->chunk_size ||
+      data->term->size_in_chunk > data->chunk_size - data->term->pos_in_chunk) {
+    GRN_LOG(ctx,
+            data->log_level,
+            "%s[%.*s][%d/%d] <%.*s>(%u): chunk: out of range: "
+            "<%u:%u>/<%u>",
+            data->tag,
+            data->name_size,
+            data->name,
+            data->nth_term,
+            data->n_terms,
+            static_cast<int>(GRN_TEXT_LEN(&(data->inspected_term))),
+            GRN_TEXT_VALUE(&(data->inspected_term)),
+            CHUNK_SPLIT_OFF(data->term->tid),
+            data->term->pos_in_chunk,
+            data->term->size_in_chunk,
+            data->chunk_size);
+    return;
+  }
+
   const uint8_t *chunk_start = data->chunk + data->term->pos_in_chunk;
   const uint8_t *chunk_end = chunk_start + data->term->size_in_chunk;
 
   if (data->term->tid & CHUNK_SPLIT) {
     const uint8_t *chunk_current = chunk_start;
 
-    GRN_B_DEC(data->n_chunks, chunk_current);
+    if (!merge_dump_source_decode(&chunk_current,
+                                  chunk_end,
+                                  &(data->n_chunks))) {
+      GRN_LOG(ctx,
+              data->log_level,
+              "%s[%.*s][%d/%d] <%.*s>(%u): chunk: broken",
+              data->tag,
+              data->name_size,
+              data->name,
+              data->nth_term,
+              data->n_terms,
+              static_cast<int>(GRN_TEXT_LEN(&(data->inspected_term))),
+              GRN_TEXT_VALUE(&(data->inspected_term)),
+              CHUNK_SPLIT_OFF(data->term->tid));
+      return;
+    }
     GRN_LOG(ctx,
             data->log_level,
             "%s[%.*s][%d/%d] <%.*s>(%u): chunk: %u",
@@ -3932,9 +4034,28 @@ merge_dump_source_chunk(grn_ctx *ctx, merge_dump_source_data *data)
         return;
       }
 
-      GRN_B_DEC(info.segno, chunk_current);
-      GRN_B_DEC(info.size, chunk_current);
-      GRN_B_DEC(info.dgap, chunk_current);
+      if (!(merge_dump_source_decode(&chunk_current,
+                                     chunk_end,
+                                     &(info.segno)) &&
+            merge_dump_source_decode(&chunk_current, chunk_end, &(info.size)) &&
+            merge_dump_source_decode(&chunk_current,
+                                     chunk_end,
+                                     &(info.dgap)))) {
+        GRN_LOG(ctx,
+                data->log_level,
+                "%s[%.*s][%d/%d] <%.*s>(%u): chunk: %u/%u: broken",
+                data->tag,
+                data->name_size,
+                data->name,
+                data->nth_term,
+                data->n_terms,
+                static_cast<int>(GRN_TEXT_LEN(&(data->inspected_term))),
+                GRN_TEXT_VALUE(&(data->inspected_term)),
+                CHUNK_SPLIT_OFF(data->term->tid),
+                data->nth_chunk,
+                data->n_chunks);
+        return;
+      }
 
       GRN_LOG(ctx,
               data->log_level,
@@ -4024,22 +4145,19 @@ merge_dump_source_chunk(grn_ctx *ctx, merge_dump_source_data *data)
 }
 
 static void
-merge_dump_source(grn_ctx *ctx,
-                  grn_ii *ii,
-                  buffer *buf,
-                  const uint8_t *chunk,
-                  grn_log_level log_level)
+merge_dump_source_internal(grn_ctx *ctx,
+                           grn_ii *ii,
+                           buffer *buf,
+                           const uint8_t *chunk,
+                           grn_log_level log_level)
 {
   merge_dump_source_data data;
-
-  if (!grn_logger_pass(ctx, log_level)) {
-    return;
-  }
 
   data.log_level = log_level;
   data.tag = "[ii][merge][source]";
   data.ii = ii;
   data.chunk = chunk;
+  data.chunk_size = buf->header.chunk_size;
   data.term = NULL;
   data.nth_term = 0;
   data.n_terms = buf->header.nterms;
@@ -4062,6 +4180,30 @@ merge_dump_source(grn_ctx *ctx,
           data.name_size,
           data.name,
           data.n_terms);
+  {
+    const uint16_t max_n_terms =
+      static_cast<uint16_t>(sizeof(buf->terms) / sizeof(buffer_term));
+    if (data.n_terms > max_n_terms) {
+      GRN_LOG(ctx,
+              data.log_level,
+              "%s[%.*s] broken: too many terms: <%u>/<%u>",
+              data.tag,
+              data.name_size,
+              data.name,
+              data.n_terms,
+              max_n_terms);
+      data.n_terms = max_n_terms;
+    }
+  }
+  /* buffer_term::pos_in_buffer and buffer_rec::step are uint16_t and
+   * they are in buffer_rec unit. So all buffer_rec are in the
+   * buffer. But data after buffer_rec may be out of the buffer. */
+  const uint8_t *buffer_end =
+    reinterpret_cast<const uint8_t *>(buf) + S_SEGMENT;
+  /* For detecting a loop in broken records. visited[position] is
+   * nth_term + 1 when the record at the position is visited for the
+   * nth_term-th term. We don't need to clear this for each term. */
+  std::vector<uint16_t> visited(UINT16_MAX + 1);
   for (data.nth_term = 0; data.nth_term < data.n_terms; data.nth_term++) {
     uint16_t position;
 
@@ -4098,11 +4240,22 @@ merge_dump_source(grn_ctx *ctx,
             data.term->pos_in_buffer,
             data.term->size_in_buffer);
 
+    const uint16_t visited_mark = static_cast<uint16_t>(data.nth_term + 1);
     position = data.term->pos_in_buffer;
     while (position > 0) {
+      if (visited[position] == visited_mark) {
+        grn_text_printf(ctx,
+                        &(data.inspected_entries),
+                        "record: %u: loop",
+                        position);
+        merge_dump_source_flush_entries(ctx, &data);
+        break;
+      }
+      visited[position] = visited_mark;
+
       buffer_rec *record = BUFFER_REC_AT(buf, position);
-      uint8_t *record_data = GRN_NEXT_ADDR(record);
-      docinfo info;
+      const uint8_t *record_data = GRN_NEXT_ADDR(record);
+      docinfo info = {};
 
       grn_text_printf(ctx,
                       &(data.inspected_entries),
@@ -4121,23 +4274,34 @@ merge_dump_source(grn_ctx *ctx,
 
       GRN_TEXT_PUTC(ctx, &(data.inspected_entries), ':');
 
-      GRN_B_DEC(info.rid, record_data);
-      if (ii->header.common->flags & GRN_OBJ_WITH_SECTION) {
-        GRN_B_DEC(info.sid, record_data);
+      bool decoded =
+        merge_dump_source_decode(&record_data, buffer_end, &(info.rid));
+      if (decoded && (ii->header.common->flags & GRN_OBJ_WITH_SECTION)) {
+        decoded =
+          merge_dump_source_decode(&record_data, buffer_end, &(info.sid));
       } else {
         info.sid = 1;
       }
-      GRN_B_DEC(info.tf, record_data);
-      if (ii->header.common->flags & GRN_OBJ_WITH_WEIGHT) {
-        GRN_B_DEC(info.weight, record_data);
+      if (decoded) {
+        decoded =
+          merge_dump_source_decode(&record_data, buffer_end, &(info.tf));
+      }
+      if (decoded && (ii->header.common->flags & GRN_OBJ_WITH_WEIGHT)) {
+        decoded =
+          merge_dump_source_decode(&record_data, buffer_end, &(info.weight));
       } else {
         info.weight = 0;
       }
-      merge_dump_source_add_entry(ctx,
-                                  &data,
-                                  MERGE_DUMP_SOURCE_ENTRY_BUFFER,
-                                  &info,
-                                  record_data);
+      if (decoded) {
+        merge_dump_source_add_entry(ctx,
+                                    &data,
+                                    MERGE_DUMP_SOURCE_ENTRY_BUFFER,
+                                    &info,
+                                    record_data,
+                                    buffer_end);
+      } else {
+        GRN_TEXT_PUTS(ctx, &(data.inspected_entries), "broken");
+      }
       merge_dump_source_flush_entries(ctx, &data);
     }
 
@@ -4149,6 +4313,37 @@ merge_dump_source(grn_ctx *ctx,
   datavec_fin(ctx, data.data_vector);
   GRN_OBJ_FIN(ctx, &(data.inspected_term));
   GRN_OBJ_FIN(ctx, &(data.inspected_entries));
+}
+
+static void
+merge_dump_source(grn_ctx *ctx,
+                  grn_ii *ii,
+                  buffer *buf,
+                  const uint8_t *chunk,
+                  grn_log_level log_level)
+{
+  if (!grn_logger_pass(ctx, log_level)) {
+    return;
+  }
+
+  /* This is just for logging. So this must not change the current
+   * error. For example, a broken term ID in a buffer may cause an
+   * error in grn_ii_get_term(). If we keep the error, the caller
+   * such as buffer_merge() fails. */
+  grn_rc rc = ctx->rc;
+  unsigned char errlvl = ctx->errlvl;
+  const char *errfile = ctx->errfile;
+  unsigned int errline = ctx->errline;
+  const char *errfunc = ctx->errfunc;
+  char errbuf[GRN_CTX_MSGSIZE];
+  grn_strcpy(errbuf, GRN_CTX_MSGSIZE, ctx->errbuf);
+  merge_dump_source_internal(ctx, ii, buf, chunk, log_level);
+  ctx->rc = rc;
+  ctx->errlvl = errlvl;
+  ctx->errfile = errfile;
+  ctx->errline = errline;
+  ctx->errfunc = errfunc;
+  grn_strcpy(ctx->errbuf, GRN_CTX_MSGSIZE, errbuf);
 }
 
 typedef struct {
