@@ -449,6 +449,7 @@ set(GRN_DOC_SOURCES
     example/reference/extractors/extractor_html/expand_character_reference.md
     example/reference/extractors/extractor_html/index.md
     example/reference/extractors/extractor_html/remove_tag.md
+    example/reference/extractors/extractor_html/selector.md
     example/reference/extractors/extractor_json/index.md
     example/reference/extractors/extractor_json/nested.md
     example/reference/extractors/extractor_json/string.md
