@@ -1,0 +1,37 @@
+table_create Data TABLE_NO_KEY
+[[0,0.0,0.0],true]
+column_create Data page COLUMN_SCALAR Int32
+[[0,0.0,0.0],true]
+load --table Data
+[
+{"page": 29}
+]
+[[0,0.0,0.0],1]
+select Data   --output_columns 'html_extract(page)'
+[
+  [
+    [
+      -22,
+      0.0,
+      0.0
+    ],
+    "html_extract(): the first argument must be an HTML string: <29>"
+  ],
+  [
+    [
+      [
+        1
+      ],
+      [
+        [
+          "html_extract",
+          null
+        ]
+      ],
+      [
+        "html_extract(): the first argument must be an HTML string: <29>"
+      ]
+    ]
+  ]
+]
+#|e| html_extract(): the first argument must be an HTML string: <29>

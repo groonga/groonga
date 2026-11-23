@@ -1,0 +1,10 @@
+table_create Data TABLE_NO_KEY
+column_create Data content COLUMN_SCALAR Text
+
+load --table Data
+[
+{"content": "<html><head><title>title text</title></head><body>body contents</body></html>"}
+]
+
+select Data \
+  --output_columns 'html_extract(content)'
