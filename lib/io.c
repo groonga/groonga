@@ -1026,12 +1026,13 @@ grn_io_rename(grn_ctx *ctx, const char *old_name, const char *new_name)
     SERR("%s failed to rename path: <%s> -> <%s>", tag, old_name, new_name);
     return ctx->rc;
   } else {
+    grn_rc rc = GRN_SUCCESS;
     uint32_t fno;
     char old_buffer[PATH_MAX];
     char new_buffer[PATH_MAX];
     for (fno = 1;; fno++) {
       gen_pathname(old_name, old_buffer, fno);
-      if (stat(old_buffer, &s) == 0) {
+      if (stat(old_buffer, &s) != 0) {
         break;
       }
       gen_pathname(new_name, new_buffer, fno);
@@ -1040,9 +1041,10 @@ grn_io_rename(grn_ctx *ctx, const char *old_name, const char *new_name)
              tag,
              old_buffer,
              new_buffer);
+        rc = ctx->rc;
       }
     }
-    return GRN_SUCCESS;
+    return rc;
   }
 }
 
