@@ -621,39 +621,67 @@ grn_io_segment_alloc(grn_ctx *ctx,
   }
 }
 
+static grn_rc
+grn_io_read_header(grn_ctx *ctx,
+                   int fd,
+                   const char *path,
+                   struct _grn_io_header *header,
+                   const char *tag)
+{
+  struct stat s;
+  if (fstat(fd, &s) == -1) {
+    ERRNO_ERR("%s failed to file status: <%s>", tag, path);
+    return ctx->rc;
+  }
+  if ((size_t)(s.st_size) < sizeof(struct _grn_io_header)) {
+    ERR(GRN_INCOMPATIBLE_FILE_FORMAT,
+        "%s file size is too small: "
+        "<%" GRN_FMT_INT64D ">(required: >= %" GRN_FMT_SIZE "): <%s>",
+        tag,
+        (int64_t)(s.st_size),
+        sizeof(struct _grn_io_header),
+        path);
+    return ctx->rc;
+  }
+  ssize_t read_bytes = grn_read(fd, header, sizeof(struct _grn_io_header));
+  if (read_bytes != sizeof(struct _grn_io_header)) {
+    ERRNO_ERR("%s failed to read header data: "
+              "<%" GRN_FMT_SSIZE ">(expected: %" GRN_FMT_SSIZE "): <%s>",
+              tag,
+              read_bytes,
+              sizeof(struct _grn_io_header),
+              path);
+    return ctx->rc;
+  }
+  if (memcmp(header->idstr, GRN_IO_IDSTR, GRN_IO_IDSTR_LEN) != 0) {
+    ERR(GRN_INCOMPATIBLE_FILE_FORMAT,
+        "%s failed to open: format ID is different: <%s>: <%.*s>",
+        tag,
+        path,
+        (int)GRN_IO_IDSTR_LEN,
+        GRN_IO_IDSTR);
+    return ctx->rc;
+  }
+  return GRN_SUCCESS;
+}
+
 uint32_t
 grn_io_detect_type(grn_ctx *ctx, const char *path)
 {
-  struct _grn_io_header h;
-  uint32_t res = 0;
+  const char *tag = "[io][detect-type]";
   int fd;
   grn_open(fd, path, O_RDONLY | GRN_OPEN_FLAG_BINARY);
-  if (fd != -1) {
-    struct stat s;
-    if (fstat(fd, &s) != -1 &&
-        (size_t)(s.st_size) >= sizeof(struct _grn_io_header)) {
-      if (grn_read(fd, &h, sizeof(struct _grn_io_header)) ==
-          sizeof(struct _grn_io_header)) {
-        if (!memcmp(h.idstr, GRN_IO_IDSTR, GRN_IO_IDSTR_LEN)) {
-          res = h.type;
-        } else {
-          ERR(GRN_INCOMPATIBLE_FILE_FORMAT,
-              "failed to detect type: format ID is different: <%s>: <%.*s>",
-              path,
-              (int)GRN_IO_IDSTR_LEN,
-              GRN_IO_IDSTR);
-        }
-      } else {
-        SERR("failed to read enough data for detecting type: <%s>", path);
-      }
-    } else {
-      ERR(GRN_INVALID_FORMAT, "grn_io_detect_type failed");
-    }
-    grn_close(fd);
-  } else {
-    ERRNO_ERR("failed to open path for detecting type: <%s>", path);
+  if (fd == -1) {
+    ERRNO_ERR("%s failed to open path: <%s>", tag, path);
+    return 0;
   }
-  return res;
+  struct _grn_io_header header;
+  grn_rc rc = grn_io_read_header(ctx, fd, path, &header, tag);
+  grn_close(fd);
+  if (rc != GRN_SUCCESS) {
+    return 0;
+  }
+  return header.type;
 }
 
 grn_io *
@@ -661,7 +689,6 @@ grn_io_open(grn_ctx *ctx, const char *path, grn_io_mode mode)
 {
   size_t max_path_len = PATH_MAX - 4;
   size_t path_length;
-  struct stat s;
   fileinfo fi;
   uint32_t flags = 0;
   uint32_t b;
@@ -685,43 +712,12 @@ grn_io_open(grn_ctx *ctx, const char *path, grn_io_mode mode)
   {
     struct _grn_io_header h;
     int fd;
-    ssize_t read_bytes;
     grn_open(fd, path, O_RDWR | GRN_OPEN_FLAG_BINARY);
     if (fd == -1) {
       ERRNO_ERR("[io][open] failed to open path: <%s>", path);
       return NULL;
     }
-    if (fstat(fd, &s) == -1) {
-      ERRNO_ERR("[io][open] failed to file status: <%s>", path);
-      grn_close(fd);
-      return NULL;
-    }
-    if ((size_t)(s.st_size) < sizeof(struct _grn_io_header)) {
-      ERR(GRN_INCOMPATIBLE_FILE_FORMAT,
-          "[io][open] file size is too small: "
-          "<%" GRN_FMT_INT64D ">(required: >= %" GRN_FMT_SIZE "): <%s>",
-          (int64_t)(s.st_size),
-          sizeof(struct _grn_io_header),
-          path);
-      grn_close(fd);
-      return NULL;
-    }
-    read_bytes = grn_read(fd, &h, sizeof(struct _grn_io_header));
-    if (read_bytes != sizeof(struct _grn_io_header)) {
-      ERRNO_ERR("[io][open] failed to read header data: "
-                "<%" GRN_FMT_SSIZE ">(expected: %" GRN_FMT_SSIZE "): <%s>",
-                read_bytes,
-                sizeof(struct _grn_io_header),
-                path);
-      grn_close(fd);
-      return NULL;
-    }
-    if (memcmp(h.idstr, GRN_IO_IDSTR, GRN_IO_IDSTR_LEN) != 0) {
-      ERR(GRN_INCOMPATIBLE_FILE_FORMAT,
-          "[io][open] failed to open: format ID is different: <%s>: <%.*s>",
-          path,
-          (int)GRN_IO_IDSTR_LEN,
-          GRN_IO_IDSTR);
+    if (grn_io_read_header(ctx, fd, path, &h, "[io][open]") != GRN_SUCCESS) {
       grn_close(fd);
       return NULL;
     }
