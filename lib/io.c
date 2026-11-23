@@ -2594,20 +2594,24 @@ grn_io_file_emulation_map(grn_ctx *ctx,
       }
       file_size = (int64_t)(s.st_size);
     }
+    /* Anonymous mapping or a region after EOF that is just extended
+     * by ftruncate() above. The content is all zero. So we don't
+     * need to read it. We use calloc() instead of malloc() and
+     * memset() for this case. calloc() may not need to clear a large
+     * region because it may be allocated by mmap() and it's already
+     * zero cleared. If we use memset(), all pages of the region are
+     * touched and allocated. It's slow for a large region. */
+    bool is_zero = (fd == -1 || offset >= file_size);
+    size_t size = sizeof(grn_mmap_emulation_header) + length;
     grn_mmap_emulation_header *header =
-      GRN_MALLOC(sizeof(grn_mmap_emulation_header) + length);
+      is_zero ? GRN_CALLOC(size) : GRN_MALLOC(size);
     if (!header) {
       return NULL;
     }
     header->fd = fd;
     header->offset = offset;
     void *res = header + 1;
-    if (fd == -1 || offset >= file_size) {
-      /* Anonymous mapping or a region after EOF that is just extended
-       * by ftruncate() above. The content is all zero. So we don't
-       * need to read it. */
-      memset(res, 0, length);
-    } else {
+    if (!is_zero) {
       ssize_t r = grn_mmap_emulation_pread(fd, res, length, offset);
       if (r == -1) {
         SERR("[io][mmap][emulation] pread(%d,%" GRN_FMT_SIZE ",%" GRN_FMT_INT64D
