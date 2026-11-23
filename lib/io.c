@@ -133,6 +133,8 @@ typedef struct {
    * * grn_io_flush() calls sync() for each mapping before
    *   sync_file(). */
   bool write_back_on_sync;
+  /* Operations for a path. They don't need an opened file. */
+  bool (*path_exist)(grn_ctx *ctx, const char *path);
 } grn_io_file_operations;
 
 static const grn_io_file_operations *
@@ -174,6 +176,12 @@ static inline grn_rc
 grn_pwrite(grn_ctx *ctx, fileinfo *fi, void *buf, size_t count, off_t offset)
 {
   return grn_io_get_file_operations()->write(ctx, fi, buf, count, offset);
+}
+
+bool
+grn_io_path_exist(grn_ctx *ctx, const char *path)
+{
+  return grn_io_get_file_operations()->path_exist(ctx, path);
 }
 
 #define GRN_MMAP(ctx, io, fi, offset, length)                                  \
@@ -966,9 +974,8 @@ grn_io_remove_raw(grn_ctx *ctx, const char *path)
   GRN_LOG(ctx, GRN_LOG_INFO, "[io][remove] removed path: <%s>", path);
 
   for (fno = 1;; fno++) {
-    struct stat s;
     gen_pathname(path, buffer, fno);
-    if (stat(buffer, &s) != 0) {
+    if (!grn_io_path_exist(ctx, buffer)) {
       break;
     }
     if (grn_unlink(buffer) == 0) {
@@ -990,10 +997,10 @@ grn_io_remove_raw(grn_ctx *ctx, const char *path)
 grn_rc
 grn_io_remove(grn_ctx *ctx, const char *path)
 {
-  struct stat s;
-
-  if (stat(path, &s) != 0) {
-    SERR("failed to stat: <%s>", path);
+  if (!grn_io_path_exist(ctx, path)) {
+    ERR(GRN_NO_SUCH_FILE_OR_DIRECTORY,
+        "[io][remove] path doesn't exist: <%s>",
+        path);
     return ctx->rc;
   }
 
@@ -1003,8 +1010,7 @@ grn_io_remove(grn_ctx *ctx, const char *path)
 grn_rc
 grn_io_remove_if_exist(grn_ctx *ctx, const char *path)
 {
-  struct stat s;
-  if (stat(path, &s) == 0) {
+  if (grn_io_path_exist(ctx, path)) {
     return grn_io_remove_raw(ctx, path);
   }
   return GRN_SUCCESS;
@@ -1014,9 +1020,11 @@ grn_rc
 grn_io_rename(grn_ctx *ctx, const char *old_name, const char *new_name)
 {
   const char *tag = "[io][rename]";
-  struct stat s;
-  if (stat(old_name, &s)) {
-    SERR("%s failed to stat path to be renamed: <%s>", tag, old_name);
+  if (!grn_io_path_exist(ctx, old_name)) {
+    ERR(GRN_NO_SUCH_FILE_OR_DIRECTORY,
+        "%s path to be renamed doesn't exist: <%s>",
+        tag,
+        old_name);
     return ctx->rc;
   } else if (rename(old_name, new_name)) {
     SERR("%s failed to rename path: <%s> -> <%s>", tag, old_name, new_name);
@@ -1028,7 +1036,7 @@ grn_io_rename(grn_ctx *ctx, const char *old_name, const char *new_name)
     char new_buffer[PATH_MAX];
     for (fno = 1;; fno++) {
       gen_pathname(old_name, old_buffer, fno);
-      if (stat(old_buffer, &s) != 0) {
+      if (!grn_io_path_exist(ctx, old_buffer)) {
         break;
       }
       gen_pathname(new_name, new_buffer, fno);
@@ -1417,7 +1425,7 @@ grn_io_seg_map_(grn_ctx *ctx, grn_io *io, uint32_t segno, grn_io_mapinfo *info)
     if (!grn_fileinfo_opened(fi)) {
       char path[PATH_MAX];
       gen_pathname(io->path, path, fno);
-      bool path_exist = grn_path_exist(path);
+      bool path_exist = grn_io_path_exist(ctx, path);
       if (!grn_fileinfo_open(ctx, fi, path, O_RDWR | O_CREAT)) {
         DO_MAP(io, fi, pos, segment_size, segno, info->map);
         if (!info->map && !path_exist) {
@@ -1806,10 +1814,11 @@ grn_io_is_corrupt(grn_ctx *ctx, grn_io *io)
   n_files = grn_io_n_files(ctx, io);
   for (i = 0; i < n_files; i++) {
     char path[PATH_MAX];
-    struct stat s;
     gen_pathname(io->path, path, i);
-    if (stat(path, &s) != 0) {
-      SERR("[io][corrupt] used path doesn't exist: <%s>", path);
+    if (!grn_io_path_exist(ctx, path)) {
+      ERR(GRN_NO_SUCH_FILE_OR_DIRECTORY,
+          "[io][corrupt] used path doesn't exist: <%s>",
+          path);
       return true;
     }
   }
@@ -2881,6 +2890,15 @@ grn_io_file_posix_write(
 
 #endif /* WIN32 */
 
+/* Path operations for the local file system. They are shared by all
+ * platforms. */
+static bool
+grn_io_path_local_exist(grn_ctx *ctx, const char *path)
+{
+  struct stat s;
+  return stat(path, &s) == 0;
+}
+
 #ifdef WIN32
 static const grn_io_file_operations grn_io_file_operations_windows = {
   .init = grn_io_file_windows_init,
@@ -2896,6 +2914,7 @@ static const grn_io_file_operations grn_io_file_operations_windows = {
   .sync_file = NULL,
   .sync_lock = NULL,
   .write_back_on_sync = false,
+  .path_exist = grn_io_path_local_exist,
 };
 #else /* WIN32 */
 static const grn_io_file_operations grn_io_file_operations_emulation = {
@@ -2923,6 +2942,7 @@ static const grn_io_file_operations grn_io_file_operations_emulation = {
    * writes back dirty pages of mmap() at any time. The latest content
    * is written back by the next sync() or unmap(). */
   .write_back_on_sync = true,
+  .path_exist = grn_io_path_local_exist,
 };
 
 #  ifndef __wasi__
@@ -2944,6 +2964,7 @@ static const grn_io_file_operations grn_io_file_operations_mmap = {
 #    endif
   .sync_lock = NULL,
   .write_back_on_sync = false,
+  .path_exist = grn_io_path_local_exist,
 };
 #  endif /* !__wasi__ */
 #endif   /* WIN32 */

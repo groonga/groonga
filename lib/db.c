@@ -248,7 +248,7 @@ grn_db_config_open(grn_ctx *ctx, grn_db *s, const char *path)
                PATH_MAX,
                GRN_DB_CONFIG_PATH_FORMAT,
                path);
-  if (grn_path_exist(config_path)) {
+  if (grn_io_path_exist(ctx, config_path)) {
     s->config = grn_hash_open(ctx, config_path);
     if (!s->config) {
       ERR(GRN_NO_MEMORY_AVAILABLE,
@@ -10790,8 +10790,7 @@ grn_ctx_is_removing(grn_ctx *ctx, grn_id id)
 {
   char path[PATH_MAX];
   grn_ctx_generate_removing_path(ctx, id, path, PATH_MAX);
-  struct stat s;
-  return stat(path, &s) == 0;
+  return grn_io_path_exist(ctx, path);
 }
 
 static void

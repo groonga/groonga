@@ -128,6 +128,8 @@ grn_rc
 grn_io_size(grn_ctx *ctx, grn_io *io, uint64_t *size);
 grn_rc
 grn_io_rename(grn_ctx *ctx, const char *old_name, const char *new_name);
+bool
+grn_io_path_exist(grn_ctx *ctx, const char *path);
 GRN_API void *
 grn_io_header(grn_io *io);
 
