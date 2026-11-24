@@ -1,110 +1,8 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1795468807178,
+  "lastUpdate": 1795484338649,
   "repoUrl": "https://github.com/groonga/groonga",
   "entries": {
     "Benchmark": [
-      {
-        "commit": {
-          "author": {
-            "email": "kou@clear-code.com",
-            "name": "Sutou Kouhei",
-            "username": "kou"
-          },
-          "committer": {
-            "email": "kou@clear-code.com",
-            "name": "Sutou Kouhei",
-            "username": "kou"
-          },
-          "distinct": true,
-          "id": "c5608e43addb54b45010642ff0d930812d12eefa",
-          "message": "cmake msvc llama-cpp: ignore possible loss of data warning\n\n    C:\\Buildbot\\amd64-windows\\build\\_deps\\llama_cpp-src\\ggml\\src\\ggml.c(1951,26): warning C4267: 'initializing': conversion from 'size_t' to 'int32_t', possible loss of data [C:\\Buildbot\\amd64-windows\\build\\_deps\\llama_cpp-build\\ggml\\src\\ggml-base.vcxproj]\n    C:\\Buildbot\\amd64-windows\\build\\_deps\\llama_cpp-src\\ggml\\src\\ggml.c(1951,31): warning C4267: 'initializing': conversion from 'size_t' to 'int32_t', possible loss of data [C:\\Buildbot\\amd64-windows\\build\\_deps\\llama_cpp-build\\ggml\\src\\ggml-base.vcxproj]\n    C:\\Buildbot\\amd64-windows\\build\\_deps\\llama_cpp-src\\ggml\\src\\ggml.c(1951,36): warning C4267: 'initializing': conversion from 'size_t' to 'int32_t', possible loss of data [C:\\Buildbot\\amd64-windows\\build\\_deps\\llama_cpp-build\\ggml\\src\\ggml-base.vcxproj]\n    C:\\Buildbot\\amd64-windows\\build\\_deps\\llama_cpp-src\\ggml\\src\\ggml.c(1951,41): warning C4267: 'initializing': conversion from 'size_t' to 'int32_t', possible loss of data [C:\\Buildbot\\amd64-windows\\build\\_deps\\llama_cpp-build\\ggml\\src\\ggml-base.vcxproj]\n    C:\\Buildbot\\amd64-windows\\build\\_deps\\llama_cpp-src\\ggml\\src\\ggml.c(2835,26): warning C4267: 'initializing': conversion from 'size_t' to 'int32_t', possible loss of data [C:\\Buildbot\\amd64-windows\\build\\_deps\\llama_cpp-build\\ggml\\src\\ggml-base.vcxproj]\n    C:\\Buildbot\\amd64-windows\\build\\_deps\\llama_cpp-src\\ggml\\src\\ggml.c(2835,31): warning C4267: 'initializing': conversion from 'size_t' to 'int32_t', possible loss of data [C:\\Buildbot\\amd64-windows\\build\\_deps\\llama_cpp-build\\ggml\\src\\ggml-base.vcxproj]\n    C:\\Buildbot\\amd64-windows\\build\\_deps\\llama_cpp-src\\ggml\\src\\ggml.c(2835,36): warning C4267: 'initializing': conversion from 'size_t' to 'int32_t', possible loss of data [C:\\Buildbot\\amd64-windows\\build\\_deps\\llama_cpp-build\\ggml\\src\\ggml-base.vcxproj]\n    C:\\Buildbot\\amd64-windows\\build\\_deps\\llama_cpp-src\\ggml\\src\\ggml.c(2835,41): warning C4267: 'initializing': conversion from 'size_t' to 'int32_t', possible loss of data [C:\\Buildbot\\amd64-windows\\build\\_deps\\llama_cpp-build\\ggml\\src\\ggml-base.vcxproj]\n    C:\\Buildbot\\amd64-windows\\build\\_deps\\llama_cpp-src\\ggml\\src\\ggml.c(3228,22): warning C4267: '=': conversion from 'size_t' to 'int', possible loss of data [C:\\Buildbot\\amd64-windows\\build\\_deps\\llama_cpp-build\\ggml\\src\\ggml-base.vcxproj]\n    C:\\Buildbot\\amd64-windows\\build\\_deps\\llama_cpp-src\\ggml\\src\\ggml.c(3229,22): warning C4267: '=': conversion from 'size_t' to 'int', possible loss of data [C:\\Buildbot\\amd64-windows\\build\\_deps\\llama_cpp-build\\ggml\\src\\ggml-base.vcxproj]\n    C:\\Buildbot\\amd64-windows\\build\\_deps\\llama_cpp-src\\ggml\\src\\ggml.c(3230,22): warning C4267: '=': conversion from 'size_t' to 'int', possible loss of data [C:\\Buildbot\\amd64-windows\\build\\_deps\\llama_cpp-build\\ggml\\src\\ggml-base.vcxproj]\n    C:\\Buildbot\\amd64-windows\\build\\_deps\\llama_cpp-src\\ggml\\src\\ggml.c(3231,22): warning C4267: '=': conversion from 'size_t' to 'int', possible loss of data [C:\\Buildbot\\amd64-windows\\build\\_deps\\llama_cpp-build\\ggml\\src\\ggml-base.vcxproj]\n    C:\\Buildbot\\amd64-windows\\build\\_deps\\llama_cpp-src\\ggml\\src\\ggml.c(5912,29): warning C4267: 'initializing': conversion from 'size_t' to 'int', possible loss of data [C:\\Buildbot\\amd64-windows\\build\\_deps\\llama_cpp-build\\ggml\\src\\ggml-base.vcxproj]",
-          "timestamp": "2025-03-03T14:19:15+09:00",
-          "tree_id": "41cfbbaa8536895f30a1d62b9df9dbcce6a37dbd",
-          "url": "https://github.com/groonga/groonga/commit/c5608e43addb54b45010642ff0d930812d12eefa"
-        },
-        "date": 1740981210011,
-        "tool": "googlecpp",
-        "benches": [
-          {
-            "name": "stdio: json|json: load/data/multiple",
-            "value": 0.36489970999991783,
-            "unit": "s/iter",
-            "extra": "iterations: 5\ncpu: 0.01926200000000003 s\nthreads: undefined"
-          },
-          {
-            "name": "stdio: json|json: load/data/short_text",
-            "value": 0.28223014600007446,
-            "unit": "s/iter",
-            "extra": "iterations: 5\ncpu: 0.020162000000000152 s\nthreads: undefined"
-          },
-          {
-            "name": "stdio: json|json: select/olap/multiple",
-            "value": 0.015305528999988383,
-            "unit": "s/iter",
-            "extra": "iterations: 5\ncpu: 0.0004259999999999542 s\nthreads: undefined"
-          },
-          {
-            "name": "stdio: json|json: select/olap/n_workers/multiple",
-            "value": 0.015306161000012253,
-            "unit": "s/iter",
-            "extra": "iterations: 5\ncpu: 0.00041200000000002346 s\nthreads: undefined"
-          },
-          {
-            "name": "stdio: json|json: wal_recover/db/auto_recovery/column/index",
-            "value": 1.4858618099999603,
-            "unit": "s/iter",
-            "extra": "iterations: 1\ncpu: 0.00034500000000026176 s\nthreads: undefined"
-          },
-          {
-            "name": "http: json|json: load/data/multiple",
-            "value": 0.22628310000010288,
-            "unit": "s/iter",
-            "extra": "iterations: 5\ncpu: 0.007487999999999995 s\nthreads: undefined"
-          },
-          {
-            "name": "http: json|json: load/data/short_text",
-            "value": 0.13227175299988403,
-            "unit": "s/iter",
-            "extra": "iterations: 5\ncpu: 0.006585999999999759 s\nthreads: undefined"
-          },
-          {
-            "name": "http: json|json: select/olap/multiple",
-            "value": 0.01686806100008198,
-            "unit": "s/iter",
-            "extra": "iterations: 5\ncpu: 0.0015789999999999693 s\nthreads: undefined"
-          },
-          {
-            "name": "http: json|json: select/olap/n_workers/multiple",
-            "value": 0.016312995000021147,
-            "unit": "s/iter",
-            "extra": "iterations: 5\ncpu: 0.0015730000000002686 s\nthreads: undefined"
-          },
-          {
-            "name": "http: apache-arrow|apache-arrow: load/data/multiple",
-            "value": 0.0600474860000304,
-            "unit": "s/iter",
-            "extra": "iterations: 5\ncpu: 0.007374999999999909 s\nthreads: undefined"
-          },
-          {
-            "name": "http: apache-arrow|apache-arrow: load/data/short_text",
-            "value": 0.06300440599989088,
-            "unit": "s/iter",
-            "extra": "iterations: 5\ncpu: 0.008278000000000119 s\nthreads: undefined"
-          },
-          {
-            "name": "http: apache-arrow|apache-arrow: select/olap/multiple",
-            "value": 0.01759083299998565,
-            "unit": "s/iter",
-            "extra": "iterations: 5\ncpu: 0.001663000000000442 s\nthreads: undefined"
-          },
-          {
-            "name": "http: apache-arrow|apache-arrow: select/olap/n_workers/multiple",
-            "value": 0.017642029999990427,
-            "unit": "s/iter",
-            "extra": "iterations: 5\ncpu: 0.0016829999999997958 s\nthreads: undefined"
-          }
-        ]
-      },
       {
         "commit": {
           "author": {
@@ -55392,6 +55290,144 @@ window.BENCHMARK_DATA = {
             "value": 0.5698080560000562,
             "unit": "s/iter",
             "extra": "iterations: 5\ncpu: 0.0034860000000318525 s\nthreads: undefined"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "kou@clear-code.com",
+            "name": "Sutou Kouhei",
+            "username": "kou"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "a37b55607efb3d062afa60ae77befe52dc7899f9",
+          "message": "io: check path existence through file operations (#3072)\n\n`grn_io` checked whether a path exists by `stat()` or `grn_path_exist()`\ndirectly. They bypass the file operations table.\n\nThis adds `path_exist()` to the table and `grn_io_path_exist()`. It's\nalso used for the paths that are managed by `grn_io` outside `io.c`: the\nDB configuration, options, the partition map and the removing marker.\n\n`grn_io_remove()`, `grn_io_rename()` and `grn_io_is_corrupt()` now\nreport `GRN_NO_SUCH_FILE_OR_DIRECTORY` with a message that doesn't\ndepend on `errno` because `path_exist()` doesn't set `errno`. So their\nmessages don't have the `system call error: ...:` prefix anymore.\n\nCo-authored-by: Claude Opus 5.5 <noreply@anthropic.com>",
+          "timestamp": "2026-11-24T10:24:52+09:00",
+          "tree_id": "2082f80e5ee0f070e42527ebc4a3119b7e997b32",
+          "url": "https://github.com/groonga/groonga/commit/a37b55607efb3d062afa60ae77befe52dc7899f9"
+        },
+        "date": 1795484336928,
+        "tool": "googlecpp",
+        "benches": [
+          {
+            "name": "stdio: json|json: load/data/multiple",
+            "value": 0.3479780079998136,
+            "unit": "s/iter",
+            "extra": "iterations: 5\ncpu: 0.008618000000000098 s\nthreads: undefined"
+          },
+          {
+            "name": "stdio: json|json: load/data/short_text",
+            "value": 0.2452297739999949,
+            "unit": "s/iter",
+            "extra": "iterations: 5\ncpu: 0.007734000000000157 s\nthreads: undefined"
+          },
+          {
+            "name": "stdio: json|json: select/olap/multiple",
+            "value": 0.014688217000070836,
+            "unit": "s/iter",
+            "extra": "iterations: 5\ncpu: 0.0005619999999997849 s\nthreads: undefined"
+          },
+          {
+            "name": "stdio: json|json: select/olap/n_workers/multiple",
+            "value": 0.015068853000002491,
+            "unit": "s/iter",
+            "extra": "iterations: 5\ncpu: 0.0005499999999998839 s\nthreads: undefined"
+          },
+          {
+            "name": "stdio: json|json: sharding/logical_select/filter",
+            "value": 0.5352990769999906,
+            "unit": "s/iter",
+            "extra": "iterations: 5\ncpu: 0.0010049999999987014 s\nthreads: undefined"
+          },
+          {
+            "name": "stdio: json|json: sharding/logical_select/n_workers/filter",
+            "value": 0.5804956599999969,
+            "unit": "s/iter",
+            "extra": "iterations: 5\ncpu: 0.0010219999999923068 s\nthreads: undefined"
+          },
+          {
+            "name": "stdio: json|json: wal_recover/db/auto_recovery/column/index",
+            "value": 1.5289931419999903,
+            "unit": "s/iter",
+            "extra": "iterations: 1\ncpu: 0.00023900000000098842 s\nthreads: undefined"
+          },
+          {
+            "name": "http: json|json: load/data/multiple",
+            "value": 0.2386507960002291,
+            "unit": "s/iter",
+            "extra": "iterations: 5\ncpu: 0.006712999999999733 s\nthreads: undefined"
+          },
+          {
+            "name": "http: json|json: load/data/short_text",
+            "value": 0.13155612999992172,
+            "unit": "s/iter",
+            "extra": "iterations: 5\ncpu: 0.005940999999999835 s\nthreads: undefined"
+          },
+          {
+            "name": "http: json|json: select/olap/multiple",
+            "value": 0.015870283999902313,
+            "unit": "s/iter",
+            "extra": "iterations: 5\ncpu: 0.0016770000000000118 s\nthreads: undefined"
+          },
+          {
+            "name": "http: json|json: select/olap/n_workers/multiple",
+            "value": 0.024447344999998677,
+            "unit": "s/iter",
+            "extra": "iterations: 5\ncpu: 0.0038499999999999646 s\nthreads: undefined"
+          },
+          {
+            "name": "http: json|json: sharding/logical_select/filter",
+            "value": 0.5398588730001848,
+            "unit": "s/iter",
+            "extra": "iterations: 5\ncpu: 0.0027399999999990765 s\nthreads: undefined"
+          },
+          {
+            "name": "http: json|json: sharding/logical_select/n_workers/filter",
+            "value": 0.5724906209998153,
+            "unit": "s/iter",
+            "extra": "iterations: 5\ncpu: 0.0027869999999951545 s\nthreads: undefined"
+          },
+          {
+            "name": "http: apache-arrow|apache-arrow: load/data/multiple",
+            "value": 0.05755636899982619,
+            "unit": "s/iter",
+            "extra": "iterations: 5\ncpu: 0.0064120000000001814 s\nthreads: undefined"
+          },
+          {
+            "name": "http: apache-arrow|apache-arrow: load/data/short_text",
+            "value": 0.058824839000067186,
+            "unit": "s/iter",
+            "extra": "iterations: 5\ncpu: 0.007472999999999785 s\nthreads: undefined"
+          },
+          {
+            "name": "http: apache-arrow|apache-arrow: select/olap/multiple",
+            "value": 0.023730879000027016,
+            "unit": "s/iter",
+            "extra": "iterations: 5\ncpu: 0.002075000000000271 s\nthreads: undefined"
+          },
+          {
+            "name": "http: apache-arrow|apache-arrow: select/olap/n_workers/multiple",
+            "value": 0.02586862399994061,
+            "unit": "s/iter",
+            "extra": "iterations: 5\ncpu: 0.0023570000000000535 s\nthreads: undefined"
+          },
+          {
+            "name": "http: apache-arrow|apache-arrow: sharding/logical_select/filter",
+            "value": 0.5410211840002148,
+            "unit": "s/iter",
+            "extra": "iterations: 5\ncpu: 0.003032000000006363 s\nthreads: undefined"
+          },
+          {
+            "name": "http: apache-arrow|apache-arrow: sharding/logical_select/n_workers/filter",
+            "value": 0.5774532270002055,
+            "unit": "s/iter",
+            "extra": "iterations: 5\ncpu: 0.002647999999971118 s\nthreads: undefined"
           }
         ]
       }
