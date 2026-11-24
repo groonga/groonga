@@ -82,7 +82,7 @@ Database has orphan 'inspect' object. Remove it by '#{real_grndb_path} recover #
                    "",
                    error_message,
                    expected_groonga_log("notice", <<-MESSAGES),
-|e| system call error: DETAIL: [io][open] failed to open path: <#{@database_path}.0000100>
+|e| [io][open] path doesn't exist: <#{@database_path}.0000100>
 |e| grn_ctx_at: failed to open object: <256>(<inspect>):<51>(<table:no_key>)
 |e| #{error_message.chomp}
                    MESSAGES
@@ -229,7 +229,7 @@ load --table Users
                    "",
                    error_message,
                    expected_groonga_log("notice", <<-MESSAGES),
-|e| system call error: DETAIL: [io][open] failed to open path: <#{@database_path}.0000100>
+|e| [io][open] path doesn't exist: <#{@database_path}.0000100>
 |e| grn_ctx_at: failed to open object: <256>(<Users>):<48>(<table:hash_key>)
 |e| #{error_message.chomp}
                    MESSAGES
@@ -512,7 +512,7 @@ Empty file exists: <#{empty_file_path_no_object}>
                      "",
                      error_message,
                      expected_groonga_log("notice", <<-MESSAGES),
-|e| system call error: DETAIL: [io][open] failed to open path: <#{path}>
+|e| [io][open] path doesn't exist: <#{path}>
 |e| grn_ctx_at: failed to open object: <256>(<Users>):<48>(<table:hash_key>)
 |e| #{error_message.chomp}
                      MESSAGES
@@ -613,7 +613,7 @@ Empty file exists: <#{empty_file_path_no_object}>
                      "",
                      error_message,
                      expected_groonga_log("notice", <<-MESSAGES)
-|e| system call error: DETAIL: [io][open] failed to open path: <#{removed_path}>
+|e| [io][open] path doesn't exist: <#{removed_path}>
 |e| grn_ctx_at: failed to open object: <256>(<Users>):<48>(<table:hash_key>)
 |e| #{error_message.chomp}
                      MESSAGES

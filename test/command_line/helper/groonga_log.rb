@@ -28,8 +28,23 @@ module GroongaLog
               "--log-level", level,
             ])
     standard_log_lines = normalize_groonga_log(File.read(log_file.path)).lines
+    last_log_lines = []
+    standard_log_lines.reverse_each do |line|
+      case remove_timestamp(line)
+      when /\A\|[d-]\| \[io\]\[close\]/,
+           /\A\|n\| grn_fin/
+        last_log_lines << line
+      else
+        break
+      end
+    end
     log = +""
-    standard_log_lines.each do |line|
+    # The first log lines may have "[io][close]" because
+    # grn_io_detect_type() opens and closes the DB. So we must not
+    # use the last log lines here.
+    first_log_line_candidates =
+      standard_log_lines[0...(standard_log_lines.size - last_log_lines.size)]
+    first_log_line_candidates.each do |line|
       case remove_timestamp(line)
       when /\A\|n\| grn_init/,
            /\A\|n\| vm\.overcommit_memory/,
@@ -37,7 +52,8 @@ module GroongaLog
            /\A\|i\| To set/,
            /\A\|i\| add/,
            /\A\|i\| run/,
-           /\A\|[i-]\| \[io\]\[open\]/
+           /\A\|[i-]\| \[io\]\[open\]/,
+           /\A\|[d-]\| \[io\]\[close\]/
         log << line
       else
         break
@@ -47,16 +63,6 @@ module GroongaLog
       messages.each_line do |message|
         next if message.chomp.empty?
         log << "1970-01-01 00:00:00.000000#{message}"
-      end
-    end
-    last_log_lines = []
-    standard_log_lines.reverse_each do |line|
-      case remove_timestamp(line)
-      when /\A\|[d-]\| \[io\]\[close\]/,
-           /\A\|n\| grn_fin/
-        last_log_lines << line
-      else
-        break
       end
     end
     log << last_log_lines.reverse.join("")

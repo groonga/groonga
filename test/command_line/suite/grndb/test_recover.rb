@@ -36,7 +36,7 @@ class TestGrnDBRecover < GroongaTestCase
                    "",
                    expected_groonga_log("info", <<-MESSAGES),
 |i| Recovering database: <#{@database_path}>
-|e| system call error: DETAIL: [io][open] failed to open path: <#{path}>
+|e| [io][open] path doesn't exist: <#{path}>
 |e| grn_ctx_at: failed to open object: <256>(<inspect>):<51>(<table:no_key>)
 |i| [db][recover] removed orphan 'inspect' object: <256>
 |i| Recovered database: <#{@database_path}>
