@@ -1,0 +1,11 @@
+# The error of creating a file on an existing directory depends on platform.
+#@require-platform !windows
+
+table_create Users TABLE_HASH_KEY ShortText
+
+# We can't create the removing marker because there is a directory at
+# the path of the removing marker.
+#@copy-path fixture/object_remove #{db_path}.0000100.removing
+
+table_remove Users
+object_exist Users

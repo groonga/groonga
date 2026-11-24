@@ -1,0 +1,17 @@
+table_create Users TABLE_HASH_KEY ShortText
+[[0,0.0,0.0],true]
+table_remove Users
+[
+  [
+    [
+      -21,
+      0.0,
+      0.0
+    ],
+    "system call error: Is a directory: [ctx][removing][mark] failed to create a removing marker: <db/db.0000100.removing>"
+  ],
+  false
+]
+#|e| system call error: Is a directory: [ctx][removing][mark] failed to create a removing marker: <db/db.0000100.removing>
+object_exist Users
+[[0,0.0,0.0],true]
