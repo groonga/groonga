@@ -1201,7 +1201,7 @@ grn_ja_have_partition_map(grn_ctx *ctx, const char *path)
   if (rc != GRN_SUCCESS) {
     partition_map_path[0] = '\0';
   }
-  return grn_path_exist(partition_map_path);
+  return grn_io_path_exist(ctx, partition_map_path);
 }
 
 static grn_rc

@@ -94,7 +94,7 @@ grn_options_open(grn_ctx *ctx,
                PATH_MAX,
                GRN_OPTIONS_PATH_FORMAT,
                path);
-  if (!grn_path_exist(options_path)) {
+  if (!grn_io_path_exist(ctx, options_path)) {
     return grn_options_create(ctx, path, context_tag);
   }
 

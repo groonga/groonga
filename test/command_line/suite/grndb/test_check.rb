@@ -350,7 +350,7 @@ load --table Users
                    "",
                    error_message,
                    expected_groonga_log("notice", <<-MESSAGES),
-|e| system call error: DETAIL: [io][corrupt] used path doesn't exist: <#{removed_path}>
+|e| [io][corrupt] used path doesn't exist: <#{removed_path}>
 |e| #{error_message.chomp}
                    MESSAGES
                  ],
@@ -450,7 +450,7 @@ load --table Users
                    "",
                    error_message,
                    expected_groonga_log("notice", <<-MESSAGES),
-|e| system call error: DETAIL: [io][corrupt] used path doesn't exist: <#{removed_path}>
+|e| [io][corrupt] used path doesn't exist: <#{removed_path}>
 |e| #{error_message.chomp}
                    MESSAGES
                  ],
