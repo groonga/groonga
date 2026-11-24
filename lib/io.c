@@ -134,8 +134,11 @@ typedef struct {
    * * grn_io_flush() calls sync() for each mapping before
    *   sync_file(). */
   bool write_back_on_sync;
-  /* Operations for a path. They don't need an opened file. */
+  /* Operations for a path. They don't need an opened file. All of
+   * them except path_exist() report an error with the given tag by
+   * themselves on error. */
   bool (*path_exist)(grn_ctx *ctx, const char *path);
+  grn_rc (*path_remove)(grn_ctx *ctx, const char *path, const char *tag);
 } grn_io_file_operations;
 
 static const grn_io_file_operations *
@@ -189,6 +192,12 @@ bool
 grn_io_path_exist(grn_ctx *ctx, const char *path)
 {
   return grn_io_get_file_operations()->path_exist(ctx, path);
+}
+
+grn_rc
+grn_io_path_remove(grn_ctx *ctx, const char *path, const char *tag)
+{
+  return grn_io_get_file_operations()->path_remove(ctx, path, tag);
 }
 
 #define GRN_MMAP(ctx, io, fi, offset, length)                                  \
@@ -467,13 +476,12 @@ grn_io_create(grn_ctx *ctx,
         GRN_MUNMAP(ctx, NULL, fis, header, b);
       }
       grn_fileinfo_close(ctx, fis);
-      if (grn_unlink(path) == 0) {
+      grn_rc rc = grn_io_path_remove(ctx, path, "[io][create][error]");
+      if (rc == GRN_SUCCESS) {
         GRN_LOG(ctx,
                 GRN_LOG_INFO,
                 "[io][create][error] removed path: <%s>",
                 path);
-      } else {
-        ERRNO_ERR("[io][create][error] failed to remove path: <%s>", path);
       }
     }
     GRN_FREE(fis);
@@ -978,12 +986,12 @@ grn_io_size(grn_ctx *ctx, grn_io *io, uint64_t *size)
 grn_rc
 grn_io_remove_raw(grn_ctx *ctx, const char *path)
 {
+  const char *tag = "[io][remove]";
   grn_rc rc = GRN_SUCCESS;
   uint32_t fno;
   char buffer[PATH_MAX];
 
-  if (grn_unlink(path) != 0) {
-    ERRNO_ERR("[io][remove] failed to remove path: <%s>", path);
+  if (grn_io_path_remove(ctx, path, tag) != GRN_SUCCESS) {
     return ctx->rc;
   }
   GRN_LOG(ctx, GRN_LOG_INFO, "[io][remove] removed path: <%s>", path);
@@ -993,16 +1001,13 @@ grn_io_remove_raw(grn_ctx *ctx, const char *path)
     if (!grn_io_path_exist(ctx, buffer)) {
       break;
     }
-    if (grn_unlink(buffer) == 0) {
+    if (grn_io_path_remove(ctx, buffer, tag) == GRN_SUCCESS) {
       GRN_LOG(ctx,
               GRN_LOG_INFO,
               "[io][remove] removed numbered path: <%d>: <%s>",
               fno,
               buffer);
     } else {
-      ERRNO_ERR("[io][remove] failed to remove numbered path: <%d>: <%s>",
-                fno,
-                buffer);
       rc = ctx->rc;
     }
   }
@@ -1445,16 +1450,13 @@ grn_io_seg_map_(grn_ctx *ctx, grn_io *io, uint32_t segno, grn_io_mapinfo *info)
         DO_MAP(io, fi, pos, segment_size, segno, info->map);
         if (!info->map && !path_exist) {
           grn_fileinfo_close(ctx, fi);
-          if (grn_unlink(path) == 0) {
+          if (grn_io_path_remove(ctx, path, "[io][map][error]") ==
+              GRN_SUCCESS) {
             GRN_LOG(ctx,
                     GRN_LOG_INFO,
                     "[io][map][error] memory mapping is failed and then "
                     "removed created map file: <%s>",
                     path);
-          } else {
-            ERRNO_ERR("[io][map][error] memory mapping is failed and then "
-                      "failed to remove created map file: <%s>",
-                      path);
           }
         }
       }
@@ -2948,6 +2950,16 @@ grn_io_path_local_exist(grn_ctx *ctx, const char *path)
   return stat(path, &s) == 0;
 }
 
+static grn_rc
+grn_io_path_local_remove(grn_ctx *ctx, const char *path, const char *tag)
+{
+  if (grn_unlink(path) != 0) {
+    ERRNO_ERR("%s failed to remove path: <%s>", tag, path);
+    return ctx->rc;
+  }
+  return GRN_SUCCESS;
+}
+
 #ifdef WIN32
 static const grn_io_file_operations grn_io_file_operations_windows = {
   .init = grn_io_file_windows_init,
@@ -2965,6 +2977,7 @@ static const grn_io_file_operations grn_io_file_operations_windows = {
   .sync_lock = NULL,
   .write_back_on_sync = false,
   .path_exist = grn_io_path_local_exist,
+  .path_remove = grn_io_path_local_remove,
 };
 #else /* WIN32 */
 static const grn_io_file_operations grn_io_file_operations_emulation = {
@@ -2994,6 +3007,7 @@ static const grn_io_file_operations grn_io_file_operations_emulation = {
    * is written back by the next sync() or unmap(). */
   .write_back_on_sync = true,
   .path_exist = grn_io_path_local_exist,
+  .path_remove = grn_io_path_local_remove,
 };
 
 #  ifndef __wasi__
@@ -3017,6 +3031,7 @@ static const grn_io_file_operations grn_io_file_operations_mmap = {
   .sync_lock = NULL,
   .write_back_on_sync = false,
   .path_exist = grn_io_path_local_exist,
+  .path_remove = grn_io_path_local_remove,
 };
 #  endif /* !__wasi__ */
 #endif   /* WIN32 */

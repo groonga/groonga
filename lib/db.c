@@ -10798,7 +10798,11 @@ grn_ctx_done_removing(grn_ctx *ctx, grn_id id)
 {
   char path[PATH_MAX];
   grn_ctx_generate_removing_path(ctx, id, path, PATH_MAX);
-  grn_unlink(path);
+  /* grn_obj_remove_force() calls this without
+   * grn_ctx_mark_removing() to remove a marker left by a crash. */
+  if (grn_io_path_exist(ctx, path)) {
+    grn_io_path_remove(ctx, path, "[ctx][removing][done]");
+  }
 }
 
 static grn_rc
