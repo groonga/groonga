@@ -41,6 +41,7 @@
 #include "grn_logger.h"
 #include "grn_cache.h"
 #include "grn_expr.h"
+#include "grn_simdjson.hpp"
 #include "grn_table_selector.h"
 #include "grn_task_executor.hpp"
 #include "grn_token_column.h"
@@ -364,6 +365,7 @@ grn_ctx_impl_init(grn_ctx *ctx)
   ctx->impl->expr_vars = NULL;
   ctx->impl->stack = NULL;
   ctx->impl->current_selector_data = NULL;
+  grn::simdjson_parser::init(ctx);
 
   CRITICAL_SECTION_INIT(ctx->impl->lock);
   CRITICAL_SECTION_INIT(ctx->impl->columns_cache_lock);
@@ -854,6 +856,7 @@ grn_ctx_impl_fin(grn_ctx *ctx)
   if (ctx->impl->parallel.task_executor) {
     delete static_cast<grn::TaskExecutor *>(ctx->impl->parallel.task_executor);
   }
+  grn::simdjson_parser::fin(ctx);
   if (ctx->impl->output.arrow_stream_writer) {
     grn_arrow_stream_writer_close(ctx, ctx->impl->output.arrow_stream_writer);
   }

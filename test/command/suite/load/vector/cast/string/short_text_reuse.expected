@@ -1,0 +1,31 @@
+table_create Data TABLE_NO_KEY
+[[0,0.0,0.0],true]
+column_create Data strings COLUMN_VECTOR ShortText
+[[0,0.0,0.0],true]
+load --table Data
+[
+{"strings": "[\"Hello\", \"World\"]"},
+{"strings": "[]"},
+{"strings": "[\"Hello\\n\\\"World\\\"\\\\!\", \"\\u3053\\u3093\\u306b\\u3061\\u306f\"]"},
+{"strings": "[\"unclosed"},
+{"strings": "[invalid]"},
+{"strings": "{\"a\": \"b\"}"},
+{"strings": "[\"recovered\", \"cleanly\"]"},
+{"strings": "plain text"},
+{"strings": "[\"final\", \"check\"]"}
+]
+[[0,0.0,0.0],9]
+dump   --dump_plugins no   --dump_schema no
+load --table Data
+[
+["_id","strings"],
+[1,["Hello","World"]],
+[2,[]],
+[3,["Hello\n\"World\"\\!","こんにちは"]],
+[4,["[\"unclosed"]],
+[5,["[invalid]"]],
+[6,["{\"a\": \"b\"}"]],
+[7,["recovered","cleanly"]],
+[8,["plain text"]],
+[9,["final","check"]]
+]
