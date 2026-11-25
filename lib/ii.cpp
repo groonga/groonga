@@ -10667,6 +10667,7 @@ typedef struct {
   bool only_skip_token;
   token_info **token_infos;
   uint32_t n_token_infos;
+  uint32_t n_allocated_token_infos;
   uint32_t n_phrase_groups;
   phrase_group *phrase_groups;
   uint32_t n_phrases;
@@ -11108,6 +11109,26 @@ token_compare(const void *a, const void *b)
   }
 }
 
+static inline bool
+grn_ii_select_data_add_token_info(grn_ctx *ctx,
+                                  grn_ii_select_data *data,
+                                  token_info *ti)
+{
+  if (data->n_token_infos == data->n_allocated_token_infos) {
+    uint32_t n_allocated_token_infos = data->n_allocated_token_infos * 2;
+    auto token_infos = static_cast<token_info **>(
+      GRN_REALLOC(data->token_infos,
+                  sizeof(token_info *) * n_allocated_token_infos));
+    if (!token_infos) {
+      return false;
+    }
+    data->token_infos = token_infos;
+    data->n_allocated_token_infos = n_allocated_token_infos;
+  }
+  data->token_infos[data->n_token_infos++] = ti;
+  return true;
+}
+
 #define TOKEN_CANDIDATE_NODE_SIZE         32
 #define TOKEN_CANDIDATE_ADJACENT_MAX_SIZE 16
 #define TOKEN_CANDIDATE_QUEUE_SIZE        64
@@ -11447,7 +11468,11 @@ token_candidate_build(grn_ctx *ctx, token_candidate_data *data, int offset)
       if (!ti) {
         goto exit;
       }
-      data->select_data->token_infos[data->select_data->n_token_infos++] = ti;
+      if (!grn_ii_select_data_add_token_info(ctx, data->select_data, ti)) {
+        token_info_close(ctx, ti);
+        rc = ctx->rc;
+        goto exit;
+      }
       GRN_LOG(ctx,
               GRN_LOG_DEBUG,
               "[ii][overlap_token_skip] tid=%u pos=%d estimated_size=%u",
@@ -11522,7 +11547,11 @@ token_info_build_phrase(grn_ctx *ctx,
                               token_cursor->orig_blen,
                               0,
                               EX_BOTH))) {
-      data->token_infos[data->n_token_infos++] = ti;
+      if (!grn_ii_select_data_add_token_info(ctx, data, ti)) {
+        token_info_close(ctx, ti);
+        rc = ctx->rc;
+        goto exit;
+      }
       rc = GRN_SUCCESS;
     }
   } else {
@@ -11593,7 +11622,11 @@ token_info_build_phrase(grn_ctx *ctx,
     if (!ti) {
       goto exit;
     }
-    data->token_infos[data->n_token_infos++] = ti;
+    if (!grn_ii_select_data_add_token_info(ctx, data, ti)) {
+      token_info_close(ctx, ti);
+      rc = ctx->rc;
+      goto exit;
+    }
 
     if (grn_ii_overlap_token_skip_enable) {
       rc = token_info_build_skipping_overlap(ctx, data, token_cursor, tid, ef);
@@ -11644,7 +11677,11 @@ token_info_build_phrase(grn_ctx *ctx,
       if (!ti) {
         goto exit;
       }
-      data->token_infos[data->n_token_infos++] = ti;
+      if (!grn_ii_select_data_add_token_info(ctx, data, ti)) {
+        token_info_close(ctx, ti);
+        rc = ctx->rc;
+        goto exit;
+      }
     }
     rc = GRN_SUCCESS;
   }
@@ -11677,7 +11714,10 @@ token_info_build_fuzzy(grn_ctx *ctx, grn_ii_select_data *data)
     if (!ti) {
       return rc;
     }
-    data->token_infos[data->n_token_infos++] = ti;
+    if (!grn_ii_select_data_add_token_info(ctx, data, ti)) {
+      token_info_close(ctx, ti);
+      return ctx->rc;
+    }
     return GRN_SUCCESS;
   }
 
@@ -11713,7 +11753,11 @@ token_info_build_fuzzy(grn_ctx *ctx, grn_ii_select_data *data)
   if (!ti) {
     goto exit;
   }
-  data->token_infos[data->n_token_infos++] = ti;
+  if (!grn_ii_select_data_add_token_info(ctx, data, ti)) {
+    token_info_close(ctx, ti);
+    rc = ctx->rc;
+    goto exit;
+  }
   while (token_cursor->status == GRN_TOKEN_CURSOR_DOING) {
     tid = grn_token_cursor_next(ctx, token_cursor);
     const unsigned char *key = NULL;
@@ -11747,7 +11791,11 @@ token_info_build_fuzzy(grn_ctx *ctx, grn_ii_select_data *data)
     if (!ti) {
       goto exit;
     }
-    data->token_infos[data->n_token_infos++] = ti;
+    if (!grn_ii_select_data_add_token_info(ctx, data, ti)) {
+      token_info_close(ctx, ti);
+      rc = ctx->rc;
+      goto exit;
+    }
   }
   rc = GRN_SUCCESS;
 exit:
@@ -12752,6 +12800,7 @@ grn_ii_select_data_init(grn_ctx *ctx,
 
   data->token_infos = NULL;
   data->n_token_infos = 0;
+  data->n_allocated_token_infos = 0;
   data->n_phrase_groups = 0;
   data->phrase_groups = NULL;
   data->n_phrases = 0;
@@ -12820,8 +12869,9 @@ grn_ii_select_data_init_token_infos(grn_ctx *ctx,
     return false;
   }
 
+  data->n_allocated_token_infos = data->query_len * 2;
   data->token_infos = static_cast<token_info **>(
-    GRN_MALLOC(sizeof(token_info *) * data->query_len * 2));
+    GRN_MALLOC(sizeof(token_info *) * data->n_allocated_token_infos));
   if (!data->token_infos) {
     char errbuf[GRN_CTX_MSGSIZE];
     grn_strcpy(errbuf, GRN_CTX_MSGSIZE, ctx->errbuf);

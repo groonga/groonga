@@ -1,0 +1,47 @@
+table_create Data TABLE_NO_KEY
+[[0,0.0,0.0],true]
+column_create Data text COLUMN_SCALAR ShortText
+[[0,0.0,0.0],true]
+table_create Terms TABLE_PAT_KEY ShortText   --default_tokenizer 'TokenNgram("unify_alphabet", false)'   --normalizer NormalizerAuto
+[[0,0.0,0.0],true]
+column_create Terms data_text COLUMN_INDEX|WITH_POSITION Data text
+[[0,0.0,0.0],true]
+load --table Data
+[
+{"text":"ﷺ"},
+{"text":"ﺺﻟﻯ ﺎﻠﻠﻫ ﻊﻠﻴﻫ ﻮﺴﻠﻣ"}
+]
+[[0,0.0,0.0],2]
+select Data --match_columns text --query 'ﷺ'
+[
+  [
+    0,
+    0.0,
+    0.0
+  ],
+  [
+    [
+      [
+        2
+      ],
+      [
+        [
+          "_id",
+          "UInt32"
+        ],
+        [
+          "text",
+          "ShortText"
+        ]
+      ],
+      [
+        1,
+        "ﷺ"
+      ],
+      [
+        2,
+        "ﺺﻟﻯ ﺎﻠﻠﻫ ﻊﻠﻴﻫ ﻮﺴﻠﻣ"
+      ]
+    ]
+  ]
+]

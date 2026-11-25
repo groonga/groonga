@@ -1,0 +1,15 @@
+table_create Data TABLE_NO_KEY
+column_create Data text COLUMN_SCALAR ShortText
+
+table_create Terms TABLE_PAT_KEY ShortText \
+  --default_tokenizer 'TokenNgram("unify_alphabet", false)' \
+  --normalizer NormalizerAuto
+column_create Terms data_text COLUMN_INDEX|WITH_POSITION Data text
+
+load --table Data
+[
+{"text":"ﷺ"},
+{"text":"ﺺﻟﻯ ﺎﻠﻠﻫ ﻊﻠﻴﻫ ﻮﺴﻠﻣ"}
+]
+
+select Data --match_columns text --query 'ﷺ'
