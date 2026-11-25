@@ -10779,14 +10779,7 @@ grn_ctx_mark_removing(grn_ctx *ctx, grn_id id)
 {
   char path[PATH_MAX];
   grn_ctx_generate_removing_path(ctx, id, path, PATH_MAX);
-  FILE *removing = grn_fopen(path, "w");
-  if (!removing) {
-    ERRNO_ERR("[ctx][removing][mark] failed to create a removing marker: <%s>",
-              path);
-    return ctx->rc;
-  }
-  fclose(removing);
-  return GRN_SUCCESS;
+  return grn_io_path_create(ctx, path, "[ctx][removing][mark]");
 }
 
 bool
