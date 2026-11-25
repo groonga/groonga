@@ -265,7 +265,7 @@ msgstr "Apache Arrowのサポートを有効化または無効化します。"
 msgid "In addition to using Apache Arrow IPC streaming format output, you can also use multithreading processing that is used in :ref:`select-n-workers` and :doc:`/reference/functions/query_parallel_or` with the Apache Arrow support."
 msgstr "Apache Arrowサポートを有効化すると、Apache ArrowのIPC streaming formatが使えるだけでなく、 :ref:`select-n-workers` や :doc:`/reference/functions/query_parallel_or` でマルチスレッドで処理できるようになります。"
 
-msgid "In case of not specifing ``--enable-apache-arrow`` nor ``--disable-apache-arrow``, the Apache Arrow support is enabled if Apache Arrow is installed on the system, otherwise disabled. This default behaviour is same as to specify ``--enable-apache-arrow=auto``."
+msgid "In case of not specifying ``--enable-apache-arrow`` nor ``--disable-apache-arrow``, the Apache Arrow support is enabled if Apache Arrow is installed on the system, otherwise disabled. This default behaviour is same as to specify ``--enable-apache-arrow=auto``."
 msgstr "``--enable-apache-arrow`` と ``--disable-apache-arrow`` のどちらも指定しない場合、Apache Arrowがシステムにインストールされていれば有効化し、そうでなければ無効化します。このデフォルト動作は ``--enable-apache-arrow=auto`` を指定した場合と同じです。"
 
 msgid "When you specify ``--enable-apache-arrow`` explicitly, you must install Apache Arrow on the system beforehand."
