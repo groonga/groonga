@@ -251,7 +251,7 @@ In addition to using Apache Arrow IPC streaming format output, you can also use
 multithreading processing that is used in :ref:`select-n-workers` and
 :doc:`/reference/functions/query_parallel_or` with the Apache Arrow support.
 
-In case of not specifing ``--enable-apache-arrow`` nor ``--disable-apache-arrow``, the Apache Arrow support is enabled if Apache Arrow
+In case of not specifying ``--enable-apache-arrow`` nor ``--disable-apache-arrow``, the Apache Arrow support is enabled if Apache Arrow
 is installed on the system, otherwise disabled. This default behaviour is same as to specify ``--enable-apache-arrow=auto``.
 
 When you specify ``--enable-apache-arrow`` explicitly, you must install Apache
