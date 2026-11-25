@@ -765,7 +765,7 @@ msgstr "``COMPRESS_ZLIB`` や ``COMPRESS_LZ4`` や ``COMPRESS_ZSTD`` といっ�
 msgid "In particular, it would work as below."
 msgstr "具体的には、以下のように動作します。"
 
-msgid "For example, there is the vector column ``[1, 1051, 515]`` in ``UInt16``. It would be as below representing in the little endien byte column."
+msgid "For example, there is the vector column ``[1, 1051, 515]`` in ``UInt16``. It would be as below representing in the little endian byte column."
 msgstr "例えば、 ``UInt16`` のベクターカラム ``[1, 1051, 515]`` があるとします。 これをリトルエンディアンのバイト列で表現すると以下のようになります。"
 
 msgid "This flag is to produce the data as following by gathering values of ``Byte 0``, then of ``Byte 1`` from the above data. The action to gather values with every N Byte would be called shuffle from now on. Shuffling the above data would be as below."
@@ -774,7 +774,7 @@ msgstr "このフラグは、上記の ``Byte 0`` の値をまとめ、その後
 msgid "The point is whether there would be same values in continuance or not. Looking at the above example data, it is appeared to have no same values in continuance after shuffling. Those data are not suitable for this flag because it is not contributed to increase the compression rate even shuffling."
 msgstr "ポイントは「同じ値が連続する箇所があるかどうか？」です。 上記の例を見てみると、シャッフル後のデータは同じ値が連続している箇所がありません。このようなデータでは、シャッフルしても圧縮率の向上に寄与しないため、このフラグを適用するには不向きなデータです。"
 
-msgid "On the other hand, the vector column ``[1, 2, 3]`` in ``UInt16`` would be as following after shuffling. First for the explanation, ``[1, 2, 3]`` in ``UInt16`` would be represented as below in the little endien byte column."
+msgid "On the other hand, the vector column ``[1, 2, 3]`` in ``UInt16`` would be as following after shuffling. First for the explanation, ``[1, 2, 3]`` in ``UInt16`` would be represented as below in the little endian byte column."
 msgstr "一方で、 ``UInt16`` のベクターカラム ``[1, 2, 3]`` というデータでは、シャッフルすると以下のようになります。まず、説明のため ``UInt16`` の ``[1, 2, 3]`` を以下のようなリトルエンディアンのバイト列表現にします。"
 
 msgid "And, after shuffling ``[1, 2, 3]`` in ``UInt16``, the data would be as below."
@@ -822,7 +822,7 @@ msgstr "ただ、差分を計算しても同じ値が連続しなかったり、
 msgid "For example, ``[4526677, 4592401, 4658217, 4723879]`` in ``UInt32`` would be ``[4526677, 65724, 65816, 65662]`` after only being applied ``COMPRESS_FILTER_BYTE_DELTA``. This data would not have values in continuance, and increments are large."
 msgstr "例えば、 ``UInt32`` の ``[4526677, 4592401, 4658217, 4723879]`` では、単に ``COMPRESS_FILTER_BYTE_DELTA`` を適用しただけでは、 ``[4526677, 65724, 65816, 65662]`` になります。このデータでは同じ値は連続しませんし、差分自体も大きい値です。"
 
-msgid "But applying ``COMPRESS_FILTER_SHUFFLE`` to this data would be different. And it will be explained in following. First for the explanation, ``[4526677, 4592401, 4658217, 4723879]`` in ``UInt32`` would be represent the byte column in the little endien as below."
+msgid "But applying ``COMPRESS_FILTER_SHUFFLE`` to this data would be different. And it will be explained in following. First for the explanation, ``[4526677, 4592401, 4658217, 4723879]`` in ``UInt32`` would be represent the byte column in the little endian as below."
 msgstr "しかし、このデータに ``COMPRESS_FILTER_SHUFFLE`` を適用すると以下のようになります。説明のため、まず以下のように ``UInt32`` の ``[4526677, 4592401, 4658217, 4723879]`` をリトルエンディアンのバイト列で表現します。"
 
 msgid "Applying ``COMPRESS_FILTER_SHUFFLE`` to this data would be following byte columns."

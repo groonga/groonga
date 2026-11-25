@@ -49,7 +49,7 @@ msgstr "[Xcode](https://developer.apple.com/xcode/)をインストールして�
 msgid "Windows"
 msgstr ""
 
-msgid "Install the followings software:"
+msgid "Install the following software:"
 msgstr "次のソフトウェアをインストールします。"
 
 msgid "[Microsoft Visual Studio Community](https://visualstudio.microsoft.com/vs/community/)"
