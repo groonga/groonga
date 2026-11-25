@@ -1243,7 +1243,7 @@ Here are available flags:
 
        For example, there is the vector column ``[1, 1051, 515]`` in
        ``UInt16``. It would be as below representing in the little
-       endien byte column.
+       endian byte column.
 
        .. code-block::
 
@@ -1272,7 +1272,7 @@ Here are available flags:
        On the other hand, the vector column ``[1, 2, 3]`` in
        ``UInt16`` would be as following after shuffling. First for
        the explanation, ``[1, 2, 3]`` in ``UInt16`` would be
-       represented as below in the little endien byte column.
+       represented as below in the little endian byte column.
 
        .. code-block::
 
@@ -1385,7 +1385,7 @@ Here are available flags:
        different. And it will be explained in following. First for
        the explanation, ``[4526677, 4592401, 4658217, 4723879]`` in
        ``UInt32`` would be represent the byte column in the little
-       endien as below.
+       endian as below.
 
        .. code-block::
 

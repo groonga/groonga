@@ -35,7 +35,7 @@ $ groonga-*/setup.sh
 
 ### Windows
 
-Install the followings software:
+Install the following software:
 
 - [Microsoft Visual Studio Community](https://visualstudio.microsoft.com/vs/community/)
 - [CMake](http://www.cmake.org/)
