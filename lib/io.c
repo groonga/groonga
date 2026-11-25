@@ -83,8 +83,25 @@ typedef struct _grn_io_fileinfo {
 
 static uint32_t grn_io_version_default = GRN_IO_VERSION_DEFAULT;
 
-/* File operations for grn_io. Each platform provides an
- * implementation. */
+/* File operations for grn_io. A table combines some implementations.
+ * For example, grn_io_file_operations_mmap uses the "posix"
+ * implementation for fd-based operations and the "mmap"
+ * implementation for mapping.
+ *
+ * An implementation function is named as
+ * grn_io_file_${FIELD}_${IMPLEMENTATION} for a field and
+ * grn_io_path_${NAME}_${IMPLEMENTATION} for a path_${NAME} field. For
+ * example, grn_io_file_open_posix() is the "open" field of the
+ * "posix" implementation and grn_io_path_exist_local() is the
+ * "path_exist" field of the "local" implementation.
+ *
+ * Implementations:
+ *
+ * * windows: Windows API
+ * * posix: fd-based operations
+ * * mmap: mmap()-based mapping
+ * * emulation: mmap() emulation by pread()/pwrite()
+ * * local: Path operations for the local file system */
 typedef struct {
   void (*init)(fileinfo *fis, uint32_t n_fis);
   grn_rc (*open)(grn_ctx *ctx, fileinfo *fi, const char *path, int flags);
@@ -2264,7 +2281,7 @@ exit:
 }
 
 static inline grn_rc
-grn_io_file_windows_open(grn_ctx *ctx,
+grn_io_file_open_windows(grn_ctx *ctx,
                          fileinfo *fi,
                          const char *path,
                          int flags)
@@ -2322,7 +2339,7 @@ grn_guess_io_version(grn_ctx *ctx, grn_io *io, fileinfo *fi)
 }
 
 static inline void *
-grn_io_file_windows_map(grn_ctx *ctx,
+grn_io_file_map_windows(grn_ctx *ctx,
                         grn_io *io,
                         fileinfo *fi,
                         int64_t offset,
@@ -2359,7 +2376,7 @@ grn_io_file_windows_map(grn_ctx *ctx,
 }
 
 static inline int
-grn_io_file_windows_unmap(
+grn_io_file_unmap_windows(
   grn_ctx *ctx, grn_io *io, fileinfo *fi, void *start, size_t length)
 {
   int version;
@@ -2374,7 +2391,7 @@ grn_io_file_windows_unmap(
 }
 
 static inline grn_rc
-grn_io_file_windows_close(grn_ctx *ctx, fileinfo *fi)
+grn_io_file_close_windows(grn_ctx *ctx, fileinfo *fi)
 {
   if (fi->fmo != NULL) {
     CloseHandle(fi->fmo);
@@ -2396,7 +2413,7 @@ grn_io_file_windows_close(grn_ctx *ctx, fileinfo *fi)
 }
 
 static inline void
-grn_io_file_windows_init(fileinfo *fis, uint32_t nfis)
+grn_io_file_init_windows(fileinfo *fis, uint32_t nfis)
 {
   for (; nfis--; fis++) {
     fis->path = NULL;
@@ -2406,13 +2423,13 @@ grn_io_file_windows_init(fileinfo *fis, uint32_t nfis)
 }
 
 static inline bool
-grn_io_file_windows_is_opened(fileinfo *fi)
+grn_io_file_is_opened_windows(fileinfo *fi)
 {
   return fi->fh != INVALID_HANDLE_VALUE;
 }
 
 static inline int
-grn_io_file_windows_sync(grn_ctx *ctx, fileinfo *fi, void *start, size_t length)
+grn_io_file_sync_windows(grn_ctx *ctx, fileinfo *fi, void *start, size_t length)
 {
   BOOL succeeded;
   SYSTEMTIME system_time;
@@ -2457,7 +2474,7 @@ grn_io_file_windows_sync(grn_ctx *ctx, fileinfo *fi, void *start, size_t length)
 }
 
 static inline grn_rc
-grn_io_file_windows_read(
+grn_io_file_read_windows(
   grn_ctx *ctx, fileinfo *fi, void *buf, size_t count, off_t offset)
 {
   /* We must not return ctx->rc on success. ctx may already have an
@@ -2487,7 +2504,7 @@ grn_io_file_windows_read(
 }
 
 static inline grn_rc
-grn_io_file_windows_write(
+grn_io_file_write_windows(
   grn_ctx *ctx, fileinfo *fi, void *buf, size_t count, off_t offset)
 {
   DWORD r, len;
@@ -2511,7 +2528,7 @@ grn_io_file_windows_write(
 }
 
 static inline grn_rc
-grn_io_file_windows_get_size(grn_ctx *ctx, fileinfo *fi, uint64_t *size)
+grn_io_file_get_size_windows(grn_ctx *ctx, fileinfo *fi, uint64_t *size)
 {
   LARGE_INTEGER file_size;
   if (!GetFileSizeEx(fi->fh, &file_size)) {
@@ -2525,7 +2542,7 @@ grn_io_file_windows_get_size(grn_ctx *ctx, fileinfo *fi, uint64_t *size)
 #else /* WIN32 */
 
 inline static grn_rc
-grn_io_file_posix_open(grn_ctx *ctx, fileinfo *fi, const char *path, int flags)
+grn_io_file_open_posix(grn_ctx *ctx, fileinfo *fi, const char *path, int flags)
 {
   struct stat st;
   fi->path = grn_strdup_raw(path);
@@ -2550,7 +2567,7 @@ grn_io_file_posix_open(grn_ctx *ctx, fileinfo *fi, const char *path, int flags)
 }
 
 static inline void
-grn_io_file_posix_init(fileinfo *fis, uint32_t nfis)
+grn_io_file_init_posix(fileinfo *fis, uint32_t nfis)
 {
   for (; nfis--; fis++) {
     fis->path = NULL;
@@ -2559,13 +2576,13 @@ grn_io_file_posix_init(fileinfo *fis, uint32_t nfis)
 }
 
 static inline bool
-grn_io_file_posix_is_opened(fileinfo *fi)
+grn_io_file_is_opened_posix(fileinfo *fi)
 {
   return fi->fd != -1;
 }
 
 static inline grn_rc
-grn_io_file_posix_close(grn_ctx *ctx, fileinfo *fi)
+grn_io_file_close_posix(grn_ctx *ctx, fileinfo *fi)
 {
   if (fi->fd != -1) {
     if (grn_close(fi->fd) == -1) {
@@ -2627,7 +2644,7 @@ grn_mmap_emulation_write_back(grn_ctx *ctx, void *start, size_t length)
  * work. This writes only the lock marker to the file. Returns -1 with
  * errno on error. */
 static inline int
-grn_io_file_emulation_sync_lock(grn_ctx *ctx, grn_io *io)
+grn_io_file_sync_lock_emulation(grn_ctx *ctx, grn_io *io)
 {
   grn_mmap_emulation_header *header =
     ((grn_mmap_emulation_header *)io->header) - 1;
@@ -2650,13 +2667,13 @@ grn_mmap_emulation_free(grn_ctx *ctx, void *start, size_t length)
 }
 
 static void
-grn_io_file_emulation_discard(grn_ctx *ctx, void *start, size_t length)
+grn_io_file_discard_emulation(grn_ctx *ctx, void *start, size_t length)
 {
   grn_mmap_emulation_free(ctx, start, length);
 }
 
 static inline void *
-grn_io_file_emulation_map(grn_ctx *ctx,
+grn_io_file_map_emulation(grn_ctx *ctx,
                           grn_io *io,
                           fileinfo *fi,
                           int64_t offset,
@@ -2747,7 +2764,7 @@ grn_io_file_emulation_map(grn_ctx *ctx,
 }
 
 static inline int
-grn_io_file_emulation_sync(grn_ctx *ctx,
+grn_io_file_sync_emulation(grn_ctx *ctx,
                            fileinfo *fi,
                            void *start,
                            size_t length)
@@ -2757,10 +2774,10 @@ grn_io_file_emulation_sync(grn_ctx *ctx,
   return grn_mmap_emulation_write_back(ctx, start, length);
 }
 
-/* grn_io_file_emulation_sync() just writes changes to the file. They
+/* grn_io_file_sync_emulation() just writes changes to the file. They
  * may be only in the page cache. This writes them to the storage. */
 static inline int
-grn_io_file_emulation_sync_file(grn_ctx *ctx, fileinfo *fi)
+grn_io_file_sync_file_emulation(grn_ctx *ctx, fileinfo *fi)
 {
 #  if defined(__linux__) || defined(__wasi__)
   int r = fdatasync(fi->fd);
@@ -2775,7 +2792,7 @@ grn_io_file_emulation_sync_file(grn_ctx *ctx, fileinfo *fi)
 }
 
 static inline int
-grn_io_file_emulation_unmap(
+grn_io_file_unmap_emulation(
   grn_ctx *ctx, grn_io *io, fileinfo *fi, void *start, size_t length)
 {
   if (grn_mmap_emulation_write_back(ctx, start, length) != 0) {
@@ -2796,14 +2813,14 @@ grn_io_file_emulation_unmap(
 #    include <sys/mman.h>
 
 inline static void *
-grn_io_file_posix_map(grn_ctx *ctx,
-                      grn_io *io,
-                      fileinfo *fi,
-                      int64_t offset,
-                      size_t length,
-                      const char *file,
-                      int line,
-                      const char *func)
+grn_io_file_map_mmap(grn_ctx *ctx,
+                     grn_io *io,
+                     fileinfo *fi,
+                     int64_t offset,
+                     size_t length,
+                     const char *file,
+                     int line,
+                     const char *func)
 {
   if (grn_fail_malloc_should_fail(length, file, line, func)) {
     MERR("[alloc][fail][mmap] <%u>: <%" GRN_FMT_SIZE ">: <%s>: "
@@ -2877,7 +2894,7 @@ grn_fileinfo_touch(grn_ctx *ctx, fileinfo *fi)
 }
 
 static inline int
-grn_io_file_posix_sync(grn_ctx *ctx, fileinfo *fi, void *start, size_t length)
+grn_io_file_sync_mmap(grn_ctx *ctx, fileinfo *fi, void *start, size_t length)
 {
   int r = msync(start, length, MS_SYNC);
   if (r == -1) {
@@ -2897,9 +2914,9 @@ grn_io_file_posix_sync(grn_ctx *ctx, fileinfo *fi, void *start, size_t length)
  * https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/mm/msync.c
  */
 #    ifdef __linux__
-#      define GRN_IO_FILE_POSIX_SYNC_FILE
+#      define GRN_IO_FILE_SYNC_FILE_MMAP
 static inline int
-grn_io_file_posix_sync_file(grn_ctx *ctx, fileinfo *fi)
+grn_io_file_sync_file_mmap(grn_ctx *ctx, fileinfo *fi)
 {
   int r = fdatasync(fi->fd);
   if (r == -1) {
@@ -2912,7 +2929,7 @@ grn_io_file_posix_sync_file(grn_ctx *ctx, fileinfo *fi)
 #    endif
 
 static inline int
-grn_io_file_posix_unmap(
+grn_io_file_unmap_mmap(
   grn_ctx *ctx, grn_io *io, fileinfo *fi, void *start, size_t length)
 {
   int res;
@@ -2930,7 +2947,7 @@ grn_io_file_posix_unmap(
 #  endif /* !__wasi__ */
 
 static inline grn_rc
-grn_io_file_posix_read(
+grn_io_file_read_posix(
   grn_ctx *ctx, fileinfo *fi, void *buf, size_t count, off_t offset)
 {
   ssize_t r = pread(fi->fd, buf, count, offset);
@@ -2950,7 +2967,7 @@ grn_io_file_posix_read(
 }
 
 static inline grn_rc
-grn_io_file_posix_write(
+grn_io_file_write_posix(
   grn_ctx *ctx, fileinfo *fi, void *buf, size_t count, off_t offset)
 {
   ssize_t r = pwrite(fi->fd, buf, count, offset);
@@ -2970,7 +2987,7 @@ grn_io_file_posix_write(
 }
 
 static inline grn_rc
-grn_io_file_posix_get_size(grn_ctx *ctx, fileinfo *fi, uint64_t *size)
+grn_io_file_get_size_posix(grn_ctx *ctx, fileinfo *fi, uint64_t *size)
 {
   struct stat st;
   if (fstat(fi->fd, &st) == -1) {
@@ -2986,14 +3003,14 @@ grn_io_file_posix_get_size(grn_ctx *ctx, fileinfo *fi, uint64_t *size)
 /* Path operations for the local file system. They are shared by all
  * platforms. */
 static bool
-grn_io_path_local_exist(grn_ctx *ctx, const char *path)
+grn_io_path_exist_local(grn_ctx *ctx, const char *path)
 {
   struct stat s;
   return stat(path, &s) == 0;
 }
 
 static grn_rc
-grn_io_path_local_get_size(grn_ctx *ctx,
+grn_io_path_get_size_local(grn_ctx *ctx,
                            const char *path,
                            uint64_t *size,
                            const char *tag)
@@ -3008,7 +3025,7 @@ grn_io_path_local_get_size(grn_ctx *ctx,
 }
 
 static grn_rc
-grn_io_path_local_remove(grn_ctx *ctx, const char *path, const char *tag)
+grn_io_path_remove_local(grn_ctx *ctx, const char *path, const char *tag)
 {
   if (grn_unlink(path) != 0) {
     ERRNO_ERR("%s failed to remove path: <%s>", tag, path);
@@ -3018,7 +3035,7 @@ grn_io_path_local_remove(grn_ctx *ctx, const char *path, const char *tag)
 }
 
 static grn_rc
-grn_io_path_local_rename(grn_ctx *ctx,
+grn_io_path_rename_local(grn_ctx *ctx,
                          const char *old_path,
                          const char *new_path,
                          const char *tag)
@@ -3032,40 +3049,40 @@ grn_io_path_local_rename(grn_ctx *ctx,
 
 #ifdef WIN32
 static const grn_io_file_operations grn_io_file_operations_windows = {
-  .init = grn_io_file_windows_init,
-  .open = grn_io_file_windows_open,
-  .is_opened = grn_io_file_windows_is_opened,
-  .close = grn_io_file_windows_close,
-  .read = grn_io_file_windows_read,
-  .write = grn_io_file_windows_write,
-  .get_size = grn_io_file_windows_get_size,
-  .map = grn_io_file_windows_map,
-  .unmap = grn_io_file_windows_unmap,
+  .init = grn_io_file_init_windows,
+  .open = grn_io_file_open_windows,
+  .is_opened = grn_io_file_is_opened_windows,
+  .close = grn_io_file_close_windows,
+  .read = grn_io_file_read_windows,
+  .write = grn_io_file_write_windows,
+  .get_size = grn_io_file_get_size_windows,
+  .map = grn_io_file_map_windows,
+  .unmap = grn_io_file_unmap_windows,
   .discard = NULL,
-  .sync = grn_io_file_windows_sync,
+  .sync = grn_io_file_sync_windows,
   .sync_file = NULL,
   .sync_lock = NULL,
   .write_back_on_sync = false,
-  .path_exist = grn_io_path_local_exist,
-  .path_get_size = grn_io_path_local_get_size,
-  .path_remove = grn_io_path_local_remove,
-  .path_rename = grn_io_path_local_rename,
+  .path_exist = grn_io_path_exist_local,
+  .path_get_size = grn_io_path_get_size_local,
+  .path_remove = grn_io_path_remove_local,
+  .path_rename = grn_io_path_rename_local,
 };
 #else /* WIN32 */
 static const grn_io_file_operations grn_io_file_operations_emulation = {
-  .init = grn_io_file_posix_init,
-  .open = grn_io_file_posix_open,
-  .is_opened = grn_io_file_posix_is_opened,
-  .close = grn_io_file_posix_close,
-  .read = grn_io_file_posix_read,
-  .write = grn_io_file_posix_write,
-  .get_size = grn_io_file_posix_get_size,
-  .map = grn_io_file_emulation_map,
-  .unmap = grn_io_file_emulation_unmap,
-  .discard = grn_io_file_emulation_discard,
-  .sync = grn_io_file_emulation_sync,
-  .sync_file = grn_io_file_emulation_sync_file,
-  .sync_lock = grn_io_file_emulation_sync_lock,
+  .init = grn_io_file_init_posix,
+  .open = grn_io_file_open_posix,
+  .is_opened = grn_io_file_is_opened_posix,
+  .close = grn_io_file_close_posix,
+  .read = grn_io_file_read_posix,
+  .write = grn_io_file_write_posix,
+  .get_size = grn_io_file_get_size_posix,
+  .map = grn_io_file_map_emulation,
+  .unmap = grn_io_file_unmap_emulation,
+  .discard = grn_io_file_discard_emulation,
+  .sync = grn_io_file_sync_emulation,
+  .sync_file = grn_io_file_sync_file_emulation,
+  .sync_lock = grn_io_file_sync_lock_emulation,
   /* The mmap() emulation writes back the content only on sync() and
    * unmap(). So grn_io_flush() must write back the content of all
    * mappings including referenced mappings before sync_file().
@@ -3078,36 +3095,36 @@ static const grn_io_file_operations grn_io_file_operations_emulation = {
    * writes back dirty pages of mmap() at any time. The latest content
    * is written back by the next sync() or unmap(). */
   .write_back_on_sync = true,
-  .path_exist = grn_io_path_local_exist,
-  .path_get_size = grn_io_path_local_get_size,
-  .path_remove = grn_io_path_local_remove,
-  .path_rename = grn_io_path_local_rename,
+  .path_exist = grn_io_path_exist_local,
+  .path_get_size = grn_io_path_get_size_local,
+  .path_remove = grn_io_path_remove_local,
+  .path_rename = grn_io_path_rename_local,
 };
 
 #  ifndef __wasi__
 static const grn_io_file_operations grn_io_file_operations_mmap = {
-  .init = grn_io_file_posix_init,
-  .open = grn_io_file_posix_open,
-  .is_opened = grn_io_file_posix_is_opened,
-  .close = grn_io_file_posix_close,
-  .read = grn_io_file_posix_read,
-  .write = grn_io_file_posix_write,
-  .get_size = grn_io_file_posix_get_size,
-  .map = grn_io_file_posix_map,
-  .unmap = grn_io_file_posix_unmap,
+  .init = grn_io_file_init_posix,
+  .open = grn_io_file_open_posix,
+  .is_opened = grn_io_file_is_opened_posix,
+  .close = grn_io_file_close_posix,
+  .read = grn_io_file_read_posix,
+  .write = grn_io_file_write_posix,
+  .get_size = grn_io_file_get_size_posix,
+  .map = grn_io_file_map_mmap,
+  .unmap = grn_io_file_unmap_mmap,
   .discard = NULL,
-  .sync = grn_io_file_posix_sync,
-#    ifdef GRN_IO_FILE_POSIX_SYNC_FILE
-  .sync_file = grn_io_file_posix_sync_file,
+  .sync = grn_io_file_sync_mmap,
+#    ifdef GRN_IO_FILE_SYNC_FILE_MMAP
+  .sync_file = grn_io_file_sync_file_mmap,
 #    else
   .sync_file = NULL,
 #    endif
   .sync_lock = NULL,
   .write_back_on_sync = false,
-  .path_exist = grn_io_path_local_exist,
-  .path_get_size = grn_io_path_local_get_size,
-  .path_remove = grn_io_path_local_remove,
-  .path_rename = grn_io_path_local_rename,
+  .path_exist = grn_io_path_exist_local,
+  .path_get_size = grn_io_path_get_size_local,
+  .path_remove = grn_io_path_remove_local,
+  .path_rename = grn_io_path_rename_local,
 };
 #  endif /* !__wasi__ */
 #endif   /* WIN32 */
