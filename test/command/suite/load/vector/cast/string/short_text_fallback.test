@@ -1,0 +1,16 @@
+table_create Data TABLE_NO_KEY
+column_create Data strings COLUMN_VECTOR ShortText
+
+load --table Data
+[
+{"strings": "[\"Hello\", \"World\"]"},
+{"strings": "[\"Hello\", \"World\", \"Longer than inline bulk buffer\"]"},
+{"strings": "[\"unclosed"},
+{"strings": "[\"recovered\", \"cleanly\"]"},
+{"strings": "plain text"},
+{"strings": "[\"final\", \"check\"]"}
+]
+
+dump \
+  --dump_plugins no \
+  --dump_schema no

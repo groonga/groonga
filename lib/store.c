@@ -4231,14 +4231,11 @@ grn_ja_cast_value_vector_var_bulk(grn_ctx *ctx,
     return buffer;
   }
 
-  if (GRN_BULK_VSIZE(buffer) != 0) {
-    grn_obj_reinit(ctx, buffer, ja->obj.range, GRN_OBJ_VECTOR);
-    if (with_weight) {
-      buffer->header.flags |= GRN_OBJ_WITH_WEIGHT;
-    }
+  if (buffer->u.v.body && !(buffer->header.impl_flags & GRN_OBJ_REFER)) {
+    grn_obj_close(ctx, buffer->u.v.body);
   }
-
-  buffer->header.impl_flags = GRN_OBJ_DO_SHALLOW_COPY;
+  buffer->u.v.n_sections = 0;
+  buffer->header.impl_flags |= GRN_OBJ_DO_SHALLOW_COPY;
   buffer->u.v.body = value;
   grn_vector_delimit(ctx, buffer, 0, value->header.domain);
 
