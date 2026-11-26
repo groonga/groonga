@@ -228,6 +228,13 @@ struct _grn_ctx_impl {
     /* in nano seconds */
     grn_obj elapsed_times;
   } trace_log;
+
+#ifdef GRN_WITH_SIMDJSON
+  struct {
+    void *parser;
+    bool parser_in_use;
+  } simdjson;
+#endif
 };
 
 #define GRN_CTX_GET_WAL_ROLE(ctx) ((ctx)->impl->wal.role)

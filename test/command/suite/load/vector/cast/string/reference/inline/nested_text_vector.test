@@ -1,0 +1,22 @@
+table_create Purchases TABLE_HASH_KEY ShortText
+column_create Purchases tags COLUMN_VECTOR ShortText
+column_create Purchases price COLUMN_SCALAR UInt32
+
+table_create Settlements TABLE_HASH_KEY ShortText
+column_create Settlements purchases COLUMN_VECTOR Purchases
+
+load --table Settlements
+[
+{
+  "_key": "super market",
+  "purchases": "[{\"_key\": \"super market-1\", \"tags\": \"[\\\"fresh\\\", \\\"organic\\\"]\", \"price\": 100}, {\"_key\": \"super market-2\", \"tags\": \"[\\\"dairy\\\", \\\"cold\\\"]\", \"price\": 200}]"
+},
+{
+  "_key": "shoes shop",
+  "purchases": "[{\"_key\": \"shoes shop-1\", \"tags\": \"[\\\"running\\\", \\\"sale\\\"]\", \"price\": 3000}]"
+}
+]
+
+dump \
+  --dump_plugins no \
+  --dump_schema no

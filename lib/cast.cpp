@@ -43,7 +43,7 @@
 #endif
 
 #ifdef GRN_WITH_SIMDJSON
-#  include <simdjson.h>
+#  include "grn_simdjson.hpp"
 #elif defined(GRN_WITH_RAPIDJSON)
 #  define RAPIDJSON_NAMESPACE grn_rapidjson
 #  include <rapidjson/document.h>
@@ -1729,10 +1729,10 @@ namespace {
     if (rc != GRN_SUCCESS) {
       return rc;
     }
-    simdjson::ondemand::parser parser;
-    auto document = parser.iterate(GRN_TEXT_VALUE(caster->src),
-                                   GRN_TEXT_LEN(caster->src),
-                                   GRN_BULK_WSIZE(caster->src));
+    grn::ScopedSIMDJSONParser parser(ctx, GRN_TEXT_LEN(caster->src));
+    auto document = parser->iterate(GRN_TEXT_VALUE(caster->src),
+                                    GRN_TEXT_LEN(caster->src),
+                                    GRN_BULK_WSIZE(caster->src));
     simdjson::ondemand::array array;
     auto error = document.get_array().get(array);
     if (error == simdjson::SUCCESS) {

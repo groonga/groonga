@@ -14,6 +14,7 @@ libgroonga_cpp_source =				\
 	grn_distance_impl.hpp			\
 	grn_distance_instantiation.hpp		\
 	grn_language_model.hpp			\
+	grn_simdjson.hpp			\
 	grn_task_executor.hpp			\
 	ii.cpp					\
 	json.cpp				\
