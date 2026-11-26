@@ -178,7 +178,7 @@ nfkc100_init(grn_ctx *ctx, grn_tokenizer_query *query)
   return nfkc_init(ctx,
                    query,
                    nfkc100_open_options,
-                   "NormalierNFKC100",
+                   "NormalizerNFKC100",
                    "[token-filter][nfkc100]");
 }
 
@@ -202,7 +202,7 @@ nfkc121_init(grn_ctx *ctx, grn_tokenizer_query *query)
   return nfkc_init(ctx,
                    query,
                    nfkc121_open_options,
-                   "NormalierNFKC121",
+                   "NormalizerNFKC121",
                    "[token-filter][nfkc121]");
 }
 
@@ -226,7 +226,7 @@ nfkc130_init(grn_ctx *ctx, grn_tokenizer_query *query)
   return nfkc_init(ctx,
                    query,
                    nfkc130_open_options,
-                   "NormalierNFKC130",
+                   "NormalizerNFKC130",
                    "[token-filter][nfkc130]");
 }
 
@@ -250,7 +250,7 @@ nfkc150_init(grn_ctx *ctx, grn_tokenizer_query *query)
   return nfkc_init(ctx,
                    query,
                    nfkc150_open_options,
-                   "NormalierNFKC150",
+                   "NormalizerNFKC150",
                    "[token-filter][nfkc150]");
 }
 
@@ -278,7 +278,7 @@ nfkc_generic_init(grn_ctx *ctx, grn_tokenizer_query *query)
   return nfkc_init(ctx,
                    query,
                    nfkc_generic_open_options,
-                   "NormalierNFKC",
+                   "NormalizerNFKC",
                    "[token-filter][nfkc]");
 }
 
