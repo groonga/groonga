@@ -17,17 +17,191 @@ msgstr ""
 msgid "News - 16 series"
 msgstr "お知らせ - 16系"
 
-msgid "Release 16.1.5 - 2026-10-29"
-msgstr "16.1.5リリース - 2026-10-29"
+msgid "Release 16.1.8 - 2026-11-30"
+msgstr "16.1.8リリース - 2026-11-30"
 
 msgid "Improvements"
 msgstr "改良"
 
-msgid "[WASI] Added support for plugins"
-msgstr "[WASI] プラグインをサポート"
+msgid "[{doc}`/reference/extractors/extractor_html`] Added the `selector` option"
+msgstr "[{doc}`/reference/extractors/extractor_html`] `selector`オプションを追加"
 
 msgid "This is an experimental feature. Currently, this feature is still not stable."
 msgstr "これは実験的な機能です。現時点ではまだ安定しきっていません。"
+
+msgid "You can extract only the content in the specified HTML tag by {ref}`extractor-html-selector`. This is useful when you want to index only the main content of a page:"
+msgstr "{ref}`extractor-html-selector`を使うと、指定されたHTMLタグ内のコンテンツのみを抽出できます。これはページのメインコンテンツのみをインデックスに登録したいときに便利です。"
+
+msgid "Only a tag name such as `article` is supported for now. Tag names are compared case-insensitively. See {ref}`extractor-html-selector` for details."
+msgstr "現在は`article`のようなタグ名のみサポートしています。タグ名は大文字小文字を区別せずにマッチします。詳細は{ref}`extractor-html-selector`を参照してください。"
+
+msgid "[{doc}`/reference/functions/html_extract`] Added new function `html_extract()`"
+msgstr "[{doc}`/reference/functions/html_extract`] 新しい関数`html_extract()`を追加"
+
+msgid "`html_extract()` extracts text content from HTML. It behaves the same as {doc}`/reference/extractors/extractor_html`. You can use it to get the text content in HTML as a value. For example, you can store the title of an HTML to a {ref}`generated-column`:"
+msgstr "`html_extract()`関数はHTMLからテキストコンテンツを抽出します。{doc}`/reference/extractors/extractor_html`と同じ挙動です。`html_extract()`を使うとHTMLのテキストコンテンツを値として取得できます。例えばHTMLのタイトルを{ref}`generated-column`に保存できます。"
+
+msgid "Improved performance of flush"
+msgstr "フラッシュの性能を改善"
+
+msgid "Groonga called `msync()` for each mapped segment on flush even when the segment wasn't changed. So flush for a large object such as a large index column was slow."
+msgstr "Groongaは変更されていないセグメントも含めて、マップされたセグメントごとに`msync()`を呼んでフラッシュしていました。そのため大きなインデックスカラムのような大きなオブジェクトのフラッシュに時間がかかりました。"
+
+msgid "Groonga calls `fdatasync()` for each file instead on Linux now. For example, the elapsed time of adding a record and flushing opened objects for each record with 1M records with a full text index is reduced from 74.79ms per record to 0.30ms per record on ext4."
+msgstr "Linuxでは、代わりにファイルごとに`fdatasync()`を呼ぶようにしました。例えば全文検索インデックスがあり、100万件のレコードがあるテーブルに対して、レコードを1件追加するごとに開いているオブジェクトをフラッシュする場合、ext4での所要時間が1レコードあたり74.79msから0.30msに短縮されました。"
+
+msgid "This improves replication performance of PGroonga because PGroonga flushes opened objects for each WAL record on a standby."
+msgstr "PGroongaはスタンバイでWALレコードごとに開いているオブジェクトをフラッシュするため、PGroongaのレプリケーションの性能が改善します。"
+
+msgid "[pgroonga/pgroonga#1021](https://github.com/pgroonga/pgroonga/issues/1021) Reported by chan-mai."
+msgstr "[pgroonga/pgroonga#1021](https://github.com/pgroonga/pgroonga/issues/1021) chan-maiさんの報告。"
+
+msgid "Changed error messages of file operations"
+msgstr "ファイル操作のエラーメッセージを変更"
+
+msgid "Some error messages of file operations in a log and a response are changed by internal refactoring. You need to update your log monitoring rules if they depend on these messages."
+msgstr "内部のリファクタリングにより、ログとレスポンスに出力されるファイル操作のエラーメッセージの一部が変わりました。これらのメッセージに依存したログ監視ルールがある場合は更新する必要があります。"
+
+msgid "Here are the changed messages:"
+msgstr "変更されたメッセージは次の通りです。"
+
+msgid "Opening an object whose file doesn't exist:"
+msgstr "ファイルが存在しないオブジェクトを開こうとしたとき"
+
+msgid "Before: `system call error: <ERROR>: [io][open] failed to open path: <PATH>`"
+msgstr ""
+
+msgid "After: `[io][open] path doesn't exist: <PATH>`"
+msgstr ""
+
+msgid "Checking a path that doesn't exist:"
+msgstr "存在しないパスを確認しようとしたとき"
+
+msgid "Before: `system call error: <ERROR>: [io][corrupt] used path doesn't exist: <PATH>`"
+msgstr ""
+
+msgid "After: `[io][corrupt] used path doesn't exist: <PATH>`"
+msgstr ""
+
+msgid "Removing a path that doesn't exist:"
+msgstr "存在しないパスを削除しようとしたとき"
+
+msgid "Before: `system call error: <ERROR>: failed to stat: <PATH>`"
+msgstr ""
+
+msgid "After: `[io][remove] path doesn't exist: <PATH>`"
+msgstr ""
+
+msgid "Renaming a path that doesn't exist:"
+msgstr "存在しないパスをリネームしようとしたとき"
+
+msgid "Before: `system call error: <ERROR>: [io][rename] failed to stat path to be renamed: <PATH>`"
+msgstr ""
+
+msgid "After: `[io][rename] path to be renamed doesn't exist: <PATH>`"
+msgstr ""
+
+msgid "Getting the size of an object:"
+msgstr "オブジェクトのサイズを取得しようとしたとき"
+
+msgid "Before: `system call error: <ERROR>: failed to stat path to compute size: <PATH>`"
+msgstr ""
+
+msgid "After: `system call error: <ERROR>: [io][size] failed to get size: <PATH>`"
+msgstr ""
+
+msgid "Opening a database whose path doesn't exist:"
+msgstr "存在しないデータベースファイルを開こうとしたとき"
+
+msgid "Before: `system call error: <ERROR>: failed to open path for detecting type: <PATH>`"
+msgstr ""
+
+msgid "After: `[io][detect-type] path doesn't exist: <PATH>`"
+msgstr ""
+
+msgid "Opening a database whose file is too small to be a Groonga database:"
+msgstr "Groongaのデータベースとしては小さすぎるファイルを開こうとしたとき"
+
+msgid "Before: `grn_io_detect_type failed`"
+msgstr ""
+
+msgid "After: `[io][detect-type] file size is too small: <SIZE>(required: >= <REQUIRED_SIZE>): <PATH>`"
+msgstr ""
+
+msgid "Opening a database whose file isn't a Groonga database:"
+msgstr "Groongaのデータベースではないファイルを開こうとしたとき"
+
+msgid "Before: `failed to detect type: format ID is different: <PATH>: <GROONGA:IO:00001>`"
+msgstr ""
+
+msgid "After: `[io][detect-type] failed to open: format ID is different: <PATH>: <GROONGA:IO:00001>`"
+msgstr ""
+
+msgid "Fixes"
+msgstr "修正"
+
+msgid "[{doc}`/reference/commands/column_create`] Added support for indexing a text that has too many same tokens by online index construction"
+msgstr "[{doc}`/reference/commands/column_create`] 同じトークンが大量に含まれるテキストの動的なインデックス構築をサポート"
+
+msgid "For example, a 37MB text that has 131071 `a`s and 142 other tokens between each `a` couldn't be indexed with the following error:"
+msgstr "例えば`a`が131071個あり`a`と`a`の間に他のトークンが142個ずつある37MBのテキストでは、次のエラーでインデックスに登録できませんでした。"
+
+msgid "The record wasn't found by searching `a` and {doc}`/reference/commands/index_column_diff` didn't report it."
+msgstr "このレコードは`a`で検索してもヒットせず、{doc}`/reference/commands/index_column_diff`でもインデックスの破損を検出できませんでした。"
+
+msgid "Such a text is indexed now."
+msgstr "このようなテキストもインデックスに登録されるようになりました。"
+
+msgid "Fixed a crash on reporting a broken index"
+msgstr "壊れたインデックスを報告するときにクラッシュする問題を修正"
+
+msgid "Groonga logs the source data when it finds broken data in an index on updating the index. Groonga might crash or might not return on logging the source data because it trusted the broken data."
+msgstr "Groongaはインデックスの更新時にインデックス内の壊れたデータを見つけると、元のデータをログに出力します。このとき壊れたデータをそのままログに出力していたため、クラッシュしたり、処理がフリーズすることがありました。"
+
+msgid "Groonga validates the data while logging it now. So Groonga doesn't crash for a broken index."
+msgstr "ログに出力するときにデータを検証するようにしました。これにより壊れたインデックスがあってもクラッシュしなくなりました。"
+
+msgid "[GH-3062](https://github.com/groonga/groonga/issues/3062) Reported by Su-Sly."
+msgstr "[GH-3062](https://github.com/groonga/groonga/issues/3062) Su-Slyさんの報告。"
+
+msgid "[{doc}`/reference/commands/select`] Fixed a crash on full text search with a query that has a character that is expanded to many characters by normalization"
+msgstr "[{doc}`/reference/commands/select`] 正規化によって多数の文字に展開される文字を含むクエリーで全文検索するとクラッシュする問題を修正"
+
+msgid "For example, `ﷺ` (U+FDFA) is normalized to many characters. Groonga might crash when such a character was used as a query of full text search."
+msgstr "例えば`ﷺ`（U+FDFA）は正規化すると多数の文字になります。このような文字を全文検索のクエリーに使うとクラッシュする場合がありました。"
+
+msgid "Reported by aqazree."
+msgstr "aqazreeさんの報告。"
+
+msgid "Fixed a bug that an object was removed even when Groonga couldn't prepare for crash recovery"
+msgstr "クラッシュリカバリーの準備ができなかった場合でもオブジェクトを削除していた問題を修正"
+
+msgid "Groonga reports an error and stops removing the object in this case now."
+msgstr "エラーを報告してオブジェクトの削除を中止するようにしました。"
+
+msgid "[WASI] Ensured that flush writes changes to the storage"
+msgstr "[WASI] フラッシュで変更を確実にストレージへ書き込むように変更"
+
+msgid "It wasn't guaranteed. Flush synchronizes files to the storage explicitly now."
+msgstr "以前は保証されていませんでした。フラッシュ時に明示的にファイルをストレージへ同期するようにしました。"
+
+msgid "Thanks"
+msgstr "感謝"
+
+msgid "Su-Sly"
+msgstr "Su-Slyさん"
+
+msgid "aqazree"
+msgstr "aqazreeさん"
+
+msgid "chan-mai"
+msgstr "chan-maiさん"
+
+msgid "Release 16.1.5 - 2026-10-29"
+msgstr "16.1.5リリース - 2026-10-29"
+
+msgid "[WASI] Added support for plugins"
+msgstr "[WASI] プラグインをサポート"
 
 msgid "WASI doesn't support dynamic linking. So plugins couldn't be used with WASI."
 msgstr "WASIは動的リンクをサポートしていないため、WASIではプラグインを使えませんでした。"
@@ -76,9 +250,6 @@ msgstr "`groonga.mjs` はデータベースを絶対パスで開いていまし�
 
 msgid "`groonga.mjs` opens a database by a relative path now so that paths in outputs are the same as the `groonga` command."
 msgstr "`groonga.mjs` が相対パスでデータベースを開くように修正し、`groonga` コマンドと同じパスを出力するようにしました。"
-
-msgid "Fixes"
-msgstr "修正"
 
 msgid "[WASI] Fixed a bug that local time was always UTC"
 msgstr "[WASI] ローカル時間が常にUTCになる問題を修正"
@@ -469,9 +640,6 @@ msgstr "しかし、このテキストには、\"sayuri\"は含まれていま�
 
 msgid "This issue occurs only when using multiple normalizers as shown below:"
 msgstr "この問題は、以下のように複数のノーマライザーを使ったときにのみ発生します："
-
-msgid "Thanks"
-msgstr "感謝"
 
 msgid "askdkc"
 msgstr "askdkcさん"
