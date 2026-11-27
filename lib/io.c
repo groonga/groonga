@@ -1940,14 +1940,20 @@ grn_get_memory_map_size(void)
 #ifdef WIN32
 
 inline static grn_rc
-grn_fileinfo_open_v1(grn_ctx *ctx, fileinfo *fi, const char *path, int flags)
+grn_io_file_open_windows_v1(grn_ctx *ctx,
+                            fileinfo *fi,
+                            const char *path,
+                            int flags)
 {
   CRITICAL_SECTION_INIT(fi->cs);
   return GRN_SUCCESS;
 }
 
 static inline void *
-grn_mmap_v1(grn_ctx *ctx, fileinfo *fi, int64_t offset, size_t length)
+grn_io_file_map_windows_v1(grn_ctx *ctx,
+                           fileinfo *fi,
+                           int64_t offset,
+                           size_t length)
 {
   void *res;
   if (!fi) {
@@ -1999,7 +2005,10 @@ grn_mmap_v1(grn_ctx *ctx, fileinfo *fi, int64_t offset, size_t length)
 }
 
 static inline int
-grn_munmap_v1(grn_ctx *ctx, fileinfo *fi, void *start, size_t length)
+grn_io_file_unmap_windows_v1(grn_ctx *ctx,
+                             fileinfo *fi,
+                             void *start,
+                             size_t length)
 {
   int r = 0;
 
@@ -2028,7 +2037,10 @@ grn_munmap_v1(grn_ctx *ctx, fileinfo *fi, void *start, size_t length)
 }
 
 static inline grn_rc
-grn_fileinfo_open_v0(grn_ctx *ctx, fileinfo *fi, const char *path, int flags)
+grn_io_file_open_windows_v0(grn_ctx *ctx,
+                            fileinfo *fi,
+                            const char *path,
+                            int flags)
 {
   /* signature may be wrong.. */
   fi->fmo = OpenFileMapping(FILE_MAP_ALL_ACCESS, FALSE, NULL);
@@ -2076,7 +2088,10 @@ grn_fileinfo_open_v0(grn_ctx *ctx, fileinfo *fi, const char *path, int flags)
 }
 
 static inline void *
-grn_mmap_v0(grn_ctx *ctx, fileinfo *fi, int64_t offset, size_t length)
+grn_io_file_map_windows_v0(grn_ctx *ctx,
+                           fileinfo *fi,
+                           int64_t offset,
+                           size_t length)
 {
   void *res;
   if (!fi) {
@@ -2112,7 +2127,10 @@ grn_mmap_v0(grn_ctx *ctx, fileinfo *fi, int64_t offset, size_t length)
 }
 
 static inline int
-grn_munmap_v0(grn_ctx *ctx, fileinfo *fi, void *start, size_t length)
+grn_io_file_unmap_windows_v0(grn_ctx *ctx,
+                             fileinfo *fi,
+                             void *start,
+                             size_t length)
 {
   int r = 0;
 
@@ -2140,10 +2158,10 @@ grn_munmap_v0(grn_ctx *ctx, fileinfo *fi, void *start, size_t length)
 }
 
 static inline bool
-grn_fileinfo_open_common(grn_ctx *ctx,
-                         fileinfo *fi,
-                         const char *path,
-                         int flags)
+grn_io_file_open_windows_common(grn_ctx *ctx,
+                                fileinfo *fi,
+                                const char *path,
+                                int flags)
 {
   bool success = true;
 
@@ -2290,7 +2308,7 @@ grn_io_file_open_windows(grn_ctx *ctx,
   LARGE_INTEGER file_size;
   int version = grn_io_version_default;
 
-  if (!grn_fileinfo_open_common(ctx, fi, path, flags)) {
+  if (!grn_io_file_open_windows_common(ctx, fi, path, flags)) {
     if (fi->fh != INVALID_HANDLE_VALUE) {
       CloseHandle(fi->fh);
       fi->fh = INVALID_HANDLE_VALUE;
@@ -2314,14 +2332,14 @@ grn_io_file_open_windows(grn_ctx *ctx,
   }
 
   if (version == 0) {
-    return grn_fileinfo_open_v0(ctx, fi, path, flags);
+    return grn_io_file_open_windows_v0(ctx, fi, path, flags);
   } else {
-    return grn_fileinfo_open_v1(ctx, fi, path, flags);
+    return grn_io_file_open_windows_v1(ctx, fi, path, flags);
   }
 }
 
 static inline int
-grn_guess_io_version(grn_ctx *ctx, grn_io *io, fileinfo *fi)
+grn_io_file_guess_version_windows(grn_ctx *ctx, grn_io *io, fileinfo *fi)
 {
   if (io) {
     return io->header->version;
@@ -2365,12 +2383,12 @@ grn_io_file_map_windows(grn_ctx *ctx,
   } else {
     int version;
 
-    version = grn_guess_io_version(ctx, io, fi);
+    version = grn_io_file_guess_version_windows(ctx, io, fi);
 
     if (version == 0) {
-      return grn_mmap_v0(ctx, fi, offset, length);
+      return grn_io_file_map_windows_v0(ctx, fi, offset, length);
     } else {
-      return grn_mmap_v1(ctx, fi, offset, length);
+      return grn_io_file_map_windows_v1(ctx, fi, offset, length);
     }
   }
 }
@@ -2381,12 +2399,12 @@ grn_io_file_unmap_windows(
 {
   int version;
 
-  version = grn_guess_io_version(ctx, io, fi);
+  version = grn_io_file_guess_version_windows(ctx, io, fi);
 
   if (version == 0) {
-    return grn_munmap_v0(ctx, fi, start, length);
+    return grn_io_file_unmap_windows_v0(ctx, fi, start, length);
   } else {
-    return grn_munmap_v1(ctx, fi, start, length);
+    return grn_io_file_unmap_windows_v1(ctx, fi, start, length);
   }
 }
 
@@ -2617,12 +2635,13 @@ grn_io_file_close_posix(grn_ctx *ctx, fileinfo *fi)
 typedef struct {
   int fd;
   int64_t offset;
-} grn_mmap_emulation_header;
+} grn_io_file_map_header_emulation;
 
 static inline int
-grn_mmap_emulation_write_back(grn_ctx *ctx, void *start, size_t length)
+grn_io_file_write_back_emulation(grn_ctx *ctx, void *start, size_t length)
 {
-  grn_mmap_emulation_header *header = ((grn_mmap_emulation_header *)start) - 1;
+  grn_io_file_map_header_emulation *header =
+    ((grn_io_file_map_header_emulation *)start) - 1;
   if (header->fd == -1) {
     return 0;
   }
@@ -2646,8 +2665,8 @@ grn_mmap_emulation_write_back(grn_ctx *ctx, void *start, size_t length)
 static inline int
 grn_io_file_sync_lock_emulation(grn_ctx *ctx, grn_io *io)
 {
-  grn_mmap_emulation_header *header =
-    ((grn_mmap_emulation_header *)io->header) - 1;
+  grn_io_file_map_header_emulation *header =
+    ((grn_io_file_map_header_emulation *)io->header) - 1;
   if (header->fd == -1) {
     return 0;
   }
@@ -2660,16 +2679,16 @@ grn_io_file_sync_lock_emulation(grn_ctx *ctx, grn_io *io)
 }
 
 static inline void
-grn_mmap_emulation_free(grn_ctx *ctx, void *start, size_t length)
+grn_io_file_free_emulation(grn_ctx *ctx, void *start, size_t length)
 {
-  GRN_FREE(((grn_mmap_emulation_header *)start) - 1);
+  GRN_FREE(((grn_io_file_map_header_emulation *)start) - 1);
   mmap_size -= length;
 }
 
 static void
 grn_io_file_discard_emulation(grn_ctx *ctx, void *start, size_t length)
 {
-  grn_mmap_emulation_free(ctx, start, length);
+  grn_io_file_free_emulation(ctx, start, length);
 }
 
 static inline void *
@@ -2723,8 +2742,8 @@ grn_io_file_map_emulation(grn_ctx *ctx,
      * zero cleared. If we use memset(), all pages of the region are
      * touched and allocated. It's slow for a large region. */
     bool is_zero = (fd == -1 || offset >= file_size);
-    size_t size = sizeof(grn_mmap_emulation_header) + length;
-    grn_mmap_emulation_header *header =
+    size_t size = sizeof(grn_io_file_map_header_emulation) + length;
+    grn_io_file_map_header_emulation *header =
       is_zero ? GRN_CALLOC(size) : GRN_MALLOC(size);
     if (!header) {
       return NULL;
@@ -2771,7 +2790,7 @@ grn_io_file_sync_emulation(grn_ctx *ctx,
 {
   /* pwrite() updates the modification time of the file. So we don't
    * need to update it explicitly like the mmap() version. */
-  return grn_mmap_emulation_write_back(ctx, start, length);
+  return grn_io_file_write_back_emulation(ctx, start, length);
 }
 
 /* grn_io_file_sync_emulation() just writes changes to the file. They
@@ -2795,13 +2814,13 @@ static inline int
 grn_io_file_unmap_emulation(
   grn_ctx *ctx, grn_io *io, fileinfo *fi, void *start, size_t length)
 {
-  if (grn_mmap_emulation_write_back(ctx, start, length) != 0) {
+  if (grn_io_file_write_back_emulation(ctx, start, length) != 0) {
     /* The buffer is the only copy of the modified content. Keep it so
      * that the caller can retry the write back later. The caller must
      * keep the mapping. */
     return -1;
   }
-  grn_mmap_emulation_free(ctx, start, length);
+  grn_io_file_free_emulation(ctx, start, length);
   return 0;
 }
 
@@ -2873,7 +2892,7 @@ grn_io_file_map_mmap(grn_ctx *ctx,
 }
 
 static inline int
-grn_fileinfo_touch(grn_ctx *ctx, fileinfo *fi)
+grn_io_file_touch_mmap(grn_ctx *ctx, fileinfo *fi)
 {
   int r = 0;
   if (fi->fd > 0) {
@@ -2902,7 +2921,7 @@ grn_io_file_sync_mmap(grn_ctx *ctx, fileinfo *fi, void *start, size_t length)
     return r;
   }
 
-  return grn_fileinfo_touch(ctx, fi);
+  return grn_io_file_touch_mmap(ctx, fi);
 }
 
 /* On Linux, changes through shared file mappings are in the page
@@ -2924,7 +2943,7 @@ grn_io_file_sync_file_mmap(grn_ctx *ctx, fileinfo *fi)
     return r;
   }
 
-  return grn_fileinfo_touch(ctx, fi);
+  return grn_io_file_touch_mmap(ctx, fi);
 }
 #    endif
 
