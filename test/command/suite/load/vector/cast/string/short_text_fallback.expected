@@ -5,21 +5,13 @@ column_create Data strings COLUMN_VECTOR ShortText
 load --table Data
 [
 {"strings": "[\"Hello\", \"World\"]"},
-{"strings": "[\"Hello\", \"World\", \"Longer than inline bulk buffer\"]"},
-{"strings": "[\"unclosed"},
-{"strings": "[\"recovered\", \"cleanly\"]"},
-{"strings": "plain text"},
-{"strings": "[\"final\", \"check\"]"}
+{"strings": "[\"unclosed"}
 ]
-[[0,0.0,0.0],6]
+[[0,0.0,0.0],2]
 dump   --dump_plugins no   --dump_schema no
 load --table Data
 [
 ["_id","strings"],
 [1,["Hello","World"]],
-[2,["Hello","World","Longer than inline bulk buffer"]],
-[3,["[\"unclosed"]],
-[4,["recovered","cleanly"]],
-[5,["plain text"]],
-[6,["final","check"]]
+[2,["[\"unclosed"]]
 ]

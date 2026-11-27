@@ -2642,10 +2642,7 @@ grn_default_query_logger_get_rotate_threshold_size(void);
     if ((bulk)->header.type == GRN_VECTOR) {                                   \
       grn_obj *_body = (bulk)->u.v.body;                                       \
       if (_body) {                                                             \
-        if ((bulk)->header.impl_flags & GRN_OBJ_REFER) {                       \
-          (bulk)->u.v.body = NULL;                                             \
-          (bulk)->header.impl_flags &= (uint8_t)(~GRN_OBJ_DO_SHALLOW_COPY);    \
-        } else if (GRN_BULK_OUTP(_body)) {                                     \
+        if (GRN_BULK_OUTP(_body)) {                                            \
           (_body)->u.b.curr = (_body)->u.b.head;                               \
         } else {                                                               \
           (_body)->header.flags &= (grn_obj_flags)(~GRN_BULK_BUFSIZE_MAX);     \
