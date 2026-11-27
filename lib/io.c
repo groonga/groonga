@@ -95,6 +95,12 @@ static uint32_t grn_io_version_default = GRN_IO_VERSION_DEFAULT;
  * "posix" implementation and grn_io_path_exist_local() is the
  * "path_exist" field of the "local" implementation.
  *
+ * A wrapper that calls a field of the current table is named as
+ * grn_io_file_${FIELD} or grn_io_path_${NAME}. GRN_IO_FILE_MAP() is a
+ * macro because it passes the caller location. The sync_file and
+ * sync_lock fields don't have a wrapper because callers need to check
+ * whether they're available.
+ *
  * Implementations:
  *
  * * windows: Windows API
@@ -172,43 +178,45 @@ static void
 grn_io_file_operations_init_from_env(void);
 
 static inline void
-grn_fileinfo_init(fileinfo *fis, uint32_t n_fis)
+grn_io_file_init(fileinfo *fis, uint32_t n_fis)
 {
   grn_io_get_file_operations()->init(fis, n_fis);
 }
 
 static inline grn_rc
-grn_fileinfo_open(grn_ctx *ctx, fileinfo *fi, const char *path, int flags)
+grn_io_file_open(grn_ctx *ctx, fileinfo *fi, const char *path, int flags)
 {
   return grn_io_get_file_operations()->open(ctx, fi, path, flags);
 }
 
 static inline bool
-grn_fileinfo_opened(fileinfo *fi)
+grn_io_file_is_opened(fileinfo *fi)
 {
   return grn_io_get_file_operations()->is_opened(fi);
 }
 
 static inline grn_rc
-grn_fileinfo_close(grn_ctx *ctx, fileinfo *fi)
+grn_io_file_close(grn_ctx *ctx, fileinfo *fi)
 {
   return grn_io_get_file_operations()->close(ctx, fi);
 }
 
 static inline grn_rc
-grn_pread(grn_ctx *ctx, fileinfo *fi, void *buf, size_t count, off_t offset)
+grn_io_file_read(
+  grn_ctx *ctx, fileinfo *fi, void *buf, size_t count, off_t offset)
 {
   return grn_io_get_file_operations()->read(ctx, fi, buf, count, offset);
 }
 
 static inline grn_rc
-grn_pwrite(grn_ctx *ctx, fileinfo *fi, void *buf, size_t count, off_t offset)
+grn_io_file_write(
+  grn_ctx *ctx, fileinfo *fi, void *buf, size_t count, off_t offset)
 {
   return grn_io_get_file_operations()->write(ctx, fi, buf, count, offset);
 }
 
 static inline grn_rc
-grn_fileinfo_get_size(grn_ctx *ctx, fileinfo *fi, uint64_t *size)
+grn_io_file_get_size(grn_ctx *ctx, fileinfo *fi, uint64_t *size)
 {
   return grn_io_get_file_operations()->get_size(ctx, fi, size);
 }
@@ -250,18 +258,18 @@ grn_rc
 grn_io_path_create(grn_ctx *ctx, const char *path, const char *tag)
 {
   fileinfo fi;
-  grn_fileinfo_init(&fi, 1);
-  grn_rc rc = grn_fileinfo_open(ctx, &fi, path, O_RDWR | O_CREAT);
+  grn_io_file_init(&fi, 1);
+  grn_rc rc = grn_io_file_open(ctx, &fi, path, O_RDWR | O_CREAT);
   if (rc != GRN_SUCCESS) {
     char errbuf[GRN_CTX_MSGSIZE];
     grn_strcpy(errbuf, GRN_CTX_MSGSIZE, ctx->errbuf);
     ERR(rc, "%s failed to create path: <%s>: %s", tag, path, errbuf);
     return ctx->rc;
   }
-  return grn_fileinfo_close(ctx, &fi);
+  return grn_io_file_close(ctx, &fi);
 }
 
-#define GRN_MMAP(ctx, io, fi, offset, length)                                  \
+#define GRN_IO_FILE_MAP(ctx, io, fi, offset, length)                           \
   (grn_io_get_file_operations()->map((ctx),                                    \
                                      (io),                                     \
                                      (fi),                                     \
@@ -270,13 +278,21 @@ grn_io_path_create(grn_ctx *ctx, const char *path, const char *tag)
                                      __FILE__,                                 \
                                      __LINE__,                                 \
                                      __FUNCTION__))
-#define GRN_MUNMAP(ctx, io, fi, start, length)                                 \
-  (grn_io_get_file_operations()->unmap((ctx), (io), (fi), (start), (length)))
-#define GRN_MSYNC(ctx, fi, start, length)                                      \
-  (grn_io_get_file_operations()->sync((ctx), (fi), (start), (length)))
+static inline int
+grn_io_file_unmap(
+  grn_ctx *ctx, grn_io *io, fileinfo *fi, void *start, size_t length)
+{
+  return grn_io_get_file_operations()->unmap(ctx, io, fi, start, length);
+}
+
+static inline int
+grn_io_file_sync(grn_ctx *ctx, fileinfo *fi, void *start, size_t length)
+{
+  return grn_io_get_file_operations()->sync(ctx, fi, start, length);
+}
 
 static inline void
-grn_munmap_discard(grn_ctx *ctx, void *start, size_t length)
+grn_io_file_discard(grn_ctx *ctx, void *start, size_t length)
 {
   const grn_io_file_operations *operations = grn_io_get_file_operations();
   if (operations->discard) {
@@ -382,7 +398,7 @@ grn_io_create_tmp(grn_ctx *ctx,
   uint32_t b;
   struct _grn_io_header *header;
   b = grn_io_compute_base(header_size);
-  header = (struct _grn_io_header *)GRN_MMAP(ctx, NULL, NULL, 0, b);
+  header = (struct _grn_io_header *)GRN_IO_FILE_MAP(ctx, NULL, NULL, 0, b);
   if (header) {
     header->version = grn_io_version_default;
     header->header_size = header_size;
@@ -414,7 +430,7 @@ grn_io_create_tmp(grn_ctx *ctx,
       }
       GRN_FREE(io);
     }
-    GRN_MUNMAP(ctx, NULL, NULL, header, b);
+    grn_io_file_unmap(ctx, NULL, NULL, header, b);
   }
   return NULL;
 }
@@ -498,9 +514,9 @@ grn_io_create(grn_ctx *ctx,
   max_nfiles =
     grn_io_compute_max_n_files(segment_size, max_segment, bs, file_size);
   if ((fis = GRN_MALLOCN(fileinfo, max_nfiles))) {
-    grn_fileinfo_init(fis, max_nfiles);
-    if (!grn_fileinfo_open(ctx, fis, path, O_RDWR | O_CREAT | O_EXCL)) {
-      header = (struct _grn_io_header *)GRN_MMAP(ctx, NULL, fis, 0, b);
+    grn_io_file_init(fis, max_nfiles);
+    if (!grn_io_file_open(ctx, fis, path, O_RDWR | O_CREAT | O_EXCL)) {
+      header = (struct _grn_io_header *)GRN_IO_FILE_MAP(ctx, NULL, fis, 0, b);
       if (header) {
         header->version = version;
         header->header_size = header_size;
@@ -510,7 +526,7 @@ grn_io_create(grn_ctx *ctx,
         header->flags = flags;
         header->lock = 0;
         grn_memcpy(header->idstr, GRN_IO_IDSTR, 16);
-        GRN_MSYNC(ctx, &(fis[0]), header, b);
+        grn_io_file_sync(ctx, &(fis[0]), header, b);
         if ((io = GRN_CALLOC(sizeof(grn_io)))) {
           grn_io_mapinfo *maps = NULL;
           if ((maps = GRN_CALLOC(sizeof(grn_io_mapinfo) * max_segment))) {
@@ -534,9 +550,9 @@ grn_io_create(grn_ctx *ctx,
           }
           GRN_FREE(io);
         }
-        GRN_MUNMAP(ctx, NULL, fis, header, b);
+        grn_io_file_unmap(ctx, NULL, fis, header, b);
       }
-      grn_fileinfo_close(ctx, fis);
+      grn_io_file_close(ctx, fis);
       grn_rc rc = grn_io_path_remove(ctx, path, "[io][create][error]");
       if (rc == GRN_SUCCESS) {
         GRN_LOG(ctx,
@@ -713,7 +729,7 @@ grn_io_read_header(grn_ctx *ctx,
                    const char *tag)
 {
   uint64_t size;
-  grn_rc rc = grn_fileinfo_get_size(ctx, fi, &size);
+  grn_rc rc = grn_io_file_get_size(ctx, fi, &size);
   if (rc != GRN_SUCCESS) {
     ERR(rc, "%s failed to get file size: <%s>", tag, path);
     return ctx->rc;
@@ -728,7 +744,7 @@ grn_io_read_header(grn_ctx *ctx,
         path);
     return ctx->rc;
   }
-  rc = grn_pread(ctx, fi, header, sizeof(struct _grn_io_header), 0);
+  rc = grn_io_file_read(ctx, fi, header, sizeof(struct _grn_io_header), 0);
   if (rc != GRN_SUCCESS) {
     ERR(rc, "%s failed to read header data: <%s>", tag, path);
     return ctx->rc;
@@ -759,15 +775,15 @@ grn_io_detect_type(grn_ctx *ctx, const char *path)
     return 0;
   }
   fileinfo fi;
-  grn_fileinfo_init(&fi, 1);
-  grn_rc rc = grn_fileinfo_open(ctx, &fi, path, O_RDONLY);
+  grn_io_file_init(&fi, 1);
+  grn_rc rc = grn_io_file_open(ctx, &fi, path, O_RDONLY);
   if (rc != GRN_SUCCESS) {
     ERR(rc, "%s failed to open path: <%s>", tag, path);
     return 0;
   }
   struct _grn_io_header header;
   rc = grn_io_read_header(ctx, &fi, path, &header, tag);
-  grn_fileinfo_close(ctx, &fi);
+  grn_io_file_close(ctx, &fi);
   if (rc != GRN_SUCCESS) {
     return 0;
   }
@@ -807,8 +823,8 @@ grn_io_open(grn_ctx *ctx, const char *path, grn_io_mode mode)
         path);
     return NULL;
   }
-  grn_fileinfo_init(&fi, 1);
-  grn_rc rc = grn_fileinfo_open(ctx, &fi, path, O_RDWR);
+  grn_io_file_init(&fi, 1);
+  grn_rc rc = grn_io_file_open(ctx, &fi, path, O_RDWR);
   if (rc != GRN_SUCCESS) {
     ERR(rc, "[io][open] failed to open fileinfo: <%s>", path);
     return NULL;
@@ -816,7 +832,7 @@ grn_io_open(grn_ctx *ctx, const char *path, grn_io_mode mode)
   {
     struct _grn_io_header h;
     if (grn_io_read_header(ctx, &fi, path, &h, "[io][open]") != GRN_SUCCESS) {
-      grn_fileinfo_close(ctx, &fi);
+      grn_io_file_close(ctx, &fi);
       return NULL;
     }
     header_size = h.header_size;
@@ -824,7 +840,7 @@ grn_io_open(grn_ctx *ctx, const char *path, grn_io_mode mode)
     max_segment = h.max_segment;
     flags = h.flags;
     if (segment_size == 0) {
-      grn_fileinfo_close(ctx, &fi);
+      grn_io_file_close(ctx, &fi);
       ERR(GRN_INCOMPATIBLE_FILE_FORMAT,
           "[io][open] failed to open: segment size is 0: <%s>",
           path);
@@ -835,9 +851,9 @@ grn_io_open(grn_ctx *ctx, const char *path, grn_io_mode mode)
   bs = grn_io_compute_base_segment(b, segment_size);
 
   struct _grn_io_header *header;
-  header = GRN_MMAP(ctx, NULL, &fi, 0, b);
+  header = GRN_IO_FILE_MAP(ctx, NULL, &fi, 0, b);
   if (!header) {
-    grn_fileinfo_close(ctx, &fi);
+    grn_io_file_close(ctx, &fi);
     ERR(GRN_NO_MEMORY_AVAILABLE, "[io][open] failed to map: <%s>", path);
     return NULL;
   }
@@ -847,21 +863,21 @@ grn_io_open(grn_ctx *ctx, const char *path, grn_io_mode mode)
     grn_io_compute_max_n_files(segment_size, max_segment, bs, file_size);
   fileinfo *fis = GRN_MALLOCN(fileinfo, max_nfiles);
   if (!fis) {
-    GRN_MUNMAP(ctx, NULL, &fi, header, b);
-    grn_fileinfo_close(ctx, &fi);
+    grn_io_file_unmap(ctx, NULL, &fi, header, b);
+    grn_io_file_close(ctx, &fi);
     ERR(GRN_NO_MEMORY_AVAILABLE,
         "[io][open] failed to allocate fileinfo: <%s>",
         path);
     return NULL;
   }
 
-  grn_fileinfo_init(fis, max_nfiles);
+  grn_io_file_init(fis, max_nfiles);
   grn_memcpy(fis, &fi, sizeof(fileinfo));
   grn_io *io = GRN_CALLOC(sizeof(grn_io));
   if (!io) {
     GRN_FREE(fis);
-    GRN_MUNMAP(ctx, NULL, &fi, header, b);
-    grn_fileinfo_close(ctx, &fi);
+    grn_io_file_unmap(ctx, NULL, &fi, header, b);
+    grn_io_file_close(ctx, &fi);
     ERR(GRN_NO_MEMORY_AVAILABLE,
         "[io][open] failed to allocate grn_io: <%s>",
         path);
@@ -872,8 +888,8 @@ grn_io_open(grn_ctx *ctx, const char *path, grn_io_mode mode)
   if (!maps) {
     GRN_FREE(io);
     GRN_FREE(fis);
-    GRN_MUNMAP(ctx, NULL, &fi, header, b);
-    grn_fileinfo_close(ctx, &fi);
+    grn_io_file_unmap(ctx, NULL, &fi, header, b);
+    grn_io_file_close(ctx, &fi);
     ERR(GRN_NO_MEMORY_AVAILABLE,
         "[io][open] failed to allocate grn_io_mapinfo: <%s>",
         path);
@@ -899,8 +915,8 @@ grn_io_open(grn_ctx *ctx, const char *path, grn_io_mode mode)
     GRN_FREE(io->maps);
     GRN_FREE(io);
     GRN_FREE(fis);
-    GRN_MUNMAP(ctx, NULL, &fi, header, b);
-    grn_fileinfo_close(ctx, &fi);
+    grn_io_file_unmap(ctx, NULL, &fi, header, b);
+    grn_io_file_close(ctx, &fi);
     ERR(rc, "[io][open] failed to initialize array: <%s>", path);
     return NULL;
   }
@@ -941,21 +957,21 @@ grn_io_close(grn_ctx *ctx, grn_io *io)
           uint32_t fno = bseg / n_segments_per_file;
           fi = &io->fis[fno];
         }
-        if (GRN_MUNMAP(ctx, io, fi, mi->map, segment_size) != 0) {
-          grn_munmap_discard(ctx, mi->map, segment_size);
+        if (grn_io_file_unmap(ctx, io, fi, mi->map, segment_size) != 0) {
+          grn_io_file_discard(ctx, mi->map, segment_size);
         }
       }
     }
     GRN_FREE(io->maps);
   }
-  if (GRN_MUNMAP(ctx, io, io->fis, io->header, io->base) != 0) {
-    grn_munmap_discard(ctx, io->header, io->base);
+  if (grn_io_file_unmap(ctx, io, io->fis, io->header, io->base) != 0) {
+    grn_io_file_discard(ctx, io->header, io->base);
   }
   if (io->fis) {
     uint32_t i;
     for (i = 0; i < max_nfiles; i++) {
       fileinfo *fi = &(io->fis[i]);
-      grn_fileinfo_close(ctx, fi);
+      grn_io_file_close(ctx, fi);
     }
     GRN_FREE(io->fis);
   }
@@ -1163,17 +1179,17 @@ grn_io_read_ja(grn_io *io,
     rest = (size_t)(pos + (off_t)size - file_size);
     size = (size_t)(file_size - pos);
   }
-  if (!grn_fileinfo_opened(fi)) {
+  if (!grn_io_file_is_opened(fi)) {
     char path[PATH_MAX];
     gen_pathname(io->path, path, fno);
-    if (grn_fileinfo_open(ctx, fi, path, O_RDWR | O_CREAT)) {
+    if (grn_io_file_open(ctx, fi, path, O_RDWR | O_CREAT)) {
       *value = NULL;
       *value_len = 0;
       GRN_FREE(v);
       return ctx->rc;
     }
   }
-  if (grn_pread(ctx, fi, v, size, pos)) {
+  if (grn_io_file_read(ctx, fi, v, size, pos)) {
     *value = NULL;
     *value_len = 0;
     GRN_FREE(v);
@@ -1223,10 +1239,10 @@ grn_io_read_ja(grn_io *io,
     byte *vr = (byte *)v + size;
     do {
       fi = &io->fis[++fno];
-      if (!grn_fileinfo_opened(fi)) {
+      if (!grn_io_file_is_opened(fi)) {
         char path[PATH_MAX];
         gen_pathname(io->path, path, fno);
-        if (grn_fileinfo_open(ctx, fi, path, O_RDWR | O_CREAT)) {
+        if (grn_io_file_open(ctx, fi, path, O_RDWR | O_CREAT)) {
           *value = NULL;
           *value_len = 0;
           GRN_FREE(v);
@@ -1234,7 +1250,7 @@ grn_io_read_ja(grn_io *io,
         }
       }
       size = rest > file_size ? file_size : rest;
-      if (grn_pread(ctx, fi, vr, size, 0)) {
+      if (grn_io_file_read(ctx, fi, vr, size, 0)) {
         *value = NULL;
         *value_len = 0;
         GRN_FREE(v);
@@ -1272,10 +1288,10 @@ grn_io_write_ja(grn_io *io,
     rest = (size_t)(pos + (off_t)size - file_size);
     size = (size_t)(file_size - pos);
   }
-  if (!grn_fileinfo_opened(fi)) {
+  if (!grn_io_file_is_opened(fi)) {
     char path[PATH_MAX];
     gen_pathname(io->path, path, fno);
-    if ((rc = grn_fileinfo_open(ctx, fi, path, O_RDWR | O_CREAT))) {
+    if ((rc = grn_io_file_open(ctx, fi, path, O_RDWR | O_CREAT))) {
       return rc;
     }
   }
@@ -1284,16 +1300,16 @@ grn_io_write_ja(grn_io *io,
     je.head.size = value_len;
     je.head.key = key;
     grn_memcpy(je.body, value, value_len);
-    rc = grn_pwrite(ctx, fi, &je, size, pos);
+    rc = grn_io_file_write(ctx, fi, &je, size, pos);
   } else {
     grn_io_ja_ehead eh;
     eh.size = value_len;
     eh.key = key;
-    if ((rc = grn_pwrite(ctx, fi, &eh, sizeof(grn_io_ja_ehead), pos))) {
+    if ((rc = grn_io_file_write(ctx, fi, &eh, sizeof(grn_io_ja_ehead), pos))) {
       return rc;
     }
     pos += (off_t)sizeof(grn_io_ja_ehead);
-    rc = grn_pwrite(ctx, fi, value, size - sizeof(grn_io_ja_ehead), pos);
+    rc = grn_io_file_write(ctx, fi, value, size - sizeof(grn_io_ja_ehead), pos);
   }
   if (rc) {
     return rc;
@@ -1302,15 +1318,15 @@ grn_io_write_ja(grn_io *io,
     byte *vr = (byte *)value + size - sizeof(grn_io_ja_ehead);
     do {
       fi = &io->fis[++fno];
-      if (!grn_fileinfo_opened(fi)) {
+      if (!grn_io_file_is_opened(fi)) {
         char path[PATH_MAX];
         gen_pathname(io->path, path, fno);
-        if ((rc = grn_fileinfo_open(ctx, fi, path, O_RDWR | O_CREAT))) {
+        if ((rc = grn_io_file_open(ctx, fi, path, O_RDWR | O_CREAT))) {
           return rc;
         }
       }
       size = rest > file_size ? file_size : rest;
-      if ((rc = grn_pwrite(ctx, fi, vr, size, 0))) {
+      if ((rc = grn_io_file_write(ctx, fi, vr, size, 0))) {
         return rc;
       }
       vr += size;
@@ -1337,10 +1353,10 @@ grn_io_write_ja_ehead(grn_io *io,
   fileinfo *fi = &io->fis[fno];
   off_t base = fno ? 0 : (off_t)(io->base) - segment_size + io->base_seg;
   off_t pos = segment_size * (bseg % n_segments_per_file) + offset + base;
-  if (!grn_fileinfo_opened(fi)) {
+  if (!grn_io_file_is_opened(fi)) {
     char path[PATH_MAX];
     gen_pathname(io->path, path, fno);
-    if ((rc = grn_fileinfo_open(ctx, fi, path, O_RDWR | O_CREAT))) {
+    if ((rc = grn_io_file_open(ctx, fi, path, O_RDWR | O_CREAT))) {
       return rc;
     }
   }
@@ -1348,7 +1364,7 @@ grn_io_write_ja_ehead(grn_io *io,
     grn_io_ja_ehead eh;
     eh.size = value_len;
     eh.key = key;
-    return grn_pwrite(ctx, fi, &eh, sizeof(grn_io_ja_ehead), pos);
+    return grn_io_file_write(ctx, fi, &eh, sizeof(grn_io_ja_ehead), pos);
   }
 }
 
@@ -1467,7 +1483,7 @@ grn_io_win_unmap(grn_ctx *ctx, grn_io_win *iw)
 
 #define DO_MAP(io, fi, pos, size, segno, res)                                  \
   do {                                                                         \
-    (res) = GRN_MMAP(ctx, (io), (fi), (pos), (size));                          \
+    (res) = GRN_IO_FILE_MAP(ctx, (io), (fi), (pos), (size));                   \
     if ((res)) {                                                               \
       uint32_t nmaps;                                                          \
       if (io->max_map_seg < segno) {                                           \
@@ -1497,14 +1513,14 @@ grn_io_seg_map_(grn_ctx *ctx, grn_io *io, uint32_t segno, grn_io_mapinfo *info)
     off_t base = fno ? 0 : (off_t)(io->base) - segment_size * io->base_seg;
     off_t pos = segment_size * (bseg % n_segments_per_file) + base;
     fileinfo *fi = &io->fis[fno];
-    if (!grn_fileinfo_opened(fi)) {
+    if (!grn_io_file_is_opened(fi)) {
       char path[PATH_MAX];
       gen_pathname(io->path, path, fno);
       bool path_exist = grn_io_path_exist(ctx, path);
-      if (!grn_fileinfo_open(ctx, fi, path, O_RDWR | O_CREAT)) {
+      if (!grn_io_file_open(ctx, fi, path, O_RDWR | O_CREAT)) {
         DO_MAP(io, fi, pos, segment_size, segno, info->map);
         if (!info->map && !path_exist) {
-          grn_fileinfo_close(ctx, fi);
+          grn_io_file_close(ctx, fi);
           if (grn_io_path_remove(ctx, path, "[io][map][error]") ==
               GRN_SUCCESS) {
             GRN_LOG(ctx,
@@ -1566,7 +1582,11 @@ grn_io_seg_expire(grn_ctx *ctx, grn_io *io, uint32_t segno, uint32_t nretry)
       } else {
         uint32_t nmaps;
         fileinfo *fi = &(io->fis[segno]);
-        if (GRN_MUNMAP(ctx, io, fi, info->map, io->header->segment_size) != 0) {
+        if (grn_io_file_unmap(ctx,
+                              io,
+                              fi,
+                              info->map,
+                              io->header->segment_size) != 0) {
           /* Keep the mapping. It's written back later. */
           GRN_ATOMIC_ADD_EX(pnref, reset_max_ref_by_overflow, nref);
           GRN_FUTEX_WAKE(pnref);
@@ -1611,11 +1631,11 @@ grn_io_expire(grn_ctx *ctx, grn_io *io, uint32_t count_thresh, uint32_t limit)
             grn_io_mapinfo *info = &(io->maps[fno]);
             if (info->map) {
               fileinfo *fi = &(io->fis[fno]);
-              if (GRN_MUNMAP(ctx,
-                             io,
-                             fi,
-                             info->map,
-                             io->header->segment_size) != 0) {
+              if (grn_io_file_unmap(ctx,
+                                    io,
+                                    fi,
+                                    info->map,
+                                    io->header->segment_size) != 0) {
                 /* Keep the mapping. It's written back later. */
                 continue;
               }
@@ -1646,13 +1666,13 @@ grn_io_expire(grn_ctx *ctx, grn_io *io, uint32_t count_thresh, uint32_t limit)
           uint32_t nmaps, nref, *pnref = &info->nref;
           GRN_ATOMIC_ADD_EX(pnref, 1, nref);
           if (!nref && info->map && (grn_gtick - info->count) > count_thresh) {
-            /* If GRN_MUNMAP() fails, keep the mapping. It's written
+            /* If grn_io_file_unmap() fails, keep the mapping. It's written
              * back later. */
-            if (GRN_MUNMAP(ctx,
-                           io,
-                           NULL,
-                           info->map,
-                           io->header->segment_size) == 0) {
+            if (grn_io_file_unmap(ctx,
+                                  io,
+                                  NULL,
+                                  info->map,
+                                  io->header->segment_size) == 0) {
               GRN_ATOMIC_ADD_EX(&io->nmaps, -1, nmaps);
               info->map = NULL;
               info->count = grn_gtick;
@@ -1682,13 +1702,13 @@ grn_io_expire(grn_ctx *ctx, grn_io *io, uint32_t count_thresh, uint32_t limit)
 void *
 grn_io_anon_map(grn_ctx *ctx, grn_io_mapinfo *mi, size_t length)
 {
-  return (mi->map = GRN_MMAP(ctx, NULL, NULL, 0, length));
+  return (mi->map = GRN_IO_FILE_MAP(ctx, NULL, NULL, 0, length));
 }
 
 void
 grn_io_anon_unmap(grn_ctx *ctx, grn_io_mapinfo *mi, size_t length)
 {
-  GRN_MUNMAP(ctx, NULL, NULL, mi->map, length);
+  grn_io_file_unmap(ctx, NULL, NULL, mi->map, length);
 }
 
 grn_rc
@@ -1803,7 +1823,8 @@ grn_io_flush(grn_ctx *ctx, grn_io *io)
     struct _grn_io_header *header = io->header;
     uint32_t aligned_header_size = grn_io_compute_base(header->header_size);
 
-    if (GRN_MSYNC(ctx, &(io->fis[0]), header, aligned_header_size) != 0) {
+    if (grn_io_file_sync(ctx, &(io->fis[0]), header, aligned_header_size) !=
+        0) {
       return ctx->rc;
     }
 
@@ -1839,8 +1860,10 @@ grn_io_flush(grn_ctx *ctx, grn_io *io)
         }
 
         nth_file_info = grn_io_compute_nth_file_info(io, i);
-        msync_result =
-          GRN_MSYNC(ctx, &(io->fis[nth_file_info]), info->map, segment_size);
+        msync_result = grn_io_file_sync(ctx,
+                                        &(io->fis[nth_file_info]),
+                                        info->map,
+                                        segment_size);
         GRN_ATOMIC_ADD_EX(pnref, -1, nref);
         GRN_FUTEX_WAKE(pnref);
 
@@ -1860,7 +1883,7 @@ grn_io_flush(grn_ctx *ctx, grn_io *io)
     uint32_t i;
     for (i = 0; i < n_files; i++) {
       fileinfo *fi = &(io->fis[i]);
-      if (!grn_fileinfo_opened(fi)) {
+      if (!grn_io_file_is_opened(fi)) {
         continue;
       }
       if (operations->sync_file(ctx, fi) != 0) {
