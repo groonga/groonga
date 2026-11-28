@@ -1,0 +1,13 @@
+table_create Data TABLE_NO_KEY
+column_create Data strings COLUMN_VECTOR ShortText
+
+load --table Data
+[
+{"strings": "[\"Hello\", \"World\"]"},
+{"strings": "[\"unclosed"},
+{"strings": "[\"ok\", invalid]"}
+]
+
+dump \
+  --dump_plugins no \
+  --dump_schema no
