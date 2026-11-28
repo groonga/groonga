@@ -4,7 +4,8 @@ column_create Data strings COLUMN_VECTOR ShortText
 load --table Data
 [
 {"strings": "[\"Hello\", \"World\"]"},
-{"strings": "[\"unclosed"}
+{"strings": "[\"unclosed"},
+{"strings": "[\"ok\", invalid]"}
 ]
 
 dump \

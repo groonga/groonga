@@ -5,13 +5,15 @@ column_create Data strings COLUMN_VECTOR ShortText
 load --table Data
 [
 {"strings": "[\"Hello\", \"World\"]"},
-{"strings": "[\"unclosed"}
+{"strings": "[\"unclosed"},
+{"strings": "[\"ok\", invalid]"}
 ]
-[[0,0.0,0.0],2]
+[[0,0.0,0.0],3]
 dump   --dump_plugins no   --dump_schema no
 load --table Data
 [
 ["_id","strings"],
 [1,["Hello","World"]],
-[2,["[\"unclosed"]]
+[2,["[\"unclosed"]],
+[3,["[\"ok\", invalid]"]]
 ]
